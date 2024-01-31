@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "91523853816",
+    "firebase_url": "https://nakath-af5a0-default-rtdb.firebaseio.com",
+    "project_id": "nakath-af5a0",
+    "storage_bucket": "nakath-af5a0.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:91523853816:android:b67064eeaf895ab369fa0d",
+        "android_client_info": {
+          "package_name": "com.nakath.aurudu_nakath"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA96Wqd5LcJtbRx14YvQpUWCyg77IugjOs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
