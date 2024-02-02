@@ -67,7 +67,6 @@ android {
     signingConfigs {
         release {
             storeFile file('G:/aurudu_nakath/android/app/old_key.jks'.replace('/', File.separator))
-
             storePassword 'MasterSORO'
             keyAlias 'key0'
             keyPassword 'MasterSORO'
