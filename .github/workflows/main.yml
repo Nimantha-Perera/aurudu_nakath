@@ -48,7 +48,7 @@ jobs:
 # - run: cd ..
 # - run: zip -r app.ipa Payload
 
-# Release Play Store
+
 - name: Upload to Play Store
   uses: google/play-developer-console-action@v2
   with:
