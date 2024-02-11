@@ -8,6 +8,7 @@ on:
       - main
       - master
       - develop
+
 name: "Build & Release"
 jobs:
   build:
@@ -26,6 +27,13 @@ jobs:
 
       - run: flutter build apk --release --split-per-abi
       - run: |
+          # Add code to sign the APK
+          jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 -keystore old_key.jks -storepass MasterSORO -keypass MasterSORO -signedjar build/app/outputs/apk/release/app-signed.apk build/app/outputs/apk/release/app-release-unsigned.apk key0
+
+          # Add code to create an Android App Bundle (AAB)
+          flutter build appbundle --target-platform android-arm,android-arm64,android-x64
+
+      - run: |
           flutter build ios --no-codesign
           cd build/ios/iphoneos
           mkdir Payload
@@ -36,14 +44,6 @@ jobs:
       - name: Push to Releases
         uses: ncipollo/release-action@v1
         with:
-          artifacts: "build/app/outputs/apk/release/*,build/ios/iphoneos/app.ipa"
+          artifacts: "build/app/outputs/apk/release/app-signed.apk,build/app/outputs/bundle/release/app-release.aab,build/ios/iphoneos/app.ipa"
           tag: v1.0.${{ github.run_number }}
           token: ${{ secrets.TOKEN }}
-
-
-
-
-
-
-# push to master, main, develop
-# pull request on main master
