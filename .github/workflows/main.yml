@@ -27,6 +27,7 @@ jobs:
           channel: 'stable'
           architecture: x64
 
+      - run: flutter build apk --release --split-per-abi
       - run: flutter build bundle --release  # Add this line to build the bundle
       - run: |
           flutter build ios --no-codesign
