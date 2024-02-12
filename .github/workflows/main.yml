@@ -8,11 +8,14 @@ on:
       - main
       - master
       - develop
+
 name: "Build & Release"
+
 jobs:
   build:
     name: Build & Release
     runs-on: macos-latest
+
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-java@v3
@@ -33,17 +36,11 @@ jobs:
           ln -s ../Runner.app
           cd ..
           zip -r app.ipa Payload
+      - run: flutter build appbundle --release  # Add this line to build the bundle
+
       - name: Push to Releases
         uses: ncipollo/release-action@v1
         with:
-          artifacts: "build/app/outputs/apk/release/*,build/ios/iphoneos/app.ipa"
+          artifacts: "build/app/outputs/apk/release/*,build/ios/iphoneos/app.ipa,build/app/outputs/bundle/release/app-release.aab"  # Add the bundle path
           tag: v1.0.${{ github.run_number }}
           token: ${{ secrets.TOKEN }}
-
-
-
-
-
-
-# push to master, main, develop
-# pull request on main master
