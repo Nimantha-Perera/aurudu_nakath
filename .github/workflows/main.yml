@@ -2,7 +2,7 @@ on:
   pull_request:
     branches:
       - main
-      - seperate
+      - master
   push:
     branches:
       - main
@@ -39,20 +39,11 @@ jobs:
           tag: v1.0.${{ github.run_number }}
           token: ${{ secrets.TOKEN }}
 
-      # Remove the Apple (iOS) build steps
-      # - run: flutter build ios --no-codesign
-      # - run: cd build/ios/iphoneos
-      # - run: mkdir Payload
-      # - run: cd Payload
-      # - run: ln -s ../Runner.app
-      # - run: cd ..
-      # - run: zip -r app.ipa Payload
-
-      # Release Play Store
-      - name: Upload to Play Store
-        uses: google/play-developer-console-action@v2
-        with:
-          serviceAccountFile: ${{ secrets.GOOGLE_PLAY_SERVICES_JSON_KEY }}
-          track: alpha  # Adjust track based on your release strategy
-          apkReleaseFile: build/app/outputs/bundle/release/app-release.aab
-          # Add other required parameters like packageName, changelog, etc.
+      # Remove the Google Play Store upload steps
+      # - name: Upload to Play Store
+      #   uses: google/play-developer-console-action@v2
+      #   with:
+      #     serviceAccountFile: ${{ secrets.GOOGLE_PLAY_SERVICES_JSON_KEY }}
+      #     track: alpha  # Adjust track based on your release strategy
+      #     apkReleaseFile: build/app/outputs/bundle/release/app-release.aab
+      #     # Add other required parameters like packageName, changelog, etc.
