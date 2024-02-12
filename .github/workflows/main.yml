@@ -27,7 +27,7 @@ jobs:
           channel: 'stable'
           architecture: x64
 
-      - run: flutter build apk --release --split-per-abi
+      - run: flutter build bundle --release  # Add this line to build the bundle
       - run: |
           flutter build ios --no-codesign
           cd build/ios/iphoneos
@@ -36,7 +36,7 @@ jobs:
           ln -s ../Runner.app
           cd ..
           zip -r app.ipa Payload
-      - run: flutter build appbundle --release  # Add this line to build the bundle
+     
 
       - name: Push to Releases
         uses: ncipollo/release-action@v1
