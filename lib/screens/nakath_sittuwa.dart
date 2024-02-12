@@ -1,5 +1,7 @@
 import 'dart:async';
 
+import 'package:aurudu_nakath/Ads/init_ads.dart';
+import 'package:aurudu_nakath/User_backClicked/back_clicked.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -12,6 +14,8 @@ class NakathSittuwa extends StatefulWidget {
 }
 
 class _NakathSittuwaState extends State<NakathSittuwa> {
+
+  InterstitialAdManager interstitialAdManager = InterstitialAdManager();
   late DateTime futureDate;
   late Timer timer;
 
@@ -21,6 +25,7 @@ class _NakathSittuwaState extends State<NakathSittuwa> {
   @override
   void initState() {
     super.initState();
+    interstitialAdManager.initInterstitialAd();
     countdownText1 = 'ගනනය කරමින්...';
     countdownText2 = 'ගනනය කරමින්...';
 
@@ -83,60 +88,66 @@ class _NakathSittuwaState extends State<NakathSittuwa> {
   
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Color(0xFF6D003B),
-        title: Text("අලුත් අවුරුදු නැකැත්"),
-      ),
-      body: Container(
-        decoration: BoxDecoration(
-          image: DecorationImage(
-            image: AssetImage('assets/background.jpg'),
-            fit: BoxFit.cover,
-          ),
+    return WillPopScope(
+      onWillPop: () async {
+       BackButtonUtil.handleBackButton(interstitialAdManager);
+        return true; // Return true to allow the back navigation
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          backgroundColor: Color(0xFF6D003B),
+          title: Text("අලුත් අවුරුදු නැකැත්"),
         ),
-        child: Column(
-          children: [
-           
-            Padding(
-              padding: const EdgeInsets.all(10.0),
-              child: Card(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: GestureDetector(
-                  child: ListTile(
-                    title: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Container(
-                          width: double.infinity,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(8),
-                            color: Colors.amber,
-                          ),
-                          child: Center(
-                            child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Text(
-                                'අලුත් අවුරුදු උදාව සඳහා තව',
-                                style: GoogleFonts.notoSerifSinhala(
-                                  fontSize: 14,
+        body: Container(
+          decoration: BoxDecoration(
+            image: DecorationImage(
+              image: AssetImage('assets/background.jpg'),
+              fit: BoxFit.cover,
+            ),
+          ),
+          child: Column(
+            children: [
+             
+              Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: Card(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: GestureDetector(
+                    child: ListTile(
+                      title: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Container(
+                            width: double.infinity,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(8),
+                              color: Colors.amber,
+                            ),
+                            child: Center(
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Text(
+                                  'අලුත් අවුරුදු උදාව සඳහා තව',
+                                  style: GoogleFonts.notoSerifSinhala(
+                                    fontSize: 14,
+                                  ),
                                 ),
                               ),
                             ),
                           ),
-                        ),
-                        SizedBox(height: 8),
-                      ],
-                    ),
-                    subtitle: Center(
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text(
-                          '$countdownText2',
-                          style: GoogleFonts.notoSerifSinhala(
-                            fontSize: 13,
+                          SizedBox(height: 8),
+                        ],
+                      ),
+                      subtitle: Center(
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text(
+                            '$countdownText2',
+                            style: GoogleFonts.notoSerifSinhala(
+                              fontSize: 13,
+                            ),
                           ),
                         ),
                       ),
@@ -144,13 +155,13 @@ class _NakathSittuwaState extends State<NakathSittuwa> {
                   ),
                 ),
               ),
-            ),
-
-
-             Expanded(
-              child: _NakathData(),
-            ),
-          ],
+    
+    
+               Expanded(
+                child: _NakathData(),
+              ),
+            ],
+          ),
         ),
       ),
     );

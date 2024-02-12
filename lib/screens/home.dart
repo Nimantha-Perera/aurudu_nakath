@@ -29,6 +29,15 @@ class _HomeScreenState extends State<HomeScreen> {
     
   }
 
+  Future<bool> _onWillPop() async {
+    // Show ad when the back button is pressed
+    if (await adManager.isInterstitialAdLoaded()) {
+      adManager.showInterstitialAd();
+      return false; // Prevent the app from closing immediately
+    }
+    return true; // Allow the app to close if the ad is not loaded
+  }
+
 
 
  
@@ -68,7 +77,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           onTap: () {
 
                             //Ads Load 
-                              adManager.showInterstitialAd();
+                              // adManager.showInterstitialAd();
 
                             
                             Navigator.of(context).push(
@@ -140,7 +149,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         child: GestureDetector(
                           onTap: () {
                              //Ads Load 
-                              adManager.showInterstitialAd();
+                              // adManager.showInterstitialAd();
                             Navigator.of(context).push(
                               MaterialPageRoute(
                                 builder: (context) {
@@ -214,7 +223,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         child: InkWell(
                           onTap: () {
                              //Ads Load 
-                              adManager.showInterstitialAd();
+                              // adManager.showInterstitialAd();
                             Navigator.of(context).push(
                               MaterialPageRoute(
                                 builder: (context) {
@@ -284,7 +293,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           onTap: () {
                             // Handle tap for "රාහු කාලය"
                              //Ads Load 
-                              adManager.showInterstitialAd();
+                              // adManager.showInterstitialAd();
                             Navigator.of(context).push(
                               MaterialPageRoute(
                                 builder: (context) {
@@ -358,7 +367,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         child: InkWell(
                           onTap: () {
                              //Ads Load 
-                              adManager.showInterstitialAd();
+                              // adManager.showInterstitialAd();
                             Navigator.of(context).push(
                               MaterialPageRoute(
                                 builder: (context) {
@@ -428,7 +437,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         child: GestureDetector(
                           onTap: () {
                              //Ads Load 
-                              adManager.showInterstitialAd();
+                              // adManager.showInterstitialAd();
                              Navigator.of(context).push(
                               MaterialPageRoute(
                                 builder: (context) {
