@@ -1,3 +1,5 @@
+import 'package:aurudu_nakath/Ads/init_ads.dart';
+import 'package:aurudu_nakath/User_backClicked/back_clicked.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -31,9 +33,14 @@ class HelaChatAI extends StatefulWidget {
   _ChatScreenState createState() => _ChatScreenState();
 }
 
+
+
+
 class _ChatScreenState extends State<HelaChatAI> {
   final TextEditingController _textController = TextEditingController();
   final List<ChatMessage> _messages = [];
+
+ InterstitialAdManager interstitialAdManager = InterstitialAdManager();
 
   void _handleSubmitted(String text) {
     // Clear the text input field
@@ -274,6 +281,15 @@ class _ChatScreenState extends State<HelaChatAI> {
     });
   }
 
+   @override
+  void initState() {
+    super.initState();
+   
+  
+    interstitialAdManager.initInterstitialAd();
+    
+  }
+
   String _getSinhalaDayOfWeek(int dayOfWeek) {
     switch (dayOfWeek) {
       case DateTime.sunday:
@@ -309,51 +325,59 @@ class _ChatScreenState extends State<HelaChatAI> {
 
     setState(() {
       _messages.insert(0, message);
+      
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('හෙල AI'),
-        backgroundColor: Color(0xFF6D003B),
-      ),
-      body: Stack(
-        children: [
-          // Background Image
-          Container(
-            decoration: BoxDecoration(
-              image: DecorationImage(
-                image: AssetImage(
-                    'assets/background_ai.png'), // Replace with your image asset path
-                fit: BoxFit.cover,
+    return WillPopScope(
+      onWillPop: () async {
+        BackButtonUtil.handleBackButton(interstitialAdManager!);
+
+        return true; // Return true to allow the back navigation
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text('හෙල AI'),
+          backgroundColor: Color(0xFF6D003B),
+        ),
+        body: Stack(
+          children: [
+            // Background Image
+            Container(
+              decoration: BoxDecoration(
+                image: DecorationImage(
+                  image: AssetImage(
+                      'assets/background_ai.png'), // Replace with your image asset path
+                  fit: BoxFit.cover,
+                ),
               ),
             ),
-          ),
-          // Column for chat interface
-          Column(
-            children: <Widget>[
-              Expanded(
-                child: ListView.builder(
-                  reverse: true,
-                  itemCount: _messages.length,
-                  itemBuilder: (context, index) {
-                    return _messages[index];
-                  },
+            // Column for chat interface
+            Column(
+              children: <Widget>[
+                Expanded(
+                  child: ListView.builder(
+                    reverse: true,
+                    itemCount: _messages.length,
+                    itemBuilder: (context, index) {
+                      return _messages[index];
+                    },
+                  ),
                 ),
-              ),
-              Divider(height: 1.0),
-              Container(
-                decoration: BoxDecoration(
-                  color: Theme.of(context).cardColor,
+                Divider(height: 1.0),
+                Container(
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).cardColor,
+                  ),
+                  child: _buildTextComposer(),
                 ),
-                child: _buildTextComposer(),
-              ),
-            ],
-          ),
-          // Add your Stack children here if needed
-        ],
+              ],
+            ),
+            // Add your Stack children here if needed
+          ],
+        ),
       ),
     );
   }

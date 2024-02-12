@@ -1,32 +1,57 @@
+import 'package:aurudu_nakath/Ads/init_ads.dart';
+import 'package:aurudu_nakath/User_backClicked/back_clicked.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-class RaahuKaalaya extends StatelessWidget {
+class RaahuKaalaya extends StatefulWidget {
   const RaahuKaalaya({Key? key}) : super(key: key);
 
   @override
+  _RaahuKaalayaState createState() => _RaahuKaalayaState();
+}
+
+class _RaahuKaalayaState extends State<RaahuKaalaya> {
+  InterstitialAdManager interstitialAdManager = InterstitialAdManager();
+
+
+
+   @override
+  void initState() {
+    super.initState();
+  
+    interstitialAdManager.initInterstitialAd();
+  
+  }
+  @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Color(0xFF6D003B),
-        title: Text(
-          'රාහු කාලය',
-          style: GoogleFonts.notoSerifSinhala(
-            fontSize: 15,
+    return WillPopScope(
+      onWillPop: () async {
+        BackButtonUtil.handleBackButton(interstitialAdManager!);
+
+        return true; // Return true to allow the back navigation
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          backgroundColor: Color(0xFF6D003B),
+          title: Text(
+            'රාහු කාලය',
+            style: GoogleFonts.notoSerifSinhala(
+              fontSize: 15,
+            ),
           ),
         ),
-      ),
-      body: Container(
-        decoration: BoxDecoration(
-          image: DecorationImage(
-            image: AssetImage("assets/background.jpg"),
-            fit: BoxFit.cover,
+        body: Container(
+          decoration: BoxDecoration(
+            image: DecorationImage(
+              image: AssetImage("assets/background.jpg"),
+              fit: BoxFit.cover,
+            ),
           ),
+          alignment: Alignment.center,
+          child: _rashi_aya_waya(),
         ),
-        alignment: Alignment.center,
-        child: _rashi_aya_waya(),
       ),
     );
   }

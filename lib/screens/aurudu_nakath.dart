@@ -1,5 +1,7 @@
 import 'dart:async';
 
+import 'package:aurudu_nakath/Ads/init_ads.dart';
+import 'package:aurudu_nakath/User_backClicked/back_clicked.dart';
 import 'package:flutter/material.dart';
 
 import 'package:google_fonts/google_fonts.dart';
@@ -32,6 +34,8 @@ class AuruduNakathScreen extends StatefulWidget {
 }
 
 class _AuruduNakathScreenState extends State<AuruduNakathScreen> {
+
+   InterstitialAdManager interstitialAdManager = InterstitialAdManager();
   Map<DateTime, List<Event>> events = {
     DateTime(2024, 1, 15): [
       Event(
@@ -164,6 +168,8 @@ class _AuruduNakathScreenState extends State<AuruduNakathScreen> {
           title: 'නත්තල් උත්සව දිනය', color: Color.fromARGB(255, 255, 238, 0)),
     ],
   };
+
+
 
   List<Event> getEventsForDay(DateTime day) {
     // Strip time information for comparison
@@ -318,20 +324,28 @@ class _AuruduNakathScreenState extends State<AuruduNakathScreen> {
     super.initState();
     print("Events: $events");
     fetchDataFromFirebase();
+    interstitialAdManager.initInterstitialAd();
     _initialization = Firebase.initializeApp();
   }
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-      future: _initialization,
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.done) {
-          return _buildAuruduNakathScreen();
-        } else {
-          return _buildLoadingScreen();
-        }
+    return WillPopScope(
+      onWillPop: () async {
+        BackButtonUtil.handleBackButton(interstitialAdManager!);
+
+        return true; // Return true to allow the back navigation
       },
+      child: FutureBuilder(
+        future: _initialization,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.done) {
+            return _buildAuruduNakathScreen();
+          } else {
+            return _buildLoadingScreen();
+          }
+        },
+      ),
     );
   }
 

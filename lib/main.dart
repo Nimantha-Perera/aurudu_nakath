@@ -70,6 +70,8 @@ class _MyAppState extends State<MyApp> {
   }
 
 
+
+
   // Check Updates
 Future<void> checkForUpdate() async {
   print('checking for Update');
@@ -189,3 +191,9 @@ class ErrorScreen extends StatelessWidget {
     );
   }
 }
+
+// hadle back buttn
+void handleBackButton() {
+  print("Back button clicked");
+  // Additional logic you want to perform on back button click
+}  

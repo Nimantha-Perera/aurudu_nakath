@@ -7,7 +7,8 @@ class InterstitialAdManager {
   Future<void> initInterstitialAd() async {
     try {
       await InterstitialAd.load(
-        adUnitId: "ca-app-pub-7834397003941676/7162644845", // Replace with your real ad unit ID
+        // adUnitId: "ca-app-pub-7834397003941676/7162644845", // Replace with your real ad unit ID
+         adUnitId: "ca-app-pub-7834397003941676/7162644845", // Replace with your real ad unit ID
         request: const AdRequest(),
         adLoadCallback: InterstitialAdLoadCallback(
           onAdLoaded: (ad) {
@@ -38,8 +39,14 @@ class InterstitialAdManager {
     }
   }
 
+  bool isInterstitialAdLoaded() {
+    return interstitialAd != null && !isAdLoading;
+  }
+
   void _loadNextAd() {
     isAdLoading = true; // Mark as loading
     initInterstitialAd();
   }
+
+  void init() {}
 }
