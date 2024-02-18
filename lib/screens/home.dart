@@ -2,6 +2,7 @@ import 'package:aurudu_nakath/Ads/constombannerad.dart';
 import 'package:aurudu_nakath/Ads/init_ads.dart';
 import 'package:aurudu_nakath/screens/hela_ai.dart';
 import 'package:aurudu_nakath/screens/help.dart';
+import 'package:aurudu_nakath/screens/horoscope/manu.dart';
 import 'package:aurudu_nakath/screens/raahu_kalaya.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -15,18 +16,14 @@ class HomeScreen extends StatefulWidget {
   @override
   _HomeScreenState createState() => _HomeScreenState();
 }
- InterstitialAdManager adManager = InterstitialAdManager();
 
-
+InterstitialAdManager adManager = InterstitialAdManager();
 
 class _HomeScreenState extends State<HomeScreen> {
-
   void initState() {
     super.initState();
     // Initialize the interstitial ad when the widget is created
     adManager.initInterstitialAd();
-
-    
   }
 
   Future<bool> _onWillPop() async {
@@ -38,15 +35,20 @@ class _HomeScreenState extends State<HomeScreen> {
     return true; // Allow the app to close if the ad is not loaded
   }
 
-
-
- 
-
-
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      floatingActionButton: FloatingActionButton(
+          backgroundColor: Colors.red,
+          mini: true,
+          onPressed: () => Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) {
+                    return Help();
+                  },
+                ),
+              ),
+          child: Icon(Icons.help)),
       body: Stack(
         children: <Widget>[
           Positioned.fill(
@@ -55,31 +57,35 @@ class _HomeScreenState extends State<HomeScreen> {
               fit: BoxFit.cover,
             ),
           ),
-          Container(
-            margin: EdgeInsets.only(top: 100, left: 20),
-            child: Text(
-              'නැකැත් App වෙත,\nසාදරයෙන් පිලිගනිමු',
-              style: GoogleFonts.notoSerifSinhala(
-                  fontSize: 20, color: Colors.white),
-            ),
-          ),
+
           Container(
             margin: EdgeInsets.all(16),
             child: Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
+                  Container(
+                    padding: EdgeInsets.only(bottom: 50),
+                    margin: EdgeInsets.only(
+                        left: 20, top: 20), // Adjust the top value as needed
+                    child: Text(
+                      'නැකැත් App වෙත,\nසාදරයෙන් පිලිගනිමු',
+                      style: GoogleFonts.notoSerifSinhala(
+                        fontSize: 20,
+                        color: Colors.white,
+                      ),
+                      textAlign: TextAlign.center, // Center the text
+                    ),
+                  ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       Expanded(
                         child: InkWell(
                           onTap: () {
+                            //Ads Load
+                            // adManager.showInterstitialAd();
 
-                            //Ads Load 
-                              // adManager.showInterstitialAd();
-
-                            
                             Navigator.of(context).push(
                               MaterialPageRoute(
                                 builder: (context) {
@@ -87,7 +93,6 @@ class _HomeScreenState extends State<HomeScreen> {
                                 },
                               ),
                             );
-                        
                           },
                           child: Container(
                             height: 100,
@@ -112,15 +117,17 @@ class _HomeScreenState extends State<HomeScreen> {
                                 ),
                                 child: Stack(
                                   children: [
-                                    Center(
-                                      child: Text(
-                                        'අවුරුදු නැකැත්',
-                                        style: GoogleFonts.notoSerifSinhala(
-                                          fontSize: 14,
-                                          color: const Color.fromARGB(
-                                              255, 255, 255, 255),
-                                          fontWeight: FontWeight
-                                              .bold, // Add this line to make the text bold
+                                    Container(
+                                      child: Center(
+                                        child: Text(
+                                          'අවුරුදු නැකැත්',
+                                          style: GoogleFonts.notoSerifSinhala(
+                                            fontSize: 14,
+                                            color: const Color.fromARGB(
+                                                255, 255, 255, 255),
+                                            fontWeight: FontWeight
+                                                .bold, // Add this line to make the text bold
+                                          ),
                                         ),
                                       ),
                                     ),
@@ -148,8 +155,8 @@ class _HomeScreenState extends State<HomeScreen> {
                       Expanded(
                         child: GestureDetector(
                           onTap: () {
-                             //Ads Load 
-                              // adManager.showInterstitialAd();
+                            //Ads Load
+                            // adManager.showInterstitialAd();
                             Navigator.of(context).push(
                               MaterialPageRoute(
                                 builder: (context) {
@@ -222,8 +229,8 @@ class _HomeScreenState extends State<HomeScreen> {
                       Expanded(
                         child: InkWell(
                           onTap: () {
-                             //Ads Load 
-                              // adManager.showInterstitialAd();
+                            //Ads Load
+                            // adManager.showInterstitialAd();
                             Navigator.of(context).push(
                               MaterialPageRoute(
                                 builder: (context) {
@@ -292,8 +299,8 @@ class _HomeScreenState extends State<HomeScreen> {
                         child: InkWell(
                           onTap: () {
                             // Handle tap for "රාහු කාලය"
-                             //Ads Load 
-                              // adManager.showInterstitialAd();
+                            //Ads Load
+                            // adManager.showInterstitialAd();
                             Navigator.of(context).push(
                               MaterialPageRoute(
                                 builder: (context) {
@@ -366,8 +373,8 @@ class _HomeScreenState extends State<HomeScreen> {
                       Expanded(
                         child: InkWell(
                           onTap: () {
-                             //Ads Load 
-                              // adManager.showInterstitialAd();
+                            //Ads Load
+                            // adManager.showInterstitialAd();
                             Navigator.of(context).push(
                               MaterialPageRoute(
                                 builder: (context) {
@@ -436,12 +443,12 @@ class _HomeScreenState extends State<HomeScreen> {
                       Expanded(
                         child: GestureDetector(
                           onTap: () {
-                             //Ads Load 
-                              // adManager.showInterstitialAd();
-                             Navigator.of(context).push(
+                            //Ads Load
+                            // adManager.showInterstitialAd();
+                            Navigator.of(context).push(
                               MaterialPageRoute(
                                 builder: (context) {
-                                  return Help();
+                                  return Menu();
                                 },
                               ),
                             );
@@ -469,7 +476,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   children: [
                                     Center(
                                       child: Text(
-                                        'උදව්',
+                                        'ජ්‍යෝතීෂ්‍ය සේවාව',
                                         style: GoogleFonts.notoSerifSinhala(
                                           fontSize: 14,
                                           color: const Color.fromARGB(
@@ -505,12 +512,12 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
           ),
-          Container(
-            child: CustomBannerAd(
-              adSize: AdSize.banner,
-              adUnitId: 'ca-app-pub-7834397003941676/2610223957',
-            ),
-          )
+          // Container(
+          //   child: CustomBannerAd(
+          //     adSize: AdSize.banner,
+          //     adUnitId: 'ca-app-pub-7834397003941676/2610223957',
+          //   ),
+          // )
         ],
       ),
     );

@@ -33,14 +33,11 @@ class HelaChatAI extends StatefulWidget {
   _ChatScreenState createState() => _ChatScreenState();
 }
 
-
-
-
 class _ChatScreenState extends State<HelaChatAI> {
   final TextEditingController _textController = TextEditingController();
   final List<ChatMessage> _messages = [];
 
- InterstitialAdManager interstitialAdManager = InterstitialAdManager();
+  InterstitialAdManager interstitialAdManager = InterstitialAdManager();
 
   void _handleSubmitted(String text) {
     // Clear the text input field
@@ -281,13 +278,11 @@ class _ChatScreenState extends State<HelaChatAI> {
     });
   }
 
-   @override
+  @override
   void initState() {
     super.initState();
-   
-  
+
     interstitialAdManager.initInterstitialAd();
-    
   }
 
   String _getSinhalaDayOfWeek(int dayOfWeek) {
@@ -325,7 +320,6 @@ class _ChatScreenState extends State<HelaChatAI> {
 
     setState(() {
       _messages.insert(0, message);
-      
     });
   }
 
@@ -339,7 +333,13 @@ class _ChatScreenState extends State<HelaChatAI> {
       },
       child: Scaffold(
         appBar: AppBar(
-          title: Text('හෙල AI'),
+          title: Text(
+            'හෙල AI',
+            style: GoogleFonts.notoSerifSinhala(
+                fontSize: 14.0,
+              ),
+          ),
+          centerTitle: true,
           backgroundColor: Color(0xFF6D003B),
         ),
         body: Stack(

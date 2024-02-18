@@ -353,6 +353,7 @@ class _AuruduNakathScreenState extends State<AuruduNakathScreen> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Color(0xFF6D003B),
+        centerTitle: true,
         title: Text(
           '2024 ලිත',
           style: GoogleFonts.notoSerifSinhala(

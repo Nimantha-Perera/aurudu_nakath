@@ -36,6 +36,7 @@ class Help extends StatefulWidget {
       child: Scaffold(
         appBar: AppBar(
           backgroundColor: Color(0xFF6D003B),
+          centerTitle: true,
           title: Text('උදව්', style: GoogleFonts.notoSerifSinhala(fontSize: 14)),
         ),
         body: Stack(

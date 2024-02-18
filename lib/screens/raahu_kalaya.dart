@@ -35,6 +35,7 @@ class _RaahuKaalayaState extends State<RaahuKaalaya> {
       child: Scaffold(
         appBar: AppBar(
           backgroundColor: Color(0xFF6D003B),
+          centerTitle: true,
           title: Text(
             'රාහු කාලය',
             style: GoogleFonts.notoSerifSinhala(

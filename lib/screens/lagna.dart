@@ -35,6 +35,7 @@ class _LagnaPalapalaState extends State<LagnaPalapala> {
       },
       child: Scaffold(
         appBar: AppBar(
+          centerTitle: true,
           backgroundColor: Color(0xFF6D003B),
           title: Text('ලග්න පලාඵල', style: GoogleFonts.notoSerifSinhala(fontSize: 14)),
         ),
