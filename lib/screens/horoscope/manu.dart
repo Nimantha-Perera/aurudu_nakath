@@ -62,7 +62,7 @@ class _MenuState extends State<Menu> {
                               mainAxisSize: MainAxisSize.min,
                               children: [
                                 Text(
-                                  'Your payment message here...',
+                                  'මෙම සේවාව සඳහා රු 1500/= ක මුදලක් අයකෙරේ. එය ඔබට පහතින් (ක්‍රෙඩිට්/ඩෙබිට් කාඩ්පත් මගින්) ගෙවිය හැක.',
                                   textAlign: TextAlign.center,
                                 ),
                                 SizedBox(height: 20),
