@@ -128,6 +128,7 @@ flutter:
         - assets/bg/iPhone SE - 2.png
         - assets/Mandala2.png
         - assets/background.jpg
+        - assets/bulath_kolaya.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

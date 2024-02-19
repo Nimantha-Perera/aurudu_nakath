@@ -1,3 +1,4 @@
+import 'package:aurudu_nakath/screens/horoscope/form_welawa/form_welawa.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
@@ -24,7 +25,8 @@ class _MenuState extends State<Menu> {
     final bool isAvailable = await _inAppPurchase.isAvailable();
     if (isAvailable) {
       // Listen to purchase updates
-      _inAppPurchase.purchaseStream.listen((List<PurchaseDetails> purchaseDetailsList) {
+      _inAppPurchase.purchaseStream
+          .listen((List<PurchaseDetails> purchaseDetailsList) {
         _listenToPurchaseUpdated(purchaseDetailsList);
       });
 
@@ -38,11 +40,11 @@ class _MenuState extends State<Menu> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Menu'),
-        backgroundColor: Color(0xFF6D003B),
-        centerTitle: true,
-      ),
+      // appBar: AppBar(
+      //   title: Text('Menu'),
+      //   backgroundColor: Color(0xFF6D003B),
+      //   centerTitle: true,
+      // ),
       body: Container(
         padding: EdgeInsets.all(20),
         child: Column(
@@ -58,32 +60,71 @@ class _MenuState extends State<Menu> {
                         context: context,
                         builder: (BuildContext context) {
                           return AlertDialog(
-                            content: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Text(
-                                  'මෙම සේවාව සඳහා රු 1500/= ක මුදලක් අයකෙරේ. එය ඔබට පහතින් (ක්‍රෙඩිට්/ඩෙබිට් කාඩ්පත් මගින්) ගෙවිය හැක.',
-                                  textAlign: TextAlign.center,
-                                ),
-                                SizedBox(height: 20),
-                                ElevatedButton(
-                                  onPressed: () {
-                                    // Call the method to initiate the in-app purchase
-                                    _initiateInAppPurchase();
-                                  },
-                                  child: Text('Proceed to Payment'),
-                                ),
-                              ],
-                            ),
-                            actions: [
-                              TextButton(
-                                onPressed: () {
-                                  // Close the dialog box
-                                  Navigator.of(context).pop();
-                                },
-                                child: Text('Close'),
+                            backgroundColor: Colors.green[400],
+                            content: Container(
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  // Close icon button at the top
+                                  Align(
+                                    alignment: Alignment.topRight,
+                                    child: GestureDetector(
+                                      onTap: () {
+                                        Navigator.of(context)
+                                            .pop(); // Close the dialog
+                                      },
+                                      child: Icon(
+                                        Icons.close,
+                                        size: 30.0,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  ),
+                                  Container(
+                                    margin: EdgeInsets.only(top: 50),
+                                    child: Text(
+                                      'මෙම සේවාව සඳහා රු 1500/= ක මුදලක් අයකෙරේ. එය ඔබට පහතින් (ක්‍රෙඩිට්/ඩෙබිට් කාඩ්පත් මගින්) ගෙවිය හැක.',
+                                      style: GoogleFonts.notoSerifSinhala(
+                                          fontSize: 14, color: Colors.white),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ),
+                                  Image.asset('assets/bulath_kolaya.png'),
+                                  SizedBox(height: 10),
+                                  ElevatedButton(
+                                    style: ButtonStyle(
+                                      backgroundColor:
+                                          MaterialStateProperty.all(
+                                              Colors.green),
+                                      shape: MaterialStateProperty.all<
+                                          RoundedRectangleBorder>(
+                                        RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(
+                                              10.0), // Set your desired border radius
+                                        ),
+                                      ),
+                                    ),
+                                    onPressed: () {
+                                      // Call the method to initiate the in-app purchase
+                                      // _initiateInAppPurchase();
+                                      Navigator.of(context).push(
+                                        MaterialPageRoute(
+                                          builder: (context) {
+                                            return Form_Welaawa();
+                                          },
+                                        ),
+                                      );
+                                    },
+                                    child: Text(
+                                      'ගෙවීම සමඟ ඉදිරියට යන්න',
+                                      style: GoogleFonts.notoSerifSinhala(
+                                          fontSize: 14),
+                                    ),
+                                  ),
+                                ],
                               ),
-                            ],
+                            ),
+                            actions: [], // Empty actions to make room for close icon
                           );
                         },
                       );
@@ -91,7 +132,7 @@ class _MenuState extends State<Menu> {
                     child: Container(
                       padding: EdgeInsets.all(10),
                       child: Text(
-                        'Your button text here',
+                        'වෙලාවන් බැලිමට',
                         textAlign: TextAlign.center,
                         style: GoogleFonts.notoSerifSinhala(
                           fontSize: 14.0,
@@ -115,7 +156,7 @@ class _MenuState extends State<Menu> {
                     child: Container(
                       padding: EdgeInsets.all(10),
                       child: Text(
-                        'Your second button text here',
+                        'පොරොන්දම් ගැලපීමට',
                         textAlign: TextAlign.center,
                         style: GoogleFonts.notoSerifSinhala(
                           fontSize: 14.0,
@@ -142,7 +183,8 @@ class _MenuState extends State<Menu> {
   // Placeholder method for in-app purchase initiation
   void _initiateInAppPurchase() async {
     // Example: Load product details from your backend or use a predefined product ID
-    ProductDetailsResponse productDetails = await _inAppPurchase.queryProductDetails({'welawan_balima'});
+    ProductDetailsResponse productDetails =
+        await _inAppPurchase.queryProductDetails({'welawan_balima'}.toSet());
 
     if (productDetails.notFoundIDs.isNotEmpty) {
       // Handle case where product details are not found
@@ -151,7 +193,8 @@ class _MenuState extends State<Menu> {
     }
 
     // Example: Make the purchase
-    PurchaseParam purchaseParam = PurchaseParam(productDetails: productDetails.productDetails.first);
+    PurchaseParam purchaseParam =
+        PurchaseParam(productDetails: productDetails.productDetails.first);
     await _inAppPurchase.buyNonConsumable(purchaseParam: purchaseParam);
   }
 

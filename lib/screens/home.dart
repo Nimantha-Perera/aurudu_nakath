@@ -2,7 +2,7 @@ import 'package:aurudu_nakath/Ads/constombannerad.dart';
 import 'package:aurudu_nakath/Ads/init_ads.dart';
 import 'package:aurudu_nakath/screens/hela_ai.dart';
 import 'package:aurudu_nakath/screens/help.dart';
-import 'package:aurudu_nakath/screens/horoscope/manu.dart';
+import 'package:aurudu_nakath/screens/horoscope/menu.dart';
 import 'package:aurudu_nakath/screens/raahu_kalaya.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
