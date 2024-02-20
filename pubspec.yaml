@@ -61,6 +61,10 @@ dependencies:
   url_launcher: ^6.2.4
   awesome_notifications: ^0.8.2
   in_app_purchase: ^3.1.13
+  flutter_speed_dial: ^7.0.0
+  flutter_compass: ^0.8.0
+  flutter_qiblah: ^2.2.1
+  sensors_plus: ^4.0.2
 
   
 
@@ -129,6 +133,8 @@ flutter:
         - assets/Mandala2.png
         - assets/background.jpg
         - assets/bulath_kolaya.png
+        - assets/malimawa/cadern.png
+        - assets/malimawa/compass.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

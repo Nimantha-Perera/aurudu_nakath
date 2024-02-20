@@ -2,9 +2,11 @@ import 'package:aurudu_nakath/Ads/constombannerad.dart';
 import 'package:aurudu_nakath/Ads/init_ads.dart';
 import 'package:aurudu_nakath/screens/hela_ai.dart';
 import 'package:aurudu_nakath/screens/help.dart';
+import 'package:aurudu_nakath/screens/horoscope/compass.dart';
 import 'package:aurudu_nakath/screens/horoscope/menu.dart';
 import 'package:aurudu_nakath/screens/raahu_kalaya.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 
@@ -38,17 +40,35 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      floatingActionButton: FloatingActionButton(
-          backgroundColor: Colors.red,
-          mini: true,
-          onPressed: () => Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context) {
-                    return Help();
-                  },
-                ),
-              ),
-          child: Icon(Icons.help)),
+      floatingActionButton: SpeedDial(
+        backgroundColor: Colors.red,
+        animatedIcon: AnimatedIcons.list_view,
+        mini: true,
+        children: [
+          SpeedDialChild(
+            backgroundColor: const Color.fromARGB(255, 255, 255, 255),
+            child: Icon(Icons.help),
+            label: 'උදව්',labelStyle: GoogleFonts.notoSerifSinhala(),
+            
+            onTap: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(builder: (context) => Help()),
+              );
+            }
+          ),
+          SpeedDialChild(
+            backgroundColor: const Color.fromARGB(255, 255, 255, 255),
+            child: Icon(Icons.compass_calibration),
+            label: 'මාලිමාව',labelStyle: GoogleFonts.notoSerifSinhala(),
+            onTap: () {
+               Navigator.of(context).push(
+                MaterialPageRoute(builder: (context) => Compass()),
+              );
+            }
+          )
+          
+        ]
+      ),
       body: Stack(
         children: <Widget>[
           Positioned.fill(
