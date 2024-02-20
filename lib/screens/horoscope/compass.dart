@@ -25,7 +25,7 @@ class _CompassPageState extends State<Compass> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: const Color.fromARGB(255, 255, 255, 255),
       appBar: AppBar(
         backgroundColor: Colors.orange,
         centerTitle: true,
@@ -41,7 +41,7 @@ class _CompassPageState extends State<Compass> {
               Text(
                 "${heading!.ceil()} degrees",
                 style: const TextStyle(
-                  color: Colors.white,
+                  color: Color.fromARGB(255, 0, 0, 0),
                   fontSize: 26,
                   fontWeight: FontWeight.bold,
                 ),
@@ -50,10 +50,10 @@ class _CompassPageState extends State<Compass> {
                 child: Stack(
                   alignment: Alignment.center,
                   children: [
-                    Image.asset("cadern.png", scale: 1.1),
+                    Image.asset("assets/malimawa/cadern.png", scale: 1.1),
                     Transform.rotate(
                       angle: (heading! * (pi / 100) * -1),
-                      child: Image.asset("compass.png"),
+                      child: Image.asset("assets/malimawa/compass.png"),
                     ),
                   ],
                 ),
