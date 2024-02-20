@@ -41,9 +41,11 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       floatingActionButton: SpeedDial(
+        
         backgroundColor: Colors.red,
-        animatedIcon: AnimatedIcons.list_view,
-        mini: true,
+        animatedIcon: AnimatedIcons.menu_close,
+        
+      
         children: [
           SpeedDialChild(
             backgroundColor: const Color.fromARGB(255, 255, 255, 255),

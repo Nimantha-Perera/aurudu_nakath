@@ -1,6 +1,8 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_compass/flutter_compass.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class Compass extends StatefulWidget {
   const Compass({Key? key}) : super(key: key);
@@ -8,17 +10,29 @@ class Compass extends StatefulWidget {
   @override
   State<Compass> createState() => _CompassPageState();
 }
-
+ bool hasLocationPermission = false;
 class _CompassPageState extends State<Compass> {
-  double? heading = 0;
+  double heading = 0; // Change to non-nullable double
 
   @override
   void initState() {
     super.initState();
+
     FlutterCompass.events!.listen((event) {
-      setState(() {
-        heading = event.heading;
-      });
+      if (mounted) {
+        // Check if the widget is still mounted before updating the state
+        setState(() {
+          heading = event.heading ?? 0; // Use null-aware operator to handle null
+        });
+      }
+    });
+  }
+   Future<void> checkLocationPermission() async {
+    // Request permission if not already granted
+    final status = await Permission.locationWhenInUse.request();
+    setState(() {
+      hasLocationPermission = status == PermissionStatus.granted;
+      checkLocationPermission();
     });
   }
 
@@ -27,9 +41,10 @@ class _CompassPageState extends State<Compass> {
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 255, 255, 255),
       appBar: AppBar(
-        backgroundColor: Colors.orange,
+         backgroundColor: Color(0xFF6D003B),
         centerTitle: true,
-        title: const Text("Compass Page"),
+              
+          title: Text('මාලිමාව', style: GoogleFonts.notoSerifSinhala(fontSize: 14)),
       ),
       body: Center(
         child: Padding(
@@ -39,11 +54,11 @@ class _CompassPageState extends State<Compass> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Text(
-                "${heading!.ceil()} degrees",
+                "${heading.ceil()} අංශක",
                 style: const TextStyle(
                   color: Color.fromARGB(255, 0, 0, 0),
-                  fontSize: 26,
-                  fontWeight: FontWeight.bold,
+                  fontSize: 16,
+                  
                 ),
               ),
               Expanded(
@@ -52,7 +67,7 @@ class _CompassPageState extends State<Compass> {
                   children: [
                     Image.asset("assets/malimawa/cadern.png", scale: 1.1),
                     Transform.rotate(
-                      angle: (heading! * (pi / 100) * -1),
+                      angle: (heading * (pi / 100) * -1),
                       child: Image.asset("assets/malimawa/compass.png"),
                     ),
                   ],

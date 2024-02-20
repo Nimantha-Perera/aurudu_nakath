@@ -65,6 +65,7 @@ dependencies:
   flutter_compass: ^0.8.0
   flutter_qiblah: ^2.2.1
   sensors_plus: ^4.0.2
+  permission_handler: ^11.0.1
 
   
 

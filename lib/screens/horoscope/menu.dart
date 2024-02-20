@@ -89,8 +89,11 @@ class _MenuState extends State<Menu> {
                                       textAlign: TextAlign.center,
                                     ),
                                   ),
-                                  Image.asset('assets/bulath_kolaya.png'),
-                                  SizedBox(height: 10),
+                                  Image.asset(
+                                    'assets/bulath_kolaya.png',
+                                    width: 150, // Set the desired width here
+                                  ),
+
                                   ElevatedButton(
                                     style: ButtonStyle(
                                       backgroundColor:
@@ -106,14 +109,7 @@ class _MenuState extends State<Menu> {
                                     ),
                                     onPressed: () {
                                       // Call the method to initiate the in-app purchase
-                                      // _initiateInAppPurchase();
-                                      Navigator.of(context).push(
-                                        MaterialPageRoute(
-                                          builder: (context) {
-                                            return Form_Welaawa();
-                                          },
-                                        ),
-                                      );
+                                      _initiateInAppPurchase();
                                     },
                                     child: Text(
                                       'ගෙවීම සමඟ ඉදිරියට යන්න',
@@ -233,6 +229,13 @@ class _MenuState extends State<Menu> {
   void _deliverProduct(PurchaseDetails purchaseDetails) {
     // Placeholder for product delivery logic
     print('Product delivered successfully.');
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) {
+          return Form_Welaawa();
+        },
+      ),
+    );
   }
 
   void _handleInvalidPurchase(PurchaseDetails purchaseDetails) {
