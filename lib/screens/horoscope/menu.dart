@@ -1,7 +1,10 @@
 import 'package:aurudu_nakath/screens/horoscope/form_welawa/form_welawa.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class Menu extends StatefulWidget {
   const Menu({Key? key}) : super(key: key);
@@ -10,15 +13,47 @@ class Menu extends StatefulWidget {
   State<Menu> createState() => _MenuState();
 }
 
+
 class _MenuState extends State<Menu> {
   final InAppPurchase _inAppPurchase = InAppPurchase.instance;
-
+TextEditingController _textFieldController = TextEditingController();
+  String _displayText = '';
   @override
   void initState() {
     super.initState();
     // Initialize in-app purchases
     _initInAppPurchases();
+    _getCopiedText();
   }
+// Function to retrieve the copied text
+  Future<void> _getCopiedText() async {
+    ClipboardData? clipboardData = await Clipboard.getData('text/plain');
+    if (clipboardData != null && clipboardData.text != null) {
+      setState(() {
+        _displayText = clipboardData.text!;
+        _textFieldController.text = _displayText;
+      });
+    }
+  }
+
+
+
+  // Function to paste the number 12344
+  void _pasteNumber() async {
+    
+
+    
+
+    // Retrieve the clipboard data to check if the paste was successful
+    ClipboardData? clipboardData = await Clipboard.getData(Clipboard.kTextPlain);
+
+    if (12344.toString() == _displayText) {
+      print('Number pasted successfully');
+    } else {
+      print('Failed to paste number');
+    }
+  }
+
 
   void _initInAppPurchases() async {
     // Check if in-app purchases are available
@@ -37,6 +72,14 @@ class _MenuState extends State<Menu> {
     }
   }
 
+  _launchURL(String url) async {
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -46,6 +89,11 @@ class _MenuState extends State<Menu> {
       //   centerTitle: true,
       // ),
       body: Container(
+        decoration: BoxDecoration(
+            image: DecorationImage(
+          image: AssetImage('assets/bg/iPhone SE - 2.png'),
+          fit: BoxFit.cover, // Replace with your image asset path
+        )),
         padding: EdgeInsets.all(20),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -80,43 +128,124 @@ class _MenuState extends State<Menu> {
                                       ),
                                     ),
                                   ),
+
                                   Container(
-                                    margin: EdgeInsets.only(top: 50),
+                                    margin: EdgeInsets.only(top: 0),
                                     child: Text(
-                                      'මෙම සේවාව සඳහා රු 1500/= ක මුදලක් අයකෙරේ. එය ඔබට පහතින් (ක්‍රෙඩිට්/ඩෙබිට් කාඩ්පත් මගින්) ගෙවිය හැක.',
+                                      'මෙම සේවාව සඳහා රු 1500/= ක මුදලක් අයකරන අතර පහත ඇති ගිනුමට මුදල් බැර කර මුදල් ගෙවූ බවට තහවුරු කිරීමට ඔබගේ රිසිට්පත පහතින් ඇති WhatsApp බොත්තම ක්ලික් කර අපට ඉදිරිපත් කරන්න. ලබාදෙන උපදෙස් පිලිපදින්න.',
                                       style: GoogleFonts.notoSerifSinhala(
                                           fontSize: 14, color: Colors.white),
                                       textAlign: TextAlign.center,
                                     ),
                                   ),
-                                  Image.asset(
-                                    'assets/bulath_kolaya.png',
-                                    width: 150, // Set the desired width here
+
+                                  Container(
+                                    color: Colors.white,
+                                    child: Column(
+                                      children: [
+                                        Center(
+                                          child: Text(
+                                            "Bank of Ceylon ගෙලිඔය",
+                                            style: GoogleFonts.notoSerifSinhala(
+                                                fontSize: 13),
+                                          ),
+                                        ),
+                                        Center(
+                                          child: Text(
+                                            "G.W.G Nimantha Madushanka",
+                                            style: GoogleFonts.notoSerifSinhala(
+                                                fontSize: 13),
+                                          ),
+                                        ),
+                                        Center(
+                                          child: Text(
+                                            "XXXXXXXX",
+                                            style: GoogleFonts.notoSerifSinhala(
+                                                fontSize: 13),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
                                   ),
 
                                   ElevatedButton(
                                     style: ButtonStyle(
                                       backgroundColor:
                                           MaterialStateProperty.all(
-                                              Colors.green),
+                                              Color.fromARGB(255, 255, 217, 0)),
                                       shape: MaterialStateProperty.all<
                                           RoundedRectangleBorder>(
                                         RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(
-                                              10.0), // Set your desired border radius
+                                          borderRadius:
+                                              BorderRadius.circular(20.0),
                                         ),
                                       ),
                                     ),
                                     onPressed: () {
                                       // Call the method to initiate the in-app purchase
-                                      _initiateInAppPurchase();
+                                      _launchURL(
+                                          'https://api.whatsapp.com/send?phone=94762938664&text=%E0%B7%84%E0%B7%8F%E0%B6%BA%E0%B7%92%20%E0%B6%B8%E0%B6%B8%20%E0%B6%B1%E0%B7%90%E0%B6%9A%E0%B7%90%E0%B6%AD%E0%B7%8A%20App%20%E0%B6%91%E0%B6%9A%E0%B7%99%E0%B6%B1%E0%B7%8A%20%E0%B6%86%E0%B7%80%E0%B7%99');
                                     },
-                                    child: Text(
-                                      'ගෙවීම සමඟ ඉදිරියට යන්න',
-                                      style: GoogleFonts.notoSerifSinhala(
-                                          fontSize: 14),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        // Adding some spacing between icon and text
+                                        Text(
+                                          'WhatsApp මගින්',
+                                          style: GoogleFonts.notoSerifSinhala(
+                                            fontSize: 10,
+                                          ),
+                                        ),
+
+                                        SizedBox(width: 8),
+
+                                        Icon(FontAwesomeIcons.whatsapp,
+                                            color: Colors.white),
+                                      ],
                                     ),
                                   ),
+
+                                  // Done Payment
+
+                                  Divider(
+                                    color: Colors
+                                        .black, // Set the color of the divider
+                                    thickness:
+                                        1.0, // Set the thickness of the divider
+                                    height:
+                                        20.0, // Set the height of the divider
+                                  ),
+
+                                  Row(
+                                    children: [
+                                      Expanded(
+                                        child: TextField(
+                                          controller: _textFieldController,
+                                          keyboardType: TextInputType.number,
+                                          decoration: InputDecoration(
+                                            labelText: 'අංකය අලවන්න',
+                                            border: OutlineInputBorder(),
+                                          ),
+                                          enabled: false,
+                                        ),
+                                      ),
+                                      SizedBox(
+                                          width:
+                                              8), // Add spacing between TextField and Button
+                                     IconButton(
+                                        onPressed: () {
+                                          // Add your button's functionality here
+                                          // For example, you can print a message
+                                          print('Button pressed!');
+                                           _getCopiedText();
+                                           _pasteNumber();
+                                        },
+                                        icon: Icon(Icons.paste),
+                                        
+                                      ),
+                                    ],
+                                  )
                                 ],
                               ),
                             ),
@@ -126,7 +255,7 @@ class _MenuState extends State<Menu> {
                       );
                     },
                     child: Container(
-                      padding: EdgeInsets.all(10),
+                      padding: EdgeInsets.all(19),
                       child: Text(
                         'වෙලාවන් බැලිමට',
                         textAlign: TextAlign.center,
@@ -137,7 +266,7 @@ class _MenuState extends State<Menu> {
                     ),
                     style: ElevatedButton.styleFrom(
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20),
+                        borderRadius: BorderRadius.circular(100),
                       ),
                       backgroundColor: Colors.amber[800],
                     ),
@@ -150,7 +279,7 @@ class _MenuState extends State<Menu> {
                       // Add functionality for the second button
                     },
                     child: Container(
-                      padding: EdgeInsets.all(10),
+                      padding: EdgeInsets.all(19),
                       child: Text(
                         'පොරොන්දම් ගැලපීමට',
                         textAlign: TextAlign.center,
@@ -161,7 +290,7 @@ class _MenuState extends State<Menu> {
                     ),
                     style: ElevatedButton.styleFrom(
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20),
+                        borderRadius: BorderRadius.circular(100),
                       ),
                       backgroundColor: Colors.amber[800],
                     ),
@@ -180,7 +309,7 @@ class _MenuState extends State<Menu> {
   void _initiateInAppPurchase() async {
     // Example: Load product details from your backend or use a predefined product ID
     ProductDetailsResponse productDetails =
-        await _inAppPurchase.queryProductDetails({'welawan_balima'}.toSet());
+        await _inAppPurchase.queryProductDetails({'nakath_pay'}.toSet());
 
     if (productDetails.notFoundIDs.isNotEmpty) {
       // Handle case where product details are not found
