@@ -37,7 +37,7 @@ class _FormWelaawaState extends State<FormWelaawa> {
     }
   }
 
-
+ 
 
   static const sriLankaDistricts = [
     'අම්පාර',
@@ -271,7 +271,7 @@ class _FormWelaawaState extends State<FormWelaawa> {
         CollectionReference formCollection =
         firestore.collection('welawa_user_details');
 
-      
+        
         // Add data to the document
         await formCollection.add({
           'name': selectedName.text,
@@ -386,10 +386,5 @@ class _FormWelaawaState extends State<FormWelaawa> {
 
 
 void main() {
-  var rng = Random(); // You need to pass a seed value, like Random(seed)
-  
-  for (var i = 0; i < 10; i++) {
-    print(rng.nextInt(100)); // Generates random integers from 0 to 99 (inclusive)
-  }
   runApp(FormWelaawa());
 }

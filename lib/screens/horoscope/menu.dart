@@ -343,12 +343,186 @@ class _MenuState extends State<Menu> {
                   child: ElevatedButton(
                     onPressed: () {
                       // Add functionality for the second button
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (context) {
-                            return FormWelaawa();
-                          },
-                        ),
+                      // Navigator.of(context).push(
+                      //   MaterialPageRoute(
+                      //     builder: (context) {
+                      //       return FormWelaawa();
+
+
+
+                      //     },
+                      //   ),
+                      // );
+
+
+
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            backgroundColor: Colors.green[400],
+                            content: Container(
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  // Close icon button at the top
+                                  Align(
+                                    alignment: Alignment.topRight,
+                                    child: GestureDetector(
+                                      onTap: () {
+                                        Navigator.of(context)
+                                            .pop(); // Close the dialog
+                                      },
+                                      child: Icon(
+                                        Icons.close,
+                                        size: 30.0,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  ),
+
+                                  Container(
+                                    margin: EdgeInsets.only(top: 0),
+                                    child: Text(
+                                      'මෙම සේවාව සඳහා රු 1500/= ක මුදලක් අයකරන අතර පහත ඇති ගිනුමට මුදල් බැර කර මුදල් ගෙවූ බවට තහවුරු කිරීමට ඔබගේ රිසිට්පත පහතින් ඇති WhatsApp බොත්තම ක්ලික් කර අපට ඉදිරිපත් කරන්න. ලබාදෙන උපදෙස් පිලිපදින්න.',
+                                      style: GoogleFonts.notoSerifSinhala(
+                                          fontSize: 14, color: Colors.white),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ),
+
+                                  SizedBox(width: 15),
+                                  Container(
+                                    color: Colors.white,
+                                    child: Column(
+                                      children: [
+                                        Center(
+                                          child: Text(
+                                            "Bank of Ceylon ගෙලිඔය",
+                                            style: GoogleFonts.notoSerifSinhala(
+                                                fontSize: 13),
+                                          ),
+                                        ),
+                                        Center(
+                                          child: Text(
+                                            "G.W.G Nimantha Madushanka",
+                                            style: GoogleFonts.notoSerifSinhala(
+                                                fontSize: 13),
+                                          ),
+                                        ),
+                                        Center(
+                                          child: Text(
+                                            "XXXXXXXX",
+                                            style: GoogleFonts.notoSerifSinhala(
+                                                fontSize: 13),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+
+                                  ElevatedButton(
+                                    style: ButtonStyle(
+                                      backgroundColor:
+                                          MaterialStateProperty.all(
+                                              Color.fromARGB(255, 255, 217, 0)),
+                                      shape: MaterialStateProperty.all<
+                                          RoundedRectangleBorder>(
+                                        RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(20.0),
+                                        ),
+                                      ),
+                                    ),
+                                    onPressed: () {
+                                      // Call the method to initiate the in-app purchase
+                                      _launchURL(
+                                          'https://api.whatsapp.com/send?phone=94762938664&text=%E0%B7%84%E0%B7%8F%E0%B6%BA%E0%B7%92%20%E0%B6%B8%E0%B6%B8%20%E0%B6%B1%E0%B7%90%E0%B6%9A%E0%B7%90%E0%B6%AD%E0%B7%8A%20App%20%E0%B6%91%E0%B6%9A%E0%B7%99%E0%B6%B1%E0%B7%8A%20%E0%B6%86%E0%B7%80%E0%B7%99');
+                                    },
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        // Adding some spacing between icon and text
+                                        Text(
+                                          'WhatsApp මගින්',
+                                          style: GoogleFonts.notoSerifSinhala(
+                                            fontSize: 10,
+                                          ),
+                                        ),
+
+                                        SizedBox(width: 8),
+
+                                        Icon(FontAwesomeIcons.whatsapp,
+                                            color: Colors.white),
+                                      ],
+                                    ),
+                                  ),
+
+                                  // Done Payment
+
+                                  Text(
+                                    'ගෙවීම තහවුරු කල පසු අංකය (Paste) කර ඉදිරියට යන්න',
+                                    style: GoogleFonts.notoSerifSinhala(
+                                      fontSize: 12,
+                                    ),
+                                  ),
+
+                                  Divider(
+                                    color: const Color.fromARGB(255, 255, 255,
+                                        255), // Set the color of the divider
+                                    thickness:
+                                        1.0, // Set the thickness of the divider
+                                    height:
+                                        20.0, // Set the height of the divider
+                                  ),
+
+                                  Row(
+                                    children: [
+                                      Expanded(
+                                        child: TextField(
+                                          style: GoogleFonts.notoSerifSinhala(
+                                            fontSize: 12,
+                                          ),
+                                          controller: _textFieldController,
+                                          keyboardType: TextInputType.number,
+                                          decoration: InputDecoration(
+                                            labelText: 'අංකය අලවන්න',
+                                            border: OutlineInputBorder(),
+                                          ),
+                                          enabled: false,
+                                        ),
+                                      ),
+                                      SizedBox(
+                                          width:
+                                              8), // Add spacing between TextField and Button
+                                      Container(
+                                        decoration: BoxDecoration(
+                                          color: Color.fromARGB(255, 0, 151,
+                                              93), // Set your desired background color here
+                                          borderRadius: BorderRadius.circular(
+                                              10.0), // Optional: You can add border radius for rounded corners
+                                        ),
+                                        child: IconButton(
+                                          onPressed: () {
+                                            // Add your button's functionality here
+                                            // For example, you can print a message
+                                            print('Button pressed!');
+                                            checkFirestoreValue(context);
+                                            _getCopiedText();
+                                          },
+                                          icon: Icon(Icons.paste),
+                                          color: Colors.white,
+                                        ),
+                                      )
+                                    ],
+                                  )
+                                ],
+                              ),
+                            ),
+                            actions: [], // Empty actions to make room for close icon
+                          );
+                        },
                       );
                     },
                     child: Container(
