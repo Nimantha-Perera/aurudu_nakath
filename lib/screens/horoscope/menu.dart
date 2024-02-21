@@ -1,4 +1,5 @@
 import 'package:aurudu_nakath/screens/horoscope/form_welawa/form_welawa.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -13,10 +14,9 @@ class Menu extends StatefulWidget {
   State<Menu> createState() => _MenuState();
 }
 
-
 class _MenuState extends State<Menu> {
   final InAppPurchase _inAppPurchase = InAppPurchase.instance;
-TextEditingController _textFieldController = TextEditingController();
+  TextEditingController _textFieldController = TextEditingController();
   String _displayText = '';
   @override
   void initState() {
@@ -25,6 +25,7 @@ TextEditingController _textFieldController = TextEditingController();
     // _initInAppPurchases();
     _getCopiedText();
   }
+
 // Function to retrieve the copied text
   Future<void> _getCopiedText() async {
     ClipboardData? clipboardData = await Clipboard.getData('text/plain');
@@ -36,33 +37,70 @@ TextEditingController _textFieldController = TextEditingController();
     }
   }
 
-
-
   // Function to paste the number 12344
-  void _pasteNumber() async {
-    
+  void checkFirestoreValue(BuildContext context) async {
+    // Specify the actual collection name:
+    String collectionName = 'nakath_codes'; // Replace with the actual name
+    String fieldName = 'codes'; // Replace with the actual field name
 
-    
+    try {
+      QuerySnapshot<Map<String, dynamic>> querySnapshot =
+          await FirebaseFirestore.instance.collection(collectionName).get();
 
-    // Retrieve the clipboard data to check if the paste was successful
-  
+      if (querySnapshot.docs.isNotEmpty) {
+        bool matchFound = false;
+        QueryDocumentSnapshot<Map<String, dynamic>>? matchingDocument;
 
-    if (12344.toString() == _displayText) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text('සාර්තකයි'),
-        backgroundColor: Color.fromARGB(255, 0, 255, 115),
-      ));
-      _displayText = '';
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text('ඔබ ඇතුලත්කල අංකය වැරදී'),
-        backgroundColor: Color.fromARGB(255, 255, 0, 0),
-      ));
+        for (QueryDocumentSnapshot<Map<String, dynamic>> document
+            in querySnapshot.docs) {
+          // Check if the "codes" field exists in the document
+          if (document.data()!.containsKey(fieldName)) {
+            String firestoreValue = document.get(fieldName);
 
-      _displayText = '';
+            if (firestoreValue == _displayText) {
+              matchFound = true;
+              matchingDocument = document;
+              break; // Exit the loop if a match is found
+            }
+          }
+        }
+
+        if (matchFound && matchingDocument != null) {
+          // Show success SnackBar
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text('සාර්තකයි'),
+            backgroundColor: Color.fromARGB(255, 0, 255, 115),
+          ));
+
+          // Delete the field from Firestore
+          await FirebaseFirestore.instance
+              .collection(collectionName)
+              .doc(matchingDocument.id)
+              .delete();
+
+          // Navigate to another page
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (context) {
+                return FormWelaawa();
+              },
+            ),
+          );
+        } else {
+          // Show error SnackBar
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text('ඔබ ඇතුලත්කල අංකය වැරදී'),
+            backgroundColor: Color.fromARGB(255, 255, 0, 0),
+          ));
+        }
+      } else {
+        print('No documents found in the collection');
+      }
+    } on FirebaseException catch (e) {
+      print('Error fetching data: $e');
+      // Handle potential errors gracefully
     }
   }
-
 
   // void _initInAppPurchases() async {
   //   // Check if in-app purchases are available
@@ -148,7 +186,7 @@ TextEditingController _textFieldController = TextEditingController();
                                     ),
                                   ),
 
-                                    SizedBox(width: 15),    
+                                  SizedBox(width: 15),
                                   Container(
                                     color: Colors.white,
                                     child: Column(
@@ -219,13 +257,15 @@ TextEditingController _textFieldController = TextEditingController();
                                   // Done Payment
 
                                   Text(
-                                    'ගෙවීම තහවුරු කල පසු',style: GoogleFonts.notoSerifSinhala(
-                                      fontSize: 14,
+                                    'ගෙවීම තහවුරු කල පසු අංකය (Paste) කර ඉදිරියට යන්න',
+                                    style: GoogleFonts.notoSerifSinhala(
+                                      fontSize: 12,
                                     ),
                                   ),
 
                                   Divider(
-                                    color: const Color.fromARGB(255, 255, 255, 255), // Set the color of the divider
+                                    color: const Color.fromARGB(255, 255, 255,
+                                        255), // Set the color of the divider
                                     thickness:
                                         1.0, // Set the thickness of the divider
                                     height:
@@ -236,6 +276,9 @@ TextEditingController _textFieldController = TextEditingController();
                                     children: [
                                       Expanded(
                                         child: TextField(
+                                          style: GoogleFonts.notoSerifSinhala(
+                                            fontSize: 12,
+                                          ),
                                           controller: _textFieldController,
                                           keyboardType: TextInputType.number,
                                           decoration: InputDecoration(
@@ -248,18 +291,25 @@ TextEditingController _textFieldController = TextEditingController();
                                       SizedBox(
                                           width:
                                               8), // Add spacing between TextField and Button
-                                     IconButton(
-                                        onPressed: () {
-                                          // Add your button's functionality here
-                                          // For example, you can print a message
-                                          print('Button pressed!');
-                                            _pasteNumber();
-                                           _getCopiedText();
-                                         
-                                        },
-                                        icon: Icon(Icons.paste),
-                                        
-                                      ),
+                                      Container(
+                                        decoration: BoxDecoration(
+                                          color: Color.fromARGB(255, 0, 151,
+                                              93), // Set your desired background color here
+                                          borderRadius: BorderRadius.circular(
+                                              10.0), // Optional: You can add border radius for rounded corners
+                                        ),
+                                        child: IconButton(
+                                          onPressed: () {
+                                            // Add your button's functionality here
+                                            // For example, you can print a message
+                                            print('Button pressed!');
+                                            checkFirestoreValue(context);
+                                            _getCopiedText();
+                                          },
+                                          icon: Icon(Icons.paste),
+                                          color: Colors.white,
+                                        ),
+                                      )
                                     ],
                                   )
                                 ],
@@ -293,6 +343,13 @@ TextEditingController _textFieldController = TextEditingController();
                   child: ElevatedButton(
                     onPressed: () {
                       // Add functionality for the second button
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) {
+                            return FormWelaawa();
+                          },
+                        ),
+                      );
                     },
                     child: Container(
                       padding: EdgeInsets.all(19),
@@ -388,7 +445,5 @@ TextEditingController _textFieldController = TextEditingController();
   //   print('Invalid purchase. Handle accordingly.');
   // }
 
-
   // check database in number
-  
 }
