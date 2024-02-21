@@ -22,7 +22,7 @@ TextEditingController _textFieldController = TextEditingController();
   void initState() {
     super.initState();
     // Initialize in-app purchases
-    _initInAppPurchases();
+    // _initInAppPurchases();
     _getCopiedText();
   }
 // Function to retrieve the copied text
@@ -45,32 +45,41 @@ TextEditingController _textFieldController = TextEditingController();
     
 
     // Retrieve the clipboard data to check if the paste was successful
-    ClipboardData? clipboardData = await Clipboard.getData(Clipboard.kTextPlain);
+  
 
     if (12344.toString() == _displayText) {
-      print('Number pasted successfully');
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text('සාර්තකයි'),
+        backgroundColor: Color.fromARGB(255, 0, 255, 115),
+      ));
+      _displayText = '';
     } else {
-      print('Failed to paste number');
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text('ඔබ ඇතුලත්කල අංකය වැරදී'),
+        backgroundColor: Color.fromARGB(255, 255, 0, 0),
+      ));
+
+      _displayText = '';
     }
   }
 
 
-  void _initInAppPurchases() async {
-    // Check if in-app purchases are available
-    final bool isAvailable = await _inAppPurchase.isAvailable();
-    if (isAvailable) {
-      // Listen to purchase updates
-      _inAppPurchase.purchaseStream
-          .listen((List<PurchaseDetails> purchaseDetailsList) {
-        _listenToPurchaseUpdated(purchaseDetailsList);
-      });
+  // void _initInAppPurchases() async {
+  //   // Check if in-app purchases are available
+  //   final bool isAvailable = await _inAppPurchase.isAvailable();
+  //   if (isAvailable) {
+  //     // Listen to purchase updates
+  //     _inAppPurchase.purchaseStream
+  //         .listen((List<PurchaseDetails> purchaseDetailsList) {
+  //       _listenToPurchaseUpdated(purchaseDetailsList);
+  //     });
 
-      // Additional setup or product loading can be done here
-    } else {
-      // Handle case where in-app purchases are not available on this device
-      print('In-app purchases are not available.');
-    }
-  }
+  //     // Additional setup or product loading can be done here
+  //   } else {
+  //     // Handle case where in-app purchases are not available on this device
+  //     print('In-app purchases are not available.');
+  //   }
+  // }
 
   _launchURL(String url) async {
     if (await canLaunch(url)) {
@@ -139,6 +148,7 @@ TextEditingController _textFieldController = TextEditingController();
                                     ),
                                   ),
 
+                                    SizedBox(width: 15),    
                                   Container(
                                     color: Colors.white,
                                     child: Column(
@@ -208,9 +218,14 @@ TextEditingController _textFieldController = TextEditingController();
 
                                   // Done Payment
 
+                                  Text(
+                                    'ගෙවීම තහවුරු කල පසු',style: GoogleFonts.notoSerifSinhala(
+                                      fontSize: 14,
+                                    ),
+                                  ),
+
                                   Divider(
-                                    color: Colors
-                                        .black, // Set the color of the divider
+                                    color: const Color.fromARGB(255, 255, 255, 255), // Set the color of the divider
                                     thickness:
                                         1.0, // Set the thickness of the divider
                                     height:
@@ -238,8 +253,9 @@ TextEditingController _textFieldController = TextEditingController();
                                           // Add your button's functionality here
                                           // For example, you can print a message
                                           print('Button pressed!');
+                                            _pasteNumber();
                                            _getCopiedText();
-                                           _pasteNumber();
+                                         
                                         },
                                         icon: Icon(Icons.paste),
                                         
@@ -306,69 +322,73 @@ TextEditingController _textFieldController = TextEditingController();
   }
 
   // Placeholder method for in-app purchase initiation
-  void _initiateInAppPurchase() async {
-    // Example: Load product details from your backend or use a predefined product ID
-    ProductDetailsResponse productDetails =
-        await _inAppPurchase.queryProductDetails({'nakath_pay'}.toSet());
+  // void _initiateInAppPurchase() async {
+  //   // Example: Load product details from your backend or use a predefined product ID
+  //   ProductDetailsResponse productDetails =
+  //       await _inAppPurchase.queryProductDetails({'nakath_pay'}.toSet());
 
-    if (productDetails.notFoundIDs.isNotEmpty) {
-      // Handle case where product details are not found
-      print('Product details not found.');
-      return;
-    }
+  //   if (productDetails.notFoundIDs.isNotEmpty) {
+  //     // Handle case where product details are not found
+  //     print('Product details not found.');
+  //     return;
+  //   }
 
-    // Example: Make the purchase
-    PurchaseParam purchaseParam =
-        PurchaseParam(productDetails: productDetails.productDetails.first);
-    await _inAppPurchase.buyNonConsumable(purchaseParam: purchaseParam);
-  }
+  //   // Example: Make the purchase
+  //   PurchaseParam purchaseParam =
+  //       PurchaseParam(productDetails: productDetails.productDetails.first);
+  //   await _inAppPurchase.buyNonConsumable(purchaseParam: purchaseParam);
+  // }
 
-  void _listenToPurchaseUpdated(List<PurchaseDetails> purchaseDetailsList) {
-    purchaseDetailsList.forEach((PurchaseDetails purchaseDetails) async {
-      if (purchaseDetails.status == PurchaseStatus.pending) {
-        // Handle pending status
-        print('Purchase is pending.');
-      } else {
-        if (purchaseDetails.status == PurchaseStatus.error) {
-          // Handle purchase error
-          print('Purchase error: ${purchaseDetails.error}');
-        } else if (purchaseDetails.status == PurchaseStatus.purchased ||
-            purchaseDetails.status == PurchaseStatus.restored) {
-          // Handle successful purchase or restore
-          bool valid = await _verifyPurchase(purchaseDetails);
-          if (valid) {
-            _deliverProduct(purchaseDetails);
-          } else {
-            _handleInvalidPurchase(purchaseDetails);
-          }
-        }
+  // void _listenToPurchaseUpdated(List<PurchaseDetails> purchaseDetailsList) {
+  //   purchaseDetailsList.forEach((PurchaseDetails purchaseDetails) async {
+  //     if (purchaseDetails.status == PurchaseStatus.pending) {
+  //       // Handle pending status
+  //       print('Purchase is pending.');
+  //     } else {
+  //       if (purchaseDetails.status == PurchaseStatus.error) {
+  //         // Handle purchase error
+  //         print('Purchase error: ${purchaseDetails.error}');
+  //       } else if (purchaseDetails.status == PurchaseStatus.purchased ||
+  //           purchaseDetails.status == PurchaseStatus.restored) {
+  //         // Handle successful purchase or restore
+  //         bool valid = await _verifyPurchase(purchaseDetails);
+  //         if (valid) {
+  //           _deliverProduct(purchaseDetails);
+  //         } else {
+  //           _handleInvalidPurchase(purchaseDetails);
+  //         }
+  //       }
 
-        if (purchaseDetails.pendingCompletePurchase) {
-          await _inAppPurchase.completePurchase(purchaseDetails);
-        }
-      }
-    });
-  }
+  //       if (purchaseDetails.pendingCompletePurchase) {
+  //         await _inAppPurchase.completePurchase(purchaseDetails);
+  //       }
+  //     }
+  //   });
+  // }
 
-  Future<bool> _verifyPurchase(PurchaseDetails purchaseDetails) async {
-    // Placeholder for purchase verification logic
-    return true;
-  }
+  // Future<bool> _verifyPurchase(PurchaseDetails purchaseDetails) async {
+  //   // Placeholder for purchase verification logic
+  //   return true;
+  // }
 
-  void _deliverProduct(PurchaseDetails purchaseDetails) {
-    // Placeholder for product delivery logic
-    print('Product delivered successfully.');
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) {
-          return Form_Welaawa();
-        },
-      ),
-    );
-  }
+  // void _deliverProduct(PurchaseDetails purchaseDetails) {
+  //   // Placeholder for product delivery logic
+  //   print('Product delivered successfully.');
+  //   Navigator.of(context).push(
+  //     MaterialPageRoute(
+  //       builder: (context) {
+  //         return Form_Welaawa();
+  //       },
+  //     ),
+  //   );
+  // }
 
-  void _handleInvalidPurchase(PurchaseDetails purchaseDetails) {
-    // Placeholder for handling invalid purchase logic
-    print('Invalid purchase. Handle accordingly.');
-  }
+  // void _handleInvalidPurchase(PurchaseDetails purchaseDetails) {
+  //   // Placeholder for handling invalid purchase logic
+  //   print('Invalid purchase. Handle accordingly.');
+  // }
+
+
+  // check database in number
+  
 }
