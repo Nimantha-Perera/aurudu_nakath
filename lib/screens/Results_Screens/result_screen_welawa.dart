@@ -75,13 +75,20 @@ class _ResultsWelaawaState extends State<ResultsWelaawa> {
  Future<void> _downloadPdf() async {
     final pdf = pdfLib.Document();
 
+    // Provide a custom font with Sinhala support
+    final fontData = await rootBundle.load("assets/NotoSerifSinhala-Thin.ttf");
+    final sinhalaFont = pdfLib.Font.ttf(fontData);
+
     // Add content to the PDF
     pdf.addPage(pdfLib.Page(
       build: (context) {
         return pdfLib.Column(
           crossAxisAlignment: pdfLib.CrossAxisAlignment.start,
           children: [
-            pdfLib.Text(name ?? ''),
+            pdfLib.Text(
+              name ?? '',
+              style: pdfLib.TextStyle(font: sinhalaFont),
+            ),
             if (DataIstAvailble == false &&
                 image != null &&
                 image.isNotEmpty)
@@ -106,7 +113,10 @@ class _ResultsWelaawaState extends State<ResultsWelaawa> {
                   )
                 ],
               ),
-            pdfLib.Text(details ?? ''),
+            pdfLib.Text(
+              details ?? '',
+              style: pdfLib.TextStyle(font: sinhalaFont),
+            ),
           ],
         );
       },
