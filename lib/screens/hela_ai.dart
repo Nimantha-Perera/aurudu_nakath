@@ -1,5 +1,7 @@
 import 'package:aurudu_nakath/Ads/init_ads.dart';
 import 'package:aurudu_nakath/User_backClicked/back_clicked.dart';
+import 'package:aurudu_nakath/screens/Results_Screens/result_screen_welawa.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -212,70 +214,110 @@ class _ChatScreenState extends State<HelaChatAI> {
       });
 
       return; // Exit the function after processing the specific case
+
+      //Check nakath balima hoo porondam galapaima
+    } else if ("කෝඩ් ඇතුලත් කිරීම" == lowercaseText) {
+      String defaultResponse =
+          "කරුණාකර ඔබට අප විසින් ලබාදුන් (උදා: #123456) කේතය ඇතුලත් කරන්න.";
+
+      Future.delayed(Duration(seconds: 1), () {
+        _simulateTyping(defaultResponse, false);
+      });
+    } else if (lowercaseText.startsWith("#")) {
+      // Extract the user-entered code excluding the "#" symbol
+      String userEnteredCode = lowercaseText.substring(1);
+
+      FirebaseFirestore.instance
+          .collection('nakath_welawa_results')
+          .where(FieldPath.documentId, isEqualTo: "#" + userEnteredCode)
+          .get()
+          .then((QuerySnapshot querySnapshot) {
+        if (querySnapshot.docs.isNotEmpty) {
+          // Document with the matching ID exists in Firestore, provide a specific response
+          String firestoreResponse =
+              "ඔබේ කේතය නිවැරදී.";
+          Future.delayed(Duration(seconds: 1), () {
+            _simulateTyping(firestoreResponse, false);
+          });
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => ResultsWelaawa(data: "#" + userEnteredCode),
+            ),
+          );
+        } else {
+          // Document with the matching ID does not exist in Firestore, provide an alternative response
+          String notFoundResponse = "සමාවන්න. කේතයේ කිසියම් වැරැද්දක් ඇත නැවත පරීක්ශා කර ඇතුලත් කරන්න.";
+          Future.delayed(Duration(seconds: 1), () {
+            _simulateTyping(notFoundResponse, false);
+          });
+        }
+      });
+    } else {
+      // Continue with the existing code for general cases
+      DatabaseReference databaseReference =
+          FirebaseDatabase.instance.reference().child('ai_messages');
+
+      // Perform a database lookup for the user-entered text
+      databaseReference.child(lowercaseText).once().then((DatabaseEvent event) {
+        // Handle the snapshot data
+        if (event.snapshot.value != null) {
+          // Get the response from the database
+          String aiResponse = event.snapshot.value.toString();
+
+          // Simulate typing effect for 1 second
+          Future.delayed(Duration(seconds: 1), () {
+            _simulateTyping(aiResponse, false);
+          });
+        } else {
+          // If no direct match found, check for nested sections
+          databaseReference.once().then((DatabaseEvent nestedEvent) {
+            Map<dynamic, dynamic> data =
+                nestedEvent.snapshot.value as Map<dynamic, dynamic>;
+
+            // Check for nested sections
+            if (data != null) {
+              data.forEach((key, value) {
+                if (value is Map && value.containsKey(lowercaseText)) {
+                  // If nested section found, get the corresponding value
+                  String nestedResponse = value[lowercaseText].toString();
+                  print("Nested Response: $nestedResponse");
+
+                  // Simulate typing effect for 1 second
+                  Future.delayed(Duration(seconds: 1), () {
+                    _simulateTyping(nestedResponse, false);
+                  });
+                } else if (lowercaseText == ("ලග්න පලාපල")) {
+                  String errorResponse =
+                      "කරුනාකර ඔබට අවශ්‍ය ලග්නය සිංහලෙන් සදහන් කරන්න";
+                  _simulateTyping(errorResponse, false);
+                } else {
+                  // If no nested sections found, provide a default response
+                  String defaultResponse =
+                      "සමාවෙන්න, ඇතුළත් කළ පෙළ සඳහා මට කිසිදු තොරතුරක් සොයාගත නොහැකි විය. කරුනාකර යෝජනා (Suggetions) භාවිතා කරන්න";
+
+                  Future.delayed(Duration(seconds: 1), () {
+                    _simulateTyping(defaultResponse, false);
+                  });
+                }
+              });
+            }
+          });
+
+          // If no data found in the database, provide a default response
+
+          // Simulate typing effect for 1 second
+        }
+      }).catchError((error) {
+        // Handle any errors that may occur during the database operation
+        print("Error: $error");
+
+        // Provide an error response
+        String errorResponse =
+            "An error occurred while processing your request.";
+        _simulateTyping(errorResponse, false);
+      });
     }
-
-    // Continue with the existing code for general cases
-    DatabaseReference databaseReference =
-        FirebaseDatabase.instance.reference().child('ai_messages');
-
-    // Perform a database lookup for the user-entered text
-    databaseReference.child(lowercaseText).once().then((DatabaseEvent event) {
-      // Handle the snapshot data
-      if (event.snapshot.value != null) {
-        // Get the response from the database
-        String aiResponse = event.snapshot.value.toString();
-
-        // Simulate typing effect for 1 second
-        Future.delayed(Duration(seconds: 1), () {
-          _simulateTyping(aiResponse, false);
-        });
-      } else {
-        // If no direct match found, check for nested sections
-        databaseReference.once().then((DatabaseEvent nestedEvent) {
-          Map<dynamic, dynamic> data =
-              nestedEvent.snapshot.value as Map<dynamic, dynamic>;
-
-          // Check for nested sections
-          if (data != null) {
-            data.forEach((key, value) {
-              if (value is Map && value.containsKey(lowercaseText)) {
-                // If nested section found, get the corresponding value
-                String nestedResponse = value[lowercaseText].toString();
-                print("Nested Response: $nestedResponse");
-
-                // Simulate typing effect for 1 second
-                Future.delayed(Duration(seconds: 1), () {
-                  _simulateTyping(nestedResponse, false);
-                });
-              } else if (lowercaseText == ("ලග්න පලාපල")) {
-                String errorResponse =
-                    "කරුනාකර ඔබට අවශ්‍ය ලග්නය සිංහලෙන් සදහන් කරන්න";
-                _simulateTyping(errorResponse, false);
-              } else {
-                // If no nested sections found, provide a default response
-                String defaultResponse =
-                    "සමාවෙන්න, ඇතුළත් කළ පෙළ සඳහා මට කිසිදු තොරතුරක් සොයාගත නොහැකි විය. කරුනාකර යෝජනා (Suggetions) භාවිතා කරන්න";
-
-                Future.delayed(Duration(seconds: 1), () {
-                  _simulateTyping(defaultResponse, false);
-                });
-              }
-            });
-          }
-        });
-
-        // If no data found in the database, provide a default response
-
-        // Simulate typing effect for 1 second
-      }
-    }).catchError((error) {
-      // Handle any errors that may occur during the database operation
-      print("Error: $error");
-
-      // Provide an error response
-      String errorResponse = "An error occurred while processing your request.";
-      _simulateTyping(errorResponse, false);
-    });
   }
 
   @override
@@ -336,8 +378,8 @@ class _ChatScreenState extends State<HelaChatAI> {
           title: Text(
             'හෙල AI',
             style: GoogleFonts.notoSerifSinhala(
-                fontSize: 14.0,
-              ),
+              fontSize: 14.0,
+            ),
           ),
           centerTitle: true,
           backgroundColor: Color(0xFF6D003B),
@@ -399,11 +441,13 @@ class _ChatScreenState extends State<HelaChatAI> {
               children: [
                 Row(
                   children: <Widget>[
-                    buildSuggestionButton("ආයුබෝවන්"),
+                    buildSuggestionButton(
+                      "ආයුබෝවන්",
+                    ),
+                    buildSuggestionButton("කෝඩ් ඇතුලත් කිරීම"),
                     buildSuggestionButton("ලග්න පලාපල"),
                     buildSuggestionButton("අද රාහු කාලය"),
                     buildSuggestionButton("අද මරු සිටින දිශාව"),
-                    buildSuggestionButton("සූනන් ඇඟ වැටීම"),
                   ],
                 ),
               ],
