@@ -5,6 +5,7 @@ import 'package:aurudu_nakath/screens/home.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:lottie/lottie.dart';
 
 class FormWelaawa extends StatefulWidget {
   const FormWelaawa({Key? key}) : super(key: key);
@@ -21,9 +22,6 @@ class _FormWelaawaState extends State<FormWelaawa> {
   TextEditingController selectedName = TextEditingController();
   TextEditingController additionalInfo = TextEditingController();
 
-
-  
-
   Future<void> _selectTime(BuildContext context) async {
     final TimeOfDay? pickedTime = await showTimePicker(
       context: context,
@@ -36,8 +34,6 @@ class _FormWelaawaState extends State<FormWelaawa> {
       });
     }
   }
-
- 
 
   static const sriLankaDistricts = [
     'අම්පාර',
@@ -158,7 +154,6 @@ class _FormWelaawaState extends State<FormWelaawa> {
                   ),
                   SizedBox(height: 20.0),
                   TextFormField(
-                   
                     maxLines: 4,
                     controller: additionalInfo,
                     key: Key('unique_2key'),
@@ -184,7 +179,6 @@ class _FormWelaawaState extends State<FormWelaawa> {
                         // Using Expanded for better alignment and spacing
                         child: ListTile(
                           leading: Checkbox(
-                            
                             value: isMale,
                             onChanged: (value) {
                               setState(() {
@@ -250,18 +244,15 @@ class _FormWelaawaState extends State<FormWelaawa> {
     );
   }
 
-   Future<void> _submitForm() async {
+  Future<void> _submitForm() async {
     if (selectedName == null) {
       _showErrorDialog("කරුනාකර නම ඇතුලත් කරන්න.");
     } else if (selectedTime == null) {
       _showErrorDialog("කරුනාකර උපන් වේලාව ඇතුලත් කරන්න.");
     } else if (selectedDistrict == null) {
       _showErrorDialog("කරුනාකර උපන් දිස්ත්‍රික්කය ඇතුලත් කරන්න.");
-
-
     } else if (isMale == false && isFemale == false) {
       _showErrorDialog("කරුනාකර ගැහැනු/පිරිමි ද යන්න සඳහන් කරන්න.");
-    
     } else {
       try {
         // Access the Firestore instance
@@ -269,72 +260,83 @@ class _FormWelaawaState extends State<FormWelaawa> {
 
         // Create a reference to a new document
         CollectionReference formCollection =
-        firestore.collection('welawa_user_details');
+            firestore.collection('welawa_user_details');
 
-        
         // Add data to the document
         await formCollection.add({
-          'name': selectedName.text,
-          'district': selectedDistrict,
-          'time': selectedTime.format(context),
-          'additionalInfo': additionalInfo.text,
-          'Gender': isMale ? 'Male' : (isFemale ? 'Female' : ''),
+          'නම': selectedName.text,
+          'උපන්_දිස්ත්‍රික්කය': selectedDistrict,
+          'උපන්_වෙලාව': selectedTime.format(context),
+          'වැඩි_විස්තර': additionalInfo.text,
+          'ස්ත්‍රී_පුරුශ': isMale ? 'Male' : (isFemale ? 'Female' : ''),
         });
 
-        // Display a success message using showDialog
-        showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              backgroundColor: Colors.green[400],
-              title: Text(
-                "Success",
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
+    // Display a success message using showDialog
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: Color.fromARGB(255, 0, 241, 169),
+          title: Text(
+            "Success",
+            style: TextStyle(
+              color: Color(0xFF585858),
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          content: Container(
+            child: Column(
+              children: [
+                Lottie.network(
+                  'https://lottie.host/a97e028a-48dd-4549-8f53-68060d76c5b7/Fe6RAnfouo.json',
+                  height: 200,
+                  width: 200,
+                  repeat: false
                 ),
-              ),
-              content: Text(
-                "Your form has been submitted successfully!",
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 14,
-                ),
-              ),
-              actions: [
-                TextButton(
-                  onPressed: () {
-                    // Add any action you want here, like navigating to another screen
-                    Navigator.pop(context);
-                  },
+                Center(
                   child: Text(
-                    "OK",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
+                    "ඔබගේ තොරතුරු සාර්ථකව ඉදිරිපත් කර ඇත. ඔබට දින 1,2 ත් අතර කාලය තුල ඔබගේ වේලාපත බැලීම සඳහා කේතයක් WhatsApp හා ඊමේල් මාර්ගයෙන් අප විසින් ඔබට ලැබීමට සලස්වමු. ඔබට ස්තූතී නැකැත් App හා නොබැඳිව රැදී සිටින්න.",
+                    style: GoogleFonts.notoSerifSinhala(
+                      color: Color.fromARGB(255, 255, 255, 255),
+                      fontSize: 14,
                     ),
+                    textAlign: TextAlign.center,
                   ),
                 ),
               ],
-            );
-          },
-        );
-
-        // Clear the form fields
-        selectedName.clear();
-        additionalInfo.clear();
-        selectedTime = TimeOfDay.now();
-        selectedDistrict = null;
-
-        Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (context) {
-              return HomeScreen();
-            },
+            ),
           ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                // Add any action you want here, like navigating to another screen
+                // Clear the form fields
+                selectedName.clear();
+                additionalInfo.clear();
+                selectedTime = TimeOfDay.now();
+                selectedDistrict = null;
+
+                Navigator.of(context).pushReplacement(
+                  MaterialPageRoute(
+                    builder: (context) => HomeScreen(),
+                  ),
+                );
+              },
+              child: Text(
+                "හරි",
+                style: TextStyle(
+                  color: Color(0xFFFFBB00),
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ],
         );
+      },
+    );
+
       } catch (error) {
         // Handle errors
         print('Error submitting form data: $error');
@@ -383,7 +385,6 @@ class _FormWelaawaState extends State<FormWelaawa> {
     );
   }
 }
-
 
 void main() {
   runApp(FormWelaawa());
