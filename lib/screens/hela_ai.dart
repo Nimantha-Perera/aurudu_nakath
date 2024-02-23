@@ -1,6 +1,9 @@
 import 'package:aurudu_nakath/Ads/init_ads.dart';
 import 'package:aurudu_nakath/User_backClicked/back_clicked.dart';
 import 'package:aurudu_nakath/screens/Results_Screens/result_screen_welawa.dart';
+import 'package:aurudu_nakath/screens/aurudu_nakath.dart';
+import 'package:aurudu_nakath/screens/help.dart';
+import 'package:aurudu_nakath/screens/nakath_sittuwa.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
@@ -234,8 +237,7 @@ class _ChatScreenState extends State<HelaChatAI> {
           .then((QuerySnapshot querySnapshot) {
         if (querySnapshot.docs.isNotEmpty) {
           // Document with the matching ID exists in Firestore, provide a specific response
-          String firestoreResponse =
-              "ඔබේ කේතය නිවැරදී.";
+          String firestoreResponse = "ඔබේ කේතය නිවැරදී.";
           Future.delayed(Duration(seconds: 1), () {
             _simulateTyping(firestoreResponse, false);
           });
@@ -247,12 +249,54 @@ class _ChatScreenState extends State<HelaChatAI> {
           );
         } else {
           // Document with the matching ID does not exist in Firestore, provide an alternative response
-          String notFoundResponse = "සමාවන්න. කේතයේ කිසියම් වැරැද්දක් ඇත නැවත පරීක්ශා කර ඇතුලත් කරන්න.";
+          String notFoundResponse =
+              "සමාවන්න. කේතයේ කිසියම් වැරැද්දක් ඇත නැවත පරීක්ශා කර ඇතුලත් කරන්න.";
           Future.delayed(Duration(seconds: 1), () {
             _simulateTyping(notFoundResponse, false);
           });
         }
       });
+
+      // හෑශ්ටැග් භාවිතයෙන් මාරු වීම
+    } else if ("අවුරුදු නැකැත්" == lowercaseText) {
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (context) {
+            return NakathSittuwa();
+          },
+        ),
+      );
+      String notFoundResponse =
+              "අවුරුදු නැකැත් විවෘත කලා  ✔";
+          Future.delayed(Duration(seconds: 1), () {
+            _simulateTyping(notFoundResponse, false);
+          });
+    } else if ("ලිත" == lowercaseText) {
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (context) {
+            return AuruduNakathScreen();
+          },
+        ),
+      );
+      String notFoundResponse =
+              "ලිත විවෘත කලා  ✔";
+          Future.delayed(Duration(seconds: 1), () {
+            _simulateTyping(notFoundResponse, false);
+          });
+    } else if ("උදව්" == lowercaseText) {
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (context) {
+            return Help();
+          },
+        ),
+      );
+      String notFoundResponse =
+              "ලිත විවෘත කලා  ✔";
+          Future.delayed(Duration(seconds: 1), () {
+            _simulateTyping(notFoundResponse, false);
+          });
     } else {
       // Continue with the existing code for general cases
       DatabaseReference databaseReference =
@@ -445,6 +489,11 @@ class _ChatScreenState extends State<HelaChatAI> {
                       "ආයුබෝවන්",
                     ),
                     buildSuggestionButton("කෝඩ් ඇතුලත් කිරීම"),
+                    buildSuggestionButton("උදව්"),
+                    buildSuggestionButton("අවුරුදු නැකැත්"),
+                    buildSuggestionButton("අද රාහු කාලය"),
+                    buildSuggestionButton("අද මරු සිටින දිශාව"),
+                    buildSuggestionButton("ලිත"),
                     buildSuggestionButton("ලග්න පලාපල"),
                     buildSuggestionButton("අද රාහු කාලය"),
                     buildSuggestionButton("අද මරු සිටින දිශාව"),

@@ -9,8 +9,6 @@ import 'package:path_provider/path_provider.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pdfLib;
 
-
-
 var name;
 var details;
 var image;
@@ -53,10 +51,11 @@ class _ResultsWelaawaState extends State<ResultsWelaawa> {
             firestoreResponse =
                 "Your response for matching Document ID from Firestore. Codes:";
             DataIstAvailble = false;
+            print("sfdsf  $name");
           });
         } else {
           setState(() {
-            firestoreResponse = "Your response is not available";
+            firestoreResponse = "ඔබගේ වේලාව නිර්මාණය වෙමින් පවතී";
             DataIstAvailble = true;
           });
         }
@@ -72,65 +71,16 @@ class _ResultsWelaawaState extends State<ResultsWelaawa> {
     await matchDataWithFirestore();
   }
 
- Future<void> _downloadPdf() async {
-    final pdf = pdfLib.Document();
-
-    // Provide a custom font with Sinhala support
-    final fontData = await rootBundle.load("assets/NotoSerifSinhala-Thin.ttf");
-    final sinhalaFont = pdfLib.Font.ttf(fontData);
-
-    // Add content to the PDF
-    pdf.addPage(pdfLib.Page(
-      build: (context) {
-        return pdfLib.Column(
-          crossAxisAlignment: pdfLib.CrossAxisAlignment.start,
-          children: [
-            pdfLib.Text(
-              name ?? '',
-              style: pdfLib.TextStyle(font: sinhalaFont),
-            ),
-            if (DataIstAvailble == false &&
-                image != null &&
-                image.isNotEmpty)
-              pdfLib.Row(
-                mainAxisAlignment: pdfLib.MainAxisAlignment.spaceBetween,
-                children: [
-                  pdfLib.Column(
-                    children: [
-                      pdfLib.Container(
-                        width: 150,
-                        // child: pdfLib.Image(pdfLib.NetworkImage(image!)),
-                      ),
-                    ],
-                  ),
-                  pdfLib.Column(
-                    children: [
-                      pdfLib.Container(
-                        width: 150,
-                        // child: pdfLib.Image(pdfLib.NetworkImage(image!)),
-                      ),
-                    ],
-                  )
-                ],
-              ),
-            pdfLib.Text(
-              details ?? '',
-              style: pdfLib.TextStyle(font: sinhalaFont),
-            ),
-          ],
-        );
-      },
-    ));
-
-    // Save the PDF to a file
-    final output = await getTemporaryDirectory();
-    final file = File("${output.path}/your_welawa_result.pdf");
-    await file.writeAsBytes(await pdf.save());
-
-    // Open the PDF using the default viewer
-    Process.run('open', [file.path]);
+  Future<pdfLib.Image> _loadImageFromNetwork(String imageUrl) async {
+    if (imageUrl != null && imageUrl.isNotEmpty) {
+      final assetBundle = NetworkAssetBundle(Uri.parse(imageUrl));
+      final bytes = (await assetBundle.load(imageUrl)).buffer.asUint8List();
+      return pdfLib.Image(pdfLib.MemoryImage(bytes));
+    } else {
+      // Handle the case when the image URL is not available
+      return pdfLib.Image(pdfLib.MemoryImage(Uint8List(0)));
+    }
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -140,14 +90,15 @@ class _ResultsWelaawaState extends State<ResultsWelaawa> {
           IconButton(
             icon: Icon(Icons.download),
             onPressed: () {
-              _downloadPdf();
+              // generatePDF();
             },
           ),
         ],
         title: Text(
-          'Your Welawa',
+          'ඔබගේ නැකැත් විස්තරය',
+          style: GoogleFonts.notoSerifSinhala(fontSize: 15),
         ),
-        backgroundColor: Colors.green[400],
+        backgroundColor: Color(0xFF6D003B),
         centerTitle: true,
       ),
       body: Padding(
@@ -157,35 +108,95 @@ class _ResultsWelaawaState extends State<ResultsWelaawa> {
           child: SingleChildScrollView(
             child: Column(
               children: [
-                Padding(
-                  padding: const EdgeInsets.all(20.0),
-                  child: Text(name ?? ''),
-                ),
+                if (DataIstAvailble == false)
+                  Container(
+                    alignment: Alignment.center,
+                    margin: EdgeInsets.only(top: 10, bottom: 10),
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(
+                          8.0), // Add your desired border radius
+                      color: Color.fromARGB(255, 255, 238,
+                          0), // Add your desired background color
+                    ),
+                    padding: EdgeInsets.all(8.0), // Add your desired padding
+                    child: Text(
+                      name ??
+                          '', // Display the name if available, otherwise an empty string
+                      style: GoogleFonts.notoSerifSinhala(
+                        // Add any additional styling here, such as fontSize, fontWeight, etc.
+                        color: const Color.fromARGB(
+                            255, 88, 88, 88), // Add your desired text color
+                      ),
+                    ),
+                  ),
                 if (DataIstAvailble == false &&
                     image != null &&
                     image.isNotEmpty)
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  Padding(
+                    padding: const EdgeInsets.all(4.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Column(
+                          children: [
+                            Container(
+                              width: 150,
+                              child: Image.network(image!),
+                            ),
+                          ],
+                        ),
+                        Column(
+                          children: [
+                            Container(
+                              width: 150,
+                              child: Image.network(image!),
+                            ),
+                          ],
+                        )
+                      ],
+                    ),
+                  ),
+                if (DataIstAvailble == false)
+                  Column(
                     children: [
-                      Column(
-                        children: [
-                          Container(
-                            width: 150,
-                            child: Image.network(image!),
-                          ),
-                        ],
-                      ),
-                      Column(
-                        children: [
-                          Container(
-                            width: 150,
-                            child: Image.network(image!),
-                          ),
-                        ],
-                      )
+                      Container(
+                          width: double.infinity,
+                          margin: EdgeInsets.only(top: 10, bottom: 10),
+                          child: Card(
+                              child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(
+                              details ?? '',
+                              style: GoogleFonts.notoSerifSinhala(),
+                            ),
+                          ))),
                     ],
                   ),
-                Text(details ?? ''),
+                if (DataIstAvailble == true)
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Center(
+                      
+                      child: Container(
+                        margin: EdgeInsets.only(top: 100),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                              // Aligns the text in the center vertically
+                          children: [
+                            Lottie.network(
+                                  'https://lottie.host/ed28ecd2-c979-49ad-a858-13d14f04b651/QGSI90WORA.json',
+                                  height: 200,
+                                  width: 200,
+                                ),
+                            Text(firestoreResponse ?? "",style: GoogleFonts.notoSerifSinhala(),),
+                            
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
               ],
             ),
           ),
