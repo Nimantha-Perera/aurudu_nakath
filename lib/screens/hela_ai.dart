@@ -1,5 +1,6 @@
 import 'package:aurudu_nakath/Ads/init_ads.dart';
 import 'package:aurudu_nakath/User_backClicked/back_clicked.dart';
+import 'package:aurudu_nakath/screens/Results_Screens/result_screen_porondam.dart';
 import 'package:aurudu_nakath/screens/Results_Screens/result_screen_welawa.dart';
 import 'package:aurudu_nakath/screens/aurudu_nakath.dart';
 import 'package:aurudu_nakath/screens/help.dart';
@@ -267,15 +268,15 @@ class _ChatScreenState extends State<HelaChatAI> {
           print("Entered User Code: Now Navigate to ResultsPorondam");
 
           // Navigate to ResultsPorondam
-          // Navigator.push(
-          //   context,
-          //   MaterialPageRoute(
-          //     builder: (context) => ResultsPorondam(data: "#" + userEnteredCode),
-          //   ),
-          // );
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => ResultsPorondam(data: "#" + userEnteredCode),
+            ),
+          );
         } else {
           // Document with the matching ID does not exist in either collection
-          String notFoundResponse = "Sorry, the entered code doesn't match any result.";
+          String notFoundResponse = "සමාවන්න, ඔබේ කේතයේ කිසියම් වැරැද්දක් ඇත කරුනාකර නිවැරදි කේතය පරීක්ශා කර ඇතුලත් කරන්න.";
           Future.delayed(Duration(seconds: 1), () {
             _simulateTyping(notFoundResponse, false);
           });
