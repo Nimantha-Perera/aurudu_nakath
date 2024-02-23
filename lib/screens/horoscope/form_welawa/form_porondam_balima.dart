@@ -2,6 +2,7 @@ import 'dart:ffi';
 import 'dart:io';
 import 'dart:math';
 
+import 'package:aurudu_nakath/screens/Results_Screens/result_screen_welawa.dart';
 import 'package:aurudu_nakath/screens/home.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:file_picker/file_picker.dart';
@@ -28,6 +29,9 @@ class _FormWelaawaState extends State<FormPorondam> {
   TextEditingController selectedName = TextEditingController();
   TextEditingController selectedName2 = TextEditingController();
   TextEditingController additionalInfo = TextEditingController();
+  String filePath = '';
+  String filePath2 = '';
+  bool isLoading = false;
 
   DateTime selectedDate = DateTime.now();
   DateTime selectedDate2 = DateTime.now();
@@ -37,12 +41,26 @@ class _FormWelaawaState extends State<FormPorondam> {
     final DateTime? picked = await showDatePicker(
       context: context,
       initialDate: selectedDate,
-      firstDate: DateTime(2000),
-      lastDate: DateTime(2101),
+      firstDate: DateTime(1000),
+      lastDate: DateTime(2025),
     );
     if (picked != null && picked != selectedDate) {
       setState(() {
         selectedDate = picked;
+      });
+    }
+  }
+
+  Future<void> _selectDate2(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: selectedDate2,
+      firstDate: DateTime(1000),
+      lastDate: DateTime(2025),
+    );
+    if (picked != null && picked != selectedDate) {
+      setState(() {
+        selectedDate2 = picked;
       });
     }
   }
@@ -60,8 +78,10 @@ class _FormWelaawaState extends State<FormPorondam> {
     }
   }
 
-  String filePath = '';
-  String filePath2 = '';
+  String mimeTypeLookup(String fileName) {
+    final mimeTypeResolver = MimeTypeResolver();
+    return mimeTypeResolver.lookup(fileName) ?? 'application/octet-stream';
+  }
 
   Future<void> _pickFile() async {
     try {
@@ -69,41 +89,64 @@ class _FormWelaawaState extends State<FormPorondam> {
         type: FileType.custom,
         allowedExtensions: ['jpg', 'pdf', 'png'],
       );
+
+      if (result != null && result.files.isNotEmpty) {
+        setState(() {
+          filePath = result.files.first.path!;
+        });
+      }
     } catch (error) {
-      // Handle potential errors during file picking
       print("Error picking file: $error");
     }
   }
 
-  String mimeTypeLookup(String fileName) {
-    final mimeTypeResolver = MimeTypeResolver();
-    return mimeTypeResolver.lookup(fileName) ?? 'application/octet-stream';
+  Future<void> _pickFile2() async {
+    try {
+      FilePickerResult? result = await FilePicker.platform.pickFiles(
+        type: FileType.custom,
+        allowedExtensions: ['jpg', 'pdf', 'png'],
+      );
+
+      if (result != null && result.files.isNotEmpty) {
+        setState(() {
+          filePath2 = result.files.first.path!;
+        });
+      }
+    } catch (error) {
+      print("Error picking second file: $error");
+    }
   }
 
   Future<void> _uploadFile(String filePath) async {
-    if (filePath != null && File(filePath).existsSync()) {
+    if (filePath != null && filePath.isNotEmpty) {
       File file = File(filePath);
-      String fileName = file.uri.pathSegments.last; // Extract filename
 
-      firebase_storage.Reference reference = firebase_storage
-          .FirebaseStorage.instance
-          .ref()
-          .child('your_storage_path/$fileName'); // Create a reference
+      if (await file.exists()) {
+        String fileName = file.uri.pathSegments.last; // Extract filename
 
-      final metadata = firebase_storage.SettableMetadata(
-        contentType:
-            mimeTypeLookup(fileName), // Set content type based on filename
-      );
+        String boyname = selectedName.text;
+        String girlname = selectedName2.text;
 
-      try {
-        await reference.putFile(file, metadata);
-        print('File uploaded successfully!');
-      } catch (e) {
-        print('Error uploading file: $e');
-        // Handle errors appropriately, e.g., show a snackbar or retry
+        firebase_storage.Reference reference =
+            firebase_storage.FirebaseStorage.instance.ref().child(
+                '$boyname+" "+$girlname/$fileName'); // Include folder name in reference
+
+        final metadata = firebase_storage.SettableMetadata(
+          contentType:
+              mimeTypeLookup(fileName), // Set content type based on filename
+        );
+
+        try {
+          await reference.putFile(file, metadata);
+        } catch (e) {
+          print('Error uploading file: $e');
+          // Handle errors appropriately, e.g., show a snackbar or retry
+        }
+      } else {
+        print('File does not exist at path: $filePath');
       }
     } else {
-      print('No file selected or file does not exist!');
+      print('No file selected!');
     }
   }
 
@@ -274,7 +317,7 @@ class _FormWelaawaState extends State<FormPorondam> {
                             borderRadius: BorderRadius.circular(5),
                           ),
                           child: Text(
-                            'තෝරාගත් ගොනුව $filePath',
+                            '$filePath',
                             style: TextStyle(fontSize: 16),
                           ),
                         ),
@@ -349,16 +392,16 @@ class _FormWelaawaState extends State<FormPorondam> {
                         Container(
                           margin: EdgeInsets.only(left: 30),
                           child: Text(
-                            selectedDate != null
+                            selectedDate2 != null
                                 ? DateFormat('yyyy-MM-dd')
-                                    .format(selectedDate.toLocal())
+                                    .format(selectedDate2.toLocal())
                                 : 'Add birthday',
                             style: TextStyle(fontSize: 13),
                           ),
                         ),
                         SizedBox(width: 20),
                         IconButton(
-                          onPressed: () => _selectDate(context),
+                          onPressed: () => _selectDate2(context),
                           icon: Icon(Icons.calendar_month),
                         ),
                       ],
@@ -441,14 +484,14 @@ class _FormWelaawaState extends State<FormPorondam> {
                             borderRadius: BorderRadius.circular(5),
                           ),
                           child: Text(
-                            'තෝරාගත් ගොනුව $filePath',
+                            '$filePath2',
                             style: TextStyle(fontSize: 16),
                           ),
                         ),
                       ),
                       SizedBox(height: 20),
                       ElevatedButton(
-                        onPressed: _pickFile,
+                        onPressed: _pickFile2,
                         child: Row(
                           mainAxisSize: MainAxisSize
                               .min, // To make the Row take minimum space
@@ -510,22 +553,21 @@ class _FormWelaawaState extends State<FormPorondam> {
                   Container(
                     width: double.infinity,
                     child: ElevatedButton(
-                      onPressed: () {
-                        // Handle form submission
-                        _submitForm();
-                      },
-                      child: Text(
-                        'යවන්න',
-                        style: GoogleFonts.notoSerifSinhala(fontSize: 12),
-                      ),
+                      onPressed: isLoading ? null : () => _submitForm(),
+                      child: isLoading
+                          ? CircularProgressIndicator(color: Colors.white)
+                          : Text(
+                              'Submit',
+                              style: TextStyle(fontSize: 12),
+                            ),
                       style: ElevatedButton.styleFrom(
-                        primary: Colors.teal,
+                        primary: isLoading ? Colors.grey : Colors.teal,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10.0),
                         ),
-                        padding: EdgeInsets.symmetric(
-                            horizontal: 50, vertical: 15), // More padding
-                        textStyle: TextStyle(fontSize: 16), // Bigger text
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 50, vertical: 15),
+                        textStyle: TextStyle(fontSize: 16),
                       ),
                     ),
                   ),
@@ -539,30 +581,23 @@ class _FormWelaawaState extends State<FormPorondam> {
   }
 
   Future<void> _submitForm() async {
-   if (selectedName.text.isEmpty) {
-    _showErrorDialog("Please enter a name.");
-    return;
-  }
-
-  if (selectedTime == null) {
-    _showErrorDialog("Please select a time.");
-    return;
-  }
-
-  if (selectedDistrict == null) {
-    _showErrorDialog("Please select a district.");
-    return;
-  }
-
-  if (selectedName2.text.isEmpty) {
-    _showErrorDialog("Please enter the second name.");
-    return;
-  }
-
-  if (selectedDistrict2 == null) {
-    _showErrorDialog("Please select the second district.");
-    return;
-  
+    setState(() {
+      isLoading = true;
+    });
+    if (filePath.isEmpty) {
+      _showErrorDialog("Please select a file.");
+    } else if (filePath2.isEmpty) {
+      _showErrorDialog("Please select a second file.");
+    } else if (selectedName.text.isEmpty) {
+      _showErrorDialog("Please enter a name.");
+    } else if (selectedTime == null) {
+      _showErrorDialog("Please select a time.");
+    } else if (selectedDistrict == null) {
+      _showErrorDialog("Please select a district.");
+    } else if (selectedName2.text.isEmpty) {
+      _showErrorDialog("Please enter the second name.");
+    } else if (selectedDistrict2 == null) {
+      _showErrorDialog("Please select the second district.");
     } else {
       try {
         // Upload the first file
@@ -594,7 +629,10 @@ class _FormWelaawaState extends State<FormPorondam> {
           context: context,
           builder: (BuildContext context) {
             return AlertDialog(
-              backgroundColor: Color.fromARGB(255, 0, 241, 169),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(15.0),
+              ),
+              backgroundColor: Colors.white, // Set the background color
               title: Text(
                 "Success",
                 style: TextStyle(
@@ -604,18 +642,21 @@ class _FormWelaawaState extends State<FormPorondam> {
                 ),
               ),
               content: Container(
+                width: 300, 
+                height: 290,// Set the width of the content container
                 child: Column(
                   children: [
                     Lottie.network(
-                        'https://lottie.host/a97e028a-48dd-4549-8f53-68060d76c5b7/Fe6RAnfouo.json',
-                        height: 200,
-                        width: 200,
-                        repeat: false),
+                      'https://lottie.host/a97e028a-48dd-4549-8f53-68060d76c5b7/Fe6RAnfouo.json',
+                      height: 150, // Set the height of the Lottie animation
+                      width: 150, // Set the width of the Lottie animation
+                      repeat: false,
+                    ),
                     Center(
                       child: Text(
-                        "ඔබගේ තොරතුරු සාර්ථකව ඉදිරිපත් කර ඇත. ඔබට දින 1,2 ත් අතර කාලය තුල ඔබගේ වේලාපත බැලීම සඳහා කේතයක් WhatsApp හා ඊමේල් මාර්ගයෙන් අප විසින් ඔබට ලැබීමට සලස්වමු. ඔබට ස්තූතී නැකැත් App හා නොබැඳිව රැදී සිටින්න.",
+                        "ඔබගේ තොරතුරු සාර්ථකව ඉදිරිපත් කර ඇත. දින 1-2ක් ඇතුළත WhatsApp හෝ විද්‍යුත් තැපෑල හරහා ඔබගේ හමුවීම් විස්තර සහිත තහවුරු කිරීමේ කේතයක් ඔබට ලැබෙනු ඇත. ඔබට එය නොලැබුනේ නම් කරුණාකර අපට දැනුම් දෙන්න.",
                         style: GoogleFonts.notoSerifSinhala(
-                          color: Color.fromARGB(255, 255, 255, 255),
+                          color: Colors.black,
                           fontSize: 14,
                         ),
                         textAlign: TextAlign.center,
@@ -627,8 +668,6 @@ class _FormWelaawaState extends State<FormPorondam> {
               actions: [
                 TextButton(
                   onPressed: () {
-                    // Add any action you want here, like navigating to another screen
-                    // Clear the form fields
                     selectedName.clear();
                     additionalInfo.clear();
                     selectedTime = TimeOfDay.now();
@@ -642,7 +681,7 @@ class _FormWelaawaState extends State<FormPorondam> {
                   },
                   child: Text(
                     "හරි",
-                    style: TextStyle(
+                    style: GoogleFonts.notoSerifSinhala(
                       color: Color(0xFFFFBB00),
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
@@ -653,9 +692,16 @@ class _FormWelaawaState extends State<FormPorondam> {
             );
           },
         );
+
+        setState(() {
+          isLoading = false;
+        });
       } catch (error) {
         // Handle errors
         print('Error submitting form data: $error');
+        setState(() {
+          isLoading = false;
+        });
       }
     }
   }

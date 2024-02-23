@@ -227,35 +227,64 @@ class _ChatScreenState extends State<HelaChatAI> {
         _simulateTyping(defaultResponse, false);
       });
     } else if (lowercaseText.startsWith("#")) {
-      // Extract the user-entered code excluding the "#" symbol
-      String userEnteredCode = lowercaseText.substring(1);
+  // Extract the user-entered code excluding the "#" symbol
+  String userEnteredCode = lowercaseText.substring(1);
 
+  FirebaseFirestore.instance
+      .collection('nakath_welawa_results')
+      .where(FieldPath.documentId, isEqualTo: "#" + userEnteredCode)
+      .get()
+      .then((QuerySnapshot welawaSnapshot) {
+    if (welawaSnapshot.docs.isNotEmpty && userEnteredCode.length >= 5 ) {
+      // Document with the matching ID exists in 'nakath_welawa_results' collection and 5th character is '5'
+      String welawaResponse = "ඔබගේ කේතය නිවැරදී";
+      Future.delayed(Duration(seconds: 1), () {
+        _simulateTyping(welawaResponse, false);
+      });
+
+      // Navigate to ResultsWelaawa
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => ResultsWelaawa(data: "#" + userEnteredCode),
+        ),
+      );
+    } else {
+      // Check 'nakath_porondam_results' if the 5th character is '6'
       FirebaseFirestore.instance
-          .collection('nakath_welawa_results')
+          .collection('nakath_porondam_results')
           .where(FieldPath.documentId, isEqualTo: "#" + userEnteredCode)
           .get()
-          .then((QuerySnapshot querySnapshot) {
-        if (querySnapshot.docs.isNotEmpty) {
-          // Document with the matching ID exists in Firestore, provide a specific response
-          String firestoreResponse = "ඔබේ කේතය නිවැරදී.";
+          .then((QuerySnapshot porondamSnapshot) {
+        if (porondamSnapshot.docs.isNotEmpty && userEnteredCode.length >= 6) {
+          // Document with the matching ID exists in 'nakath_porondam_results' collection and 5th character is '6'
+          String porondamResponse = "ඔබගේ කේතය නිවැරදී";
           Future.delayed(Duration(seconds: 1), () {
-            _simulateTyping(firestoreResponse, false);
+            _simulateTyping(porondamResponse, false);
           });
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => ResultsWelaawa(data: "#" + userEnteredCode),
-            ),
-          );
+
+
+          print("Entered User Code: Now Navigate to ResultsPorondam");
+
+          // Navigate to ResultsPorondam
+          // Navigator.push(
+          //   context,
+          //   MaterialPageRoute(
+          //     builder: (context) => ResultsPorondam(data: "#" + userEnteredCode),
+          //   ),
+          // );
         } else {
-          // Document with the matching ID does not exist in Firestore, provide an alternative response
-          String notFoundResponse =
-              "සමාවන්න. කේතයේ කිසියම් වැරැද්දක් ඇත නැවත පරීක්ශා කර ඇතුලත් කරන්න.";
+          // Document with the matching ID does not exist in either collection
+          String notFoundResponse = "Sorry, the entered code doesn't match any result.";
           Future.delayed(Duration(seconds: 1), () {
             _simulateTyping(notFoundResponse, false);
           });
         }
       });
+    }
+  });
+
+
 
       // හෑශ්ටැග් භාවිතයෙන් මාරු වීම
     } else if ("අවුරුදු නැකැත්" == lowercaseText) {
@@ -293,7 +322,7 @@ class _ChatScreenState extends State<HelaChatAI> {
         ),
       );
       String notFoundResponse =
-              "ලිත විවෘත කලා  ✔";
+              "උදව් විවෘත කලා  ✔";
           Future.delayed(Duration(seconds: 1), () {
             _simulateTyping(notFoundResponse, false);
           });
