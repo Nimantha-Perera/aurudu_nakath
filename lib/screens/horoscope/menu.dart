@@ -247,21 +247,22 @@ class _MenuState extends State<Menu> {
                                   Container(
                                     margin: EdgeInsets.only(top: 0),
                                     child: Text(
-                                      'මෙම සේවාව සඳහා රු 1500/= ක මුදලක් අයකරන අතර පහත ඇති ගිනුමට මුදල් බැර කර මුදල් ගෙවූ බවට තහවුරු කිරීමට ඔබගේ රිසිට්පත පහතින් ඇති WhatsApp බොත්තම ක්ලික් කර අපට ඉදිරිපත් කරන්න. ලබාදෙන උපදෙස් පිලිපදින්න.',
+                                      'මෙම සේවාව සඳහා රු 1000/= ක මුදලක් අයකරන අතර පහත ඇති ගිනුමට මුදල් බැර කර මුදල් ගෙවූ බවට තහවුරු කිරීමට ඔබගේ රිසිට්පත පහතින් ඇති WhatsApp බොත්තම ක්ලික් කර අපට ඉදිරිපත් කර. ලබාදෙන උපදෙස් පිලිපදින්න.',
                                       style: GoogleFonts.notoSerifSinhala(
                                           fontSize: 14, color: Colors.white),
                                       textAlign: TextAlign.center,
                                     ),
                                   ),
 
-                                  SizedBox(width: 15),
+                                
                                   Container(
+                                    margin: EdgeInsets.only(top: 20),
                                     color: Colors.white,
                                     child: Column(
                                       children: [
                                         Center(
                                           child: Text(
-                                            "Bank of Ceylon ගෙලිඔය",
+                                            "Bank of Ceylon Gelioya",
                                             style: GoogleFonts.notoSerifSinhala(
                                                 fontSize: 13),
                                           ),
@@ -275,7 +276,7 @@ class _MenuState extends State<Menu> {
                                         ),
                                         Center(
                                           child: Text(
-                                            "XXXXXXXX",
+                                            "Account No 4103699",
                                             style: GoogleFonts.notoSerifSinhala(
                                                 fontSize: 13),
                                           ),
@@ -325,7 +326,7 @@ class _MenuState extends State<Menu> {
                                   // Done Payment
 
                                   Text(
-                                    'ගෙවීම තහවුරු කල පසු අංකය (Paste) කර ඉදිරියට යන්න',
+                                    'ගෙවීම තහවුරු කල පසු අංකය (Paste) කර ඉදිරියට යන්න.',
                                     style: GoogleFonts.notoSerifSinhala(
                                       fontSize: 12,
                                     ),
@@ -452,21 +453,22 @@ class _MenuState extends State<Menu> {
                                   Container(
                                     margin: EdgeInsets.only(top: 0),
                                     child: Text(
-                                      'මෙම සේවාව සඳහා රු 1500/= ක මුදලක් අයකරන අතර පහත ඇති ගිනුමට මුදල් බැර කර මුදල් ගෙවූ බවට තහවුරු කිරීමට ඔබගේ රිසිට්පත පහතින් ඇති WhatsApp බොත්තම ක්ලික් කර අපට ඉදිරිපත් කරන්න. ලබාදෙන උපදෙස් පිලිපදින්න.',
+                                      'මෙම සේවාව සඳහා රු 1500/= ක මුදලක් අයකරන අතර පහත ඇති ගිනුමට මුදල් බැර කර මුදල් ගෙවූ බවට තහවුරු කිරීමට ඔබගේ රිසිට්පත පහතින් ඇති WhatsApp බොත්තම ක්ලික් කර අපට ඉදිරිපත් කර. ලබාදෙන උපදෙස් පිලිපදින්න.',
                                       style: GoogleFonts.notoSerifSinhala(
                                           fontSize: 14, color: Colors.white),
                                       textAlign: TextAlign.center,
                                     ),
                                   ),
 
-                                  SizedBox(width: 15),
+                                
                                   Container(
+                                     margin: EdgeInsets.only(top: 20),
                                     color: Colors.white,
                                     child: Column(
                                       children: [
                                         Center(
                                           child: Text(
-                                            "Bank of Ceylon ගෙලිඔය",
+                                            "Bank of Ceylon Gelioya",
                                             style: GoogleFonts.notoSerifSinhala(
                                                 fontSize: 13),
                                           ),
@@ -480,7 +482,7 @@ class _MenuState extends State<Menu> {
                                         ),
                                         Center(
                                           child: Text(
-                                            "XXXXXXXX",
+                                            "Account No 4103699",
                                             style: GoogleFonts.notoSerifSinhala(
                                                 fontSize: 13),
                                           ),
@@ -530,7 +532,7 @@ class _MenuState extends State<Menu> {
                                   // Done Payment
 
                                   Text(
-                                    'ගෙවීම තහවුරු කල පසු අංකය (Paste) කර ඉදිරියට යන්න',
+                                    'ගෙවීම තහවුරු කල පසු අංකය (Paste) කර ඉදිරියට යන්න.',
                                     style: GoogleFonts.notoSerifSinhala(
                                       fontSize: 12,
                                     ),

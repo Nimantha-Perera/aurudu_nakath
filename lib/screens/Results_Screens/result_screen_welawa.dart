@@ -110,93 +110,155 @@ class _ResultsWelaawaState extends State<ResultsWelaawa> {
               children: [
                 if (DataIstAvailble == false)
                   Container(
-                    alignment: Alignment.center,
-                    margin: EdgeInsets.only(top: 10, bottom: 10),
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(
-                          8.0), // Add your desired border radius
-                      color: Color.fromARGB(255, 255, 238,
-                          0), // Add your desired background color
+                    child: Image.asset("assets/arimbuwa/arimbuwa.png"),
+                  ),
+                Container(
+                  alignment: Alignment.center,
+                  margin: EdgeInsets.only(top: 10, bottom: 10),
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(
+                        8.0), // Add your desired border radius
+                    color: Color.fromARGB(
+                        255, 255, 238, 0), // Add your desired background color
+                  ),
+                  padding: EdgeInsets.all(8.0), // Add your desired padding
+                  child: Text(
+                    name ??
+                        '', // Display the name if available, otherwise an empty string
+                    style: GoogleFonts.notoSerifSinhala(
+                      // Add any additional styling here, such as fontSize, fontWeight, etc.
+                      color: const Color.fromARGB(
+                          255, 88, 88, 88), // Add your desired text color
                     ),
-                    padding: EdgeInsets.all(8.0), // Add your desired padding
-                    child: Text(
-                      name ??
-                          '', // Display the name if available, otherwise an empty string
-                      style: GoogleFonts.notoSerifSinhala(
-                        // Add any additional styling here, such as fontSize, fontWeight, etc.
-                        color: const Color.fromARGB(
-                            255, 88, 88, 88), // Add your desired text color
+                  ),
+                ),
+                // if (DataIstAvailble == false &&
+                //     image != null &&
+                //     image.isNotEmpty)
+                //   Padding(
+                //     padding: const EdgeInsets.all(4.0),
+                //     child: Row(
+                //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                //       children: [
+                //         Column(
+                //           children: [
+                //             Container(
+                //               width: 150,
+                //               child: Image.network(image!),
+                //             ),
+                //           ],
+                //         ),
+                //         Column(
+                //           children: [
+                //             Container(
+                //               width: 150,
+                //               child: Image.network(image!),
+                //             ),
+                //           ],
+                //         )
+                //       ],
+                //     ),
+                //   ),
+                // if (DataIstAvailble == false)
+                Container(
+                  child: Card(
+                    child: Column(children: [
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                "ලග්නය: මේශ",
+                                style: GoogleFonts.notoSerifSinhala(
+                                    fontSize: 13, color: Colors.blue),
+                              ),
+                              Text(
+                                "නවාංශකය: මේශ",
+                                style: GoogleFonts.notoSerifSinhala(
+                                    fontSize: 13, color: Colors.green),
+                              ),
+                              Text(
+                                "ඝනය: රාක්ශ",
+                                style: GoogleFonts.notoSerifSinhala(
+                                    fontSize: 13, color: Colors.red),
+                              ),
+                            ]),
                       ),
-                    ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                "උපන් වෙලාව: උදේ 8.30",
+                                style: GoogleFonts.notoSerifSinhala(
+                                    fontSize: 13, color: Colors.orange),
+                              ),
+                              Text(
+                                "උපන් නැකත: සුවන",
+                                style: GoogleFonts.notoSerifSinhala(
+                                    fontSize: 13, color: Colors.purple),
+                              ),
+                            ]),
+                      ),
+                    ]),
                   ),
-                if (DataIstAvailble == false &&
-                    image != null &&
-                    image.isNotEmpty)
-                  Padding(
-                    padding: const EdgeInsets.all(4.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Column(
-                          children: [
-                            Container(
-                              width: 150,
-                              child: Image.network(image!),
-                            ),
-                          ],
-                        ),
-                        Column(
-                          children: [
-                            Container(
-                              width: 150,
-                              child: Image.network(image!),
-                            ),
-                          ],
-                        )
-                      ],
-                    ),
-                  ),
-                if (DataIstAvailble == false)
-                  Column(
-                    children: [
-                      Container(
-                          width: double.infinity,
-                          margin: EdgeInsets.only(top: 10, bottom: 10),
-                          child: Card(
-                              child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Text(
-                              details ?? '',
-                              style: GoogleFonts.notoSerifSinhala(),
-                            ),
-                          ))),
-                    ],
-                  ),
+                ),
+
+                Column(
+                  children: [
+                    Container(
+                        width: double.infinity,
+                        margin: EdgeInsets.only(top: 10, bottom: 10),
+                        child: Card(
+                            child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text(
+                            details ?? '',
+                            style: GoogleFonts.notoSerifSinhala(),
+                          ),
+                        ))),
+                  ],
+                ),
                 if (DataIstAvailble == true)
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Center(
-                      
                       child: Container(
                         margin: EdgeInsets.only(top: 100),
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.center,
-                              // Aligns the text in the center vertically
+                          // Aligns the text in the center vertically
                           children: [
                             Lottie.network(
-                                  'https://lottie.host/ed28ecd2-c979-49ad-a858-13d14f04b651/QGSI90WORA.json',
-                                  height: 200,
-                                  width: 200,
-                                ),
-                            Text(firestoreResponse ?? "",style: GoogleFonts.notoSerifSinhala(),),
-                            
+                              'https://lottie.host/ed28ecd2-c979-49ad-a858-13d14f04b651/QGSI90WORA.json',
+                              height: 200,
+                              width: 200,
+                            ),
+                            Text(
+                              firestoreResponse ?? "",
+                              style: GoogleFonts.notoSerifSinhala(),
+                            ),
                           ],
                         ),
                       ),
                     ),
                   ),
+
+                Container(
+                  child: Image.asset("assets/arimbuwa/arimbuwa_end.png"),
+                ),
+                Center(
+                  child: Text(
+                    "මෙම වේලාව සංස්තෘත මූලධර්ම වලට අනුව නිර්මාණය කර ඇත",
+                    style: GoogleFonts.notoSerifSinhala(fontSize: 10),
+                    textAlign:
+                        TextAlign.center, // This centers the text horizontally
+                  ),
+                ),
               ],
             ),
           ),

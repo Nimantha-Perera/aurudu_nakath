@@ -20,6 +20,7 @@ var name;
 var name2;
 var details;
 var image;
+var image2;
 
 class ResultsPorondam extends StatefulWidget {
   final String data;
@@ -53,6 +54,7 @@ class _ResultsWelaawaState extends State<ResultsPorondam> {
         name2 = data?['name2'] as String?;
         details = data?['details'] as String?;
         image = data?['image'] as String?;
+        image2 = data?['image2'] as String?;
 
         if (name != null && name.isNotEmpty ||
             details != null && details.isNotEmpty) {
@@ -227,23 +229,25 @@ class _ResultsWelaawaState extends State<ResultsPorondam> {
             child: Column(
               children: [
                 if (DataIstAvailble == false)
-                  Padding(
-                    padding: const EdgeInsets.all(15.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-
-                        Image.asset(
-                          'assets/monn_sun/sun.png',
-                          width: 100, // Replace with your image path
-                        ),
-                        Image.asset(
-                          'assets/monn_sun/moon.png',
-                          width: 100,
-                        )
-                      ],
-                    ),
+                  Container(
+                    child: Image.asset("assets/arimbuwa/arimbuwa_end.png"),
                   ),
+                Padding(
+                  padding: const EdgeInsets.all(15.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Image.asset(
+                        'assets/monn_sun/sun.png',
+                        width: 100, // Replace with your image path
+                      ),
+                      Image.asset(
+                        'assets/monn_sun/moon.png',
+                        width: 100,
+                      )
+                    ],
+                  ),
+                ),
                 Container(
                   alignment: Alignment.center,
                   margin: EdgeInsets.only(top: 10, bottom: 10),
@@ -307,10 +311,9 @@ class _ResultsWelaawaState extends State<ResultsPorondam> {
                       children: [
                         Column(
                           children: [
-                            Container(
+                           Container(
                               width: 150,
-                              child: Image.network(
-                                  "https://firebasestorage.googleapis.com/v0/b/nakath-af5a0.appspot.com/o/Welawa_images%2Fcxc.png?alt=media&token=d5a9f052-20ab-4833-9501-c472156223a7"),
+                              child: Image.network(image!),
                             ),
                           ],
                         ),
@@ -318,8 +321,7 @@ class _ResultsWelaawaState extends State<ResultsPorondam> {
                           children: [
                             Container(
                               width: 150,
-                              child: Image.network(
-                                  "https://firebasestorage.googleapis.com/v0/b/nakath-af5a0.appspot.com/o/Welawa_images%2Fcxc.png?alt=media&token=d5a9f052-20ab-4833-9501-c472156223a7"),
+                              child: Image.network(image!),
                             ),
                           ],
                         )

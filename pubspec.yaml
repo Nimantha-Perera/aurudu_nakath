@@ -79,6 +79,7 @@ dependencies:
   lecle_downloads_path_provider: ^0.0.2+8
   android_path_provider: ^0.3.0
   animated_text_kit: ^4.2.2
+  clipboard: ^0.1.3
 
 dev_dependencies:
   flutter_test:
@@ -137,6 +138,8 @@ flutter:
     - assets/malimawa/compass.png
     - assets/monn_sun/moon.png
     - assets/monn_sun/sun.png
+    - assets/arimbuwa/arimbuwa.png
+    - assets/arimbuwa/arimbuwa_end.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
