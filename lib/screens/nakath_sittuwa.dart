@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:aurudu_nakath/Ads/init_ads.dart';
+import 'package:aurudu_nakath/Image_chache_Save/img_chanche.dart';
 import 'package:aurudu_nakath/User_backClicked/back_clicked.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
@@ -28,6 +29,7 @@ class _NakathSittuwaState extends State<NakathSittuwa> {
     interstitialAdManager.initInterstitialAd();
     countdownText1 = 'ගනනය කරමින්...';
     countdownText2 = 'ගනනය කරමින්...';
+     ImageUtils.precacheImage(context);
 
     // Future dates
     futureDate1 = DateTime(2024, 4, 11);

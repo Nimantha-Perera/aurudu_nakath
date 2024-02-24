@@ -1,4 +1,5 @@
 import 'package:aurudu_nakath/Ads/init_ads.dart';
+import 'package:aurudu_nakath/Image_chache_Save/img_chanche.dart';
 import 'package:aurudu_nakath/User_backClicked/back_clicked.dart';
 import 'package:aurudu_nakath/screens/Results_Screens/result_screen_porondam.dart';
 import 'package:aurudu_nakath/screens/Results_Screens/result_screen_welawa.dart';
@@ -42,6 +43,8 @@ class HelaChatAI extends StatefulWidget {
 class _ChatScreenState extends State<HelaChatAI> {
   final TextEditingController _textController = TextEditingController();
   final List<ChatMessage> _messages = [];
+  bool isSendButtonEnabled = false;
+
 
   InterstitialAdManager interstitialAdManager = InterstitialAdManager();
 
@@ -397,7 +400,7 @@ class _ChatScreenState extends State<HelaChatAI> {
   @override
   void initState() {
     super.initState();
-
+ ImageUtils.precacheImage(context);
     interstitialAdManager.initInterstitialAd();
   }
 
@@ -534,67 +537,73 @@ class _ChatScreenState extends State<HelaChatAI> {
           ),
         ),
         Container(
-          margin: const EdgeInsets.symmetric(horizontal: 8.0),
-          child: Row(
-            children: <Widget>[
-              Flexible(
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: TextField(
-                    controller: _textController,
-                    onSubmitted: _handleSubmitted,
-                    style:
-                        TextStyle(fontSize: 12), // Add this line for font size
-                    decoration: InputDecoration(
-                      hintText: "ඔබට අවශ්‍ය විස්තරය කෙටියෙන් මෙහි ලියන්න",
-                      filled: true,
-                      fillColor: Colors.grey[200],
-                      contentPadding: EdgeInsets.all(10.0),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(20.0),
-                        borderSide: BorderSide.none,
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(20.0),
-                        borderSide: BorderSide(
-                          color: Theme.of(context).colorScheme.secondary,
-                        ),
-                      ),
-                      suffixIcon: IconButton(
-                        icon: Icon(Icons.send),
-                        onPressed: () => _handleSubmitted(_textController.text),
-                      ),
-                    ),
-                  ),
+  margin: const EdgeInsets.symmetric(horizontal: 8.0),
+  child: Row(
+    children: <Widget>[
+      Flexible(
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: TextField(
+            controller: _textController,
+            onChanged: (text) {
+              // Update the state to enable/disable the button based on whether there is text
+              setState(() {
+                isSendButtonEnabled = text.isNotEmpty;
+              });
+            },
+            onSubmitted: _handleSubmitted,
+            style: TextStyle(fontSize: 12),
+            decoration: InputDecoration(
+              hintText: "ඔබට අවශ්‍ය විස්තරය කෙටියෙන් මෙහි ලියන්න",
+              filled: true,
+              fillColor: Colors.grey[200],
+              contentPadding: EdgeInsets.all(10.0),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(20.0),
+                borderSide: BorderSide.none,
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(20.0),
+                borderSide: BorderSide(
+                  color: Theme.of(context).colorScheme.secondary,
                 ),
               ),
-
-              // Container(
-              //   margin: EdgeInsets.symmetric(horizontal: 4.0),
-              //   child: IconButton(
-              //     icon: Icon(Icons.send),
-              //     onPressed: () => _handleSubmitted(_textController.text),
-              //   ),
-              // ),
-            ],
+              suffixIcon: IconButton(
+                icon: Icon(Icons.send),
+                onPressed: isSendButtonEnabled
+                    ? () => _handleSubmitted(_textController.text)
+                    : null, // Disable the button if isSendButtonEnabled is false
+              ),
+            ),
           ),
         ),
+      ),
+    ],
+  ),
+),
+
       ],
     );
   }
 
-  Widget buildSuggestionButton(String suggestion) {
-    return Container(
-      margin: EdgeInsets.symmetric(horizontal: 4.0),
-      child: ElevatedButton(
-        onPressed: () {
-          _textController.text = suggestion;
-          _handleSubmitted(suggestion);
-        },
-        child: Text(suggestion),
+Widget buildSuggestionButton(String suggestion) {
+  return Container(
+    margin: EdgeInsets.symmetric(horizontal: 4.0),
+    child: ElevatedButton(
+      onPressed: () {
+        _textController.text = suggestion;
+        _handleSubmitted(suggestion);
+      },
+      style: ElevatedButton.styleFrom(
+        primary: Color.fromARGB(255, 255, 217, 0), // Change the button color here
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10.0), // Change the border radius here
+        ),
       ),
-    );
-  }
+      child: Text(suggestion,style: GoogleFonts.notoSerifSinhala(fontSize: 12,color: const Color.fromARGB(255, 77, 77, 77)),),
+    ),
+  );
+}
 }
 
 class ChatMessage extends StatelessWidget {

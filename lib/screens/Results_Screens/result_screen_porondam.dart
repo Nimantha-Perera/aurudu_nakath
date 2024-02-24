@@ -6,6 +6,7 @@ import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/services.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
 import 'package:lecle_downloads_path_provider/lecle_downloads_path_provider.dart';
@@ -63,7 +64,7 @@ class _ResultsWelaawaState extends State<ResultsPorondam> {
           });
         } else {
           setState(() {
-            firestoreResponse = "ඔබගේ පොරොන්දම නිර්මාණය වෙමින් පවතී";
+            firestoreResponse = "ඔබගේ පොරොන්දම සැකසෙමින් වෙමින් පවතී";
             DataIstAvailble = true;
           });
         }
@@ -79,17 +80,33 @@ class _ResultsWelaawaState extends State<ResultsPorondam> {
   try {
     // Show a loading dialog
     showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text("Downloading Image"),
-          content: CircularProgressIndicator(),
-        );
-      },
+  context: context,
+  barrierDismissible: false,
+  builder: (BuildContext context) {
+    return AlertDialog(
+      title: Text("Downloading PDF"),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          // CircularProgressIndicator(
+          //   strokeWidth: 6,
+          //   valueColor: AlwaysStoppedAnimation<Color>(Colors.blue),
+          //   semanticsLabel: 'Downloading',
+          // ),
+          // SizedBox(height: 16), // Adjust the spacing between the circular and linear progress indicators
+          LinearProgressIndicator(
+            value: 0.5, // Set the value accordingly (between 0.0 and 1.0)
+            valueColor: AlwaysStoppedAnimation<Color>(Colors.green), // Adjust the color if needed
+            semanticsLabel: 'Progress', // Optional label for accessibility
+          ),
+        ],
+      ),
     );
+  },
+);
 
-    firebase_storage.Reference ref = firebase_storage.FirebaseStorage.instance.ref('porondam_pdf/${widget.data}.png');
+
+    firebase_storage.Reference ref = firebase_storage.FirebaseStorage.instance.ref('porondam_pdf/${widget.data}.pdf');
     final String url = await ref.getDownloadURL();
 
     // Use the URL to download the image file using http package
@@ -101,7 +118,7 @@ class _ResultsWelaawaState extends State<ResultsPorondam> {
 
 
     // Save the file to the downloads directory
-    final String localFilePath = '${downloadsDirectory?.path}/downloaded_image.png';
+    final String localFilePath = '${downloadsDirectory?.path}/nakath_app_porondam.pdf';
     final File localFile = File(localFilePath);
 
     await localFile.writeAsBytes(response.bodyBytes);
@@ -110,22 +127,31 @@ class _ResultsWelaawaState extends State<ResultsPorondam> {
     Navigator.of(context).pop();
 
     // Show success dialog
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text("Download Complete"),
-          content: Text("Image downloaded successfully. Saved to: $localFilePath"),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: Text("OK"),
-            ),
-          ],
-        );
-      },
+    // showDialog(
+    //   context: context,
+    //   builder: (BuildContext context) {
+    //     return AlertDialog(
+    //       title: Text("Download Complete"),
+    //       content: Text("Image downloaded successfully. Saved to: $localFilePath"),
+    //       actions: <Widget>[
+    //         TextButton(
+    //           onPressed: () {
+    //             Navigator.of(context).pop();
+    //           },
+    //           child: Text("OK"),
+    //         ),
+    //       ],
+    //     );
+    //   },
+    // );
+    Fluttertoast.showToast(
+        msg: "Saved to: $localFilePath",
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.CENTER,
+        timeInSecForIosWeb: 1,
+        backgroundColor: Colors.red,
+        textColor: Colors.white,
+        fontSize: 16.0
     );
 
     print('Image Download URL: $url');
@@ -142,7 +168,7 @@ class _ResultsWelaawaState extends State<ResultsPorondam> {
       builder: (BuildContext context) {
         return AlertDialog(
           title: Text("Error"),
-          content: Text("Failed to download image. Please try again."),
+          content: Text("සමාවන්න, ඔබගේ PDF ගොනුව සැකසෙමින් පවතී."),
           actions: <Widget>[
             TextButton(
               onPressed: () {
@@ -200,6 +226,16 @@ class _ResultsWelaawaState extends State<ResultsPorondam> {
             child: Column(
               children: [
                 if (DataIstAvailble == false)
+
+                Row(
+                  children: [
+                    Image.asset(
+                'assets/background.jpg', // Replace with your image path
+              
+              ),
+                    Image.asset('assets/moon.png')
+                  ],
+                ),
                 Container(
                   alignment: Alignment.center,
                   margin: EdgeInsets.only(top: 10, bottom: 10),
