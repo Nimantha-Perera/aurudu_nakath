@@ -529,7 +529,7 @@ class _ChatScreenState extends State<HelaChatAI> {
                     buildSuggestionButton("ලිත"),
                     buildSuggestionButton("ලග්න පලාපල"),
                     buildSuggestionButton("අද රාහු කාලය"),
-                    buildSuggestionButton("අද මරු සිටින දිශාව"),
+                    
                   ],
                 ),
               ],

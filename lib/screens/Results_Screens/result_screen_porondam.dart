@@ -76,112 +76,113 @@ class _ResultsWelaawaState extends State<ResultsPorondam> {
     });
   }
 
- Future<void> downloadImage() async {
-  try {
-    // Show a loading dialog
-    showDialog(
-  context: context,
-  barrierDismissible: false,
-  builder: (BuildContext context) {
-    return AlertDialog(
-      title: Text("Downloading PDF"),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          // CircularProgressIndicator(
-          //   strokeWidth: 6,
-          //   valueColor: AlwaysStoppedAnimation<Color>(Colors.blue),
-          //   semanticsLabel: 'Downloading',
-          // ),
-          // SizedBox(height: 16), // Adjust the spacing between the circular and linear progress indicators
-          LinearProgressIndicator(
-            value: 0.5, // Set the value accordingly (between 0.0 and 1.0)
-            valueColor: AlwaysStoppedAnimation<Color>(Colors.green), // Adjust the color if needed
-            semanticsLabel: 'Progress', // Optional label for accessibility
-          ),
-        ],
-      ),
-    );
-  },
-);
+  Future<void> downloadImage() async {
+    try {
+      // Show a loading dialog
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text("Downloading PDF"),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // CircularProgressIndicator(
+                //   strokeWidth: 6,
+                //   valueColor: AlwaysStoppedAnimation<Color>(Colors.blue),
+                //   semanticsLabel: 'Downloading',
+                // ),
+                // SizedBox(height: 16), // Adjust the spacing between the circular and linear progress indicators
+                LinearProgressIndicator(
+                  value: 0.5, // Set the value accordingly (between 0.0 and 1.0)
+                  valueColor: AlwaysStoppedAnimation<Color>(
+                      Colors.green), // Adjust the color if needed
+                  semanticsLabel:
+                      'Progress', // Optional label for accessibility
+                ),
+              ],
+            ),
+          );
+        },
+      );
 
+      firebase_storage.Reference ref = firebase_storage.FirebaseStorage.instance
+          .ref('porondam_pdf/${widget.data}.pdf');
+      final String url = await ref.getDownloadURL();
 
-    firebase_storage.Reference ref = firebase_storage.FirebaseStorage.instance.ref('porondam_pdf/${widget.data}.pdf');
-    final String url = await ref.getDownloadURL();
+      // Use the URL to download the image file using http package
+      final http.Response response = await http.get(Uri.parse(url));
 
-    // Use the URL to download the image file using http package
-    final http.Response response = await http.get(Uri.parse(url));
-
-    // Get the downloads directory
-    final downloadsDirectory = await getDownloadsDirectory();
+      // Get the downloads directory
+      final downloadsDirectory = await getDownloadsDirectory();
 // Access files in the Downloads directory
 
+      // Save the file to the downloads directory
+      final String localFilePath =
+          '${downloadsDirectory?.path}/nakath_app_porondam.pdf';
+      final File localFile = File(localFilePath);
 
-    // Save the file to the downloads directory
-    final String localFilePath = '${downloadsDirectory?.path}/nakath_app_porondam.pdf';
-    final File localFile = File(localFilePath);
+      await localFile.writeAsBytes(response.bodyBytes);
 
-    await localFile.writeAsBytes(response.bodyBytes);
+      // Close the loading dialog
+      Navigator.of(context).pop();
 
-    // Close the loading dialog
-    Navigator.of(context).pop();
+      // Show success dialog
+      // showDialog(
+      //   context: context,
+      //   builder: (BuildContext context) {
+      //     return AlertDialog(
+      //       title: Text("Download Complete"),
+      //       content: Text("Image downloaded successfully. Saved to: $localFilePath"),
+      //       actions: <Widget>[
+      //         TextButton(
+      //           onPressed: () {
+      //             Navigator.of(context).pop();
+      //           },
+      //           child: Text("OK"),
+      //         ),
+      //       ],
+      //     );
+      //   },
+      // );
+      Fluttertoast.showToast(
+          msg: "Saved to: $localFilePath",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+          fontSize: 16.0);
 
-    // Show success dialog
-    // showDialog(
-    //   context: context,
-    //   builder: (BuildContext context) {
-    //     return AlertDialog(
-    //       title: Text("Download Complete"),
-    //       content: Text("Image downloaded successfully. Saved to: $localFilePath"),
-    //       actions: <Widget>[
-    //         TextButton(
-    //           onPressed: () {
-    //             Navigator.of(context).pop();
-    //           },
-    //           child: Text("OK"),
-    //         ),
-    //       ],
-    //     );
-    //   },
-    // );
-    Fluttertoast.showToast(
-        msg: "Saved to: $localFilePath",
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.CENTER,
-        timeInSecForIosWeb: 1,
-        backgroundColor: Colors.red,
-        textColor: Colors.white,
-        fontSize: 16.0
-    );
+      print('Image Download URL: $url');
+    } catch (e) {
+      print('Error downloading image: $e');
+      // Handle errors accordingly
 
-    print('Image Download URL: $url');
-  } catch (e) {
-    print('Error downloading image: $e');
-    // Handle errors accordingly
+      // Close the loading dialog
+      Navigator.of(context).pop();
 
-    // Close the loading dialog
-    Navigator.of(context).pop();
-
-    // Show error dialog
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text("Error"),
-          content: Text("සමාවන්න, ඔබගේ PDF ගොනුව සැකසෙමින් පවතී."),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: Text("OK"),
-            ),
-          ],
-        );
-      },
-    );
+      // Show error dialog
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text("Error"),
+            content: Text("සමාවන්න, ඔබගේ PDF ගොනුව සැකසෙමින් පවතී."),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: Text("OK"),
+              ),
+            ],
+          );
+        },
+      );
+    }
   }
-}
 
   Future<void> _refresh() async {
     await matchDataWithFirestore();
@@ -207,7 +208,7 @@ class _ResultsWelaawaState extends State<ResultsPorondam> {
             icon: Icon(Icons.download),
             onPressed: () {
               // generatePDF();
-               downloadImage();
+              downloadImage();
             },
           ),
         ],
@@ -226,16 +227,23 @@ class _ResultsWelaawaState extends State<ResultsPorondam> {
             child: Column(
               children: [
                 if (DataIstAvailble == false)
+                  Padding(
+                    padding: const EdgeInsets.all(15.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
 
-                Row(
-                  children: [
-                    Image.asset(
-                'assets/background.jpg', // Replace with your image path
-              
-              ),
-                    Image.asset('assets/moon.png')
-                  ],
-                ),
+                        Image.asset(
+                          'assets/monn_sun/sun.png',
+                          width: 100, // Replace with your image path
+                        ),
+                        Image.asset(
+                          'assets/monn_sun/moon.png',
+                          width: 100,
+                        )
+                      ],
+                    ),
+                  ),
                 Container(
                   alignment: Alignment.center,
                   margin: EdgeInsets.only(top: 10, bottom: 10),
@@ -257,13 +265,12 @@ class _ResultsWelaawaState extends State<ResultsPorondam> {
                             child: Text(
                               name ??
                                   '', // Display the name if available, otherwise an empty string
-                              
+
                               style: GoogleFonts.notoSerifSinhala(
                                 fontSize: 12,
                                 // Add any additional styling here, such as fontSize, fontWeight, etc.
-                                color: const Color.fromARGB(
-                                  
-                                    255, 88, 88, 88), // Add your desired text color
+                                color: const Color.fromARGB(255, 88, 88,
+                                    88), // Add your desired text color
                               ),
                             ),
                           ),
@@ -276,12 +283,12 @@ class _ResultsWelaawaState extends State<ResultsPorondam> {
                             child: Text(
                               name2 ??
                                   '', // Display the name if available, otherwise an empty string
-                              
+
                               style: GoogleFonts.notoSerifSinhala(
-                                  fontSize: 12,
+                                fontSize: 12,
                                 // Add any additional styling here, such as fontSize, fontWeight, etc.
-                                color: const Color.fromARGB(
-                                    255, 88, 88, 88), // Add your desired text color
+                                color: const Color.fromARGB(255, 88, 88,
+                                    88), // Add your desired text color
                               ),
                             ),
                           ),
@@ -293,52 +300,50 @@ class _ResultsWelaawaState extends State<ResultsPorondam> {
                 if (DataIstAvailble == false &&
                     image != null &&
                     image.isNotEmpty)
-
-                Padding(
-                  padding: const EdgeInsets.all(4.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Column(
-                        children: [
-                          Container(
-                            width: 150,
-                            child: Image.network(
-                                "https://firebasestorage.googleapis.com/v0/b/nakath-af5a0.appspot.com/o/Welawa_images%2Fcxc.png?alt=media&token=d5a9f052-20ab-4833-9501-c472156223a7"),
-                          ),
-                        ],
-                      ),
-                      Column(
-                        children: [
-                          Container(
-                            width: 150,
-                            child: Image.network(
-                                "https://firebasestorage.googleapis.com/v0/b/nakath-af5a0.appspot.com/o/Welawa_images%2Fcxc.png?alt=media&token=d5a9f052-20ab-4833-9501-c472156223a7"),
-                          ),
-                        ],
-                      )
-                    ],
+                  Padding(
+                    padding: const EdgeInsets.all(4.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Column(
+                          children: [
+                            Container(
+                              width: 150,
+                              child: Image.network(
+                                  "https://firebasestorage.googleapis.com/v0/b/nakath-af5a0.appspot.com/o/Welawa_images%2Fcxc.png?alt=media&token=d5a9f052-20ab-4833-9501-c472156223a7"),
+                            ),
+                          ],
+                        ),
+                        Column(
+                          children: [
+                            Container(
+                              width: 150,
+                              child: Image.network(
+                                  "https://firebasestorage.googleapis.com/v0/b/nakath-af5a0.appspot.com/o/Welawa_images%2Fcxc.png?alt=media&token=d5a9f052-20ab-4833-9501-c472156223a7"),
+                            ),
+                          ],
+                        )
+                      ],
+                    ),
                   ),
-                ),
                 if (DataIstAvailble == false)
-                Container(
-                  margin:
-                      EdgeInsets.only(top: 10, bottom: 10, left: 10, right: 10),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        "උපන් දිනය 1996.07.10",
-                        style: GoogleFonts.notoSerifSinhala(fontSize: 13),
-                      ),
-                      Text(
-                        "උපන් දිනය 1996.02.10",
-                        style: GoogleFonts.notoSerifSinhala(fontSize: 13),
-                      ),
-                    ],
+                  Container(
+                    margin: EdgeInsets.only(
+                        top: 10, bottom: 10, left: 10, right: 10),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          "උපන් දිනය 1996.07.10",
+                          style: GoogleFonts.notoSerifSinhala(fontSize: 13),
+                        ),
+                        Text(
+                          "උපන් දිනය 1996.02.10",
+                          style: GoogleFonts.notoSerifSinhala(fontSize: 13),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-
                 SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
                   child: Table(
@@ -352,7 +357,6 @@ class _ResultsWelaawaState extends State<ResultsPorondam> {
                     children: _buildRows(),
                   ),
                 ),
-
                 Column(
                   children: [
                     Container(
@@ -369,7 +373,6 @@ class _ResultsWelaawaState extends State<ResultsPorondam> {
                         ))),
                   ],
                 ),
-
                 Center(
                   child: Container(
                     width: double.infinity,
@@ -380,7 +383,6 @@ class _ResultsWelaawaState extends State<ResultsPorondam> {
                     ),
                   ),
                 ),
-
                 if (DataIstAvailble == true)
                   Padding(
                     padding: const EdgeInsets.all(8.0),

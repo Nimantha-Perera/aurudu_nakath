@@ -135,8 +135,8 @@ flutter:
     - assets/bulath_kolaya.png
     - assets/malimawa/cadern.png
     - assets/malimawa/compass.png
-    - assets/moon.png
-    - assets/sun.png
+    - assets/monn_sun/moon.png
+    - assets/monn_sun/sun.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
