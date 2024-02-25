@@ -21,6 +21,12 @@ var name2;
 var details;
 var image;
 var image2;
+var birthday;
+var birthday2;
+var dhasa_porondama;
+var ashta_kutaya;
+var wisi_porondama;
+var result_porondama;
 
 class ResultsPorondam extends StatefulWidget {
   final String data;
@@ -33,13 +39,17 @@ class ResultsPorondam extends StatefulWidget {
 
 class _ResultsWelaawaState extends State<ResultsPorondam> {
   bool DataIstAvailble = false;
-  String firestoreResponse = "Loading...";
 
+  String firestoreResponse = "Loading...";
+  late Future<List<TableRow>> dataRows;
   @override
   void initState() {
     super.initState();
     matchDataWithFirestore();
+    dataRows = _buildRowsFromFirestore();
   }
+
+  List<TableRow> _tableRows = [];
 
   Future<void> matchDataWithFirestore() async {
     FirebaseFirestore.instance
@@ -54,7 +64,13 @@ class _ResultsWelaawaState extends State<ResultsPorondam> {
         name2 = data?['name2'] as String?;
         details = data?['details'] as String?;
         image = data?['image'] as String?;
-        image2 = data?['image2'] as String?;
+        image2 = data?['image_2'] as String?;
+        birthday = data?['birthday_boy'] as String?;
+        birthday2 = data?['birthday_girl'] as String?;
+        dhasa_porondama = data?['dhasa_porondama'] as String?;
+        ashta_kutaya = data?['ashta_kutaya'] as String?;
+        wisi_porondama = data?['wisi_porondama'] as String?;
+        result_porondama = data?['result_porondama'] as String?;
 
         if (name != null && name.isNotEmpty ||
             details != null && details.isNotEmpty) {
@@ -311,7 +327,7 @@ class _ResultsWelaawaState extends State<ResultsPorondam> {
                       children: [
                         Column(
                           children: [
-                           Container(
+                            Container(
                               width: 150,
                               child: Image.network(image!),
                             ),
@@ -321,7 +337,7 @@ class _ResultsWelaawaState extends State<ResultsPorondam> {
                           children: [
                             Container(
                               width: 150,
-                              child: Image.network(image!),
+                              child: Image.network(image2!),
                             ),
                           ],
                         )
@@ -336,27 +352,49 @@ class _ResultsWelaawaState extends State<ResultsPorondam> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          "උපන් දිනය 1996.07.10",
+                          "උපන් දිනය $birthday",
                           style: GoogleFonts.notoSerifSinhala(fontSize: 13),
                         ),
                         Text(
-                          "උපන් දිනය 1996.02.10",
+                          "උපන් දිනය $birthday2",
                           style: GoogleFonts.notoSerifSinhala(fontSize: 13),
                         ),
                       ],
                     ),
                   ),
-                SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: Table(
-                    border: TableBorder.all(),
-                    columnWidths: const <int, TableColumnWidth>{
-                      0: FixedColumnWidth(85.0),
-                      1: FixedColumnWidth(85.0),
-                      2: FixedColumnWidth(85.0),
-                      3: FixedColumnWidth(85.0),
-                    },
-                    children: _buildRows(),
+                Container(
+                  child: Card(
+                    child: Column(children: [
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                "දස පොරොන්දම: $dhasa_porondama",
+                                style: GoogleFonts.notoSerifSinhala(
+                                    fontSize: 13, color: Colors.blue),
+                              ),
+                              Text(
+                                "අෂ්ට කූඨය: $ashta_kutaya",
+                                style: GoogleFonts.notoSerifSinhala(
+                                    fontSize: 13, color: Colors.green),
+                              ),
+                            ]),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                "විසි පොරොන්දම: $wisi_porondama",
+                                style: GoogleFonts.notoSerifSinhala(
+                                    fontSize: 13, color: Colors.orange),
+                              ),
+                            ]),
+                      ),
+                    ]),
                   ),
                 ),
                 Column(
@@ -369,22 +407,47 @@ class _ResultsWelaawaState extends State<ResultsPorondam> {
                           padding: const EdgeInsets.all(8.0),
                           child: Text(
                             // details ?? '',
-                            "ඔබගේ පොරොන්දම 78% නිවැරදිව ගැලපේ",
+                            "ඔබගේ පොරොන්දම $result_porondama",
                             style: GoogleFonts.notoSerifSinhala(),
                           ),
                         ))),
                   ],
                 ),
-                Center(
-                  child: Container(
-                    width: double.infinity,
-                    alignment: Alignment.center,
-                    child: Text(
-                      "මෙම පොරොන්දම් ගැලපීම සංස්තෘත මූලධර්ම වලට අනුව නිර්මාණය කර ඇත",
-                      style: GoogleFonts.notoSerifSinhala(fontSize: 13),
-                    ),
-                  ),
+                FutureBuilder<List<TableRow>>(
+                  future: _buildRowsFromFirestore(),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return Center(child: CircularProgressIndicator());
+                    } else if (snapshot.hasError) {
+                      return Center(child: Text('Error: ${snapshot.error}'));
+                    } else {
+                      return SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: Table(
+                          border: TableBorder.all(),
+                          columnWidths: const <int, TableColumnWidth>{
+                            0: FixedColumnWidth(85.0),
+                            1: FixedColumnWidth(85.0),
+                            2: FixedColumnWidth(85.0),
+                            3: FixedColumnWidth(85.0),
+                          },
+                          children: snapshot.data!.map((row) => row).toList(),
+                        ),
+                      );
+                    }
+                  },
                 ),
+                 Padding(
+                   padding: const EdgeInsets.all(8.0),
+                   child: Center(
+                    child: Text(
+                      "මෙම පොරොන්දම සංස්තෘත මූලධර්ම වලට අනුව නිර්මාණය කර ඇත",
+                      style: GoogleFonts.notoSerifSinhala(fontSize: 10),
+                      textAlign:
+                          TextAlign.center, // This centers the text horizontally
+                    ),
+                                 ),
+                 ),
                 if (DataIstAvailble == true)
                   Padding(
                     padding: const EdgeInsets.all(8.0),
@@ -418,7 +481,7 @@ class _ResultsWelaawaState extends State<ResultsPorondam> {
     );
   }
 
-  List<TableRow> _buildRows() {
+  Future<List<TableRow>> _buildRowsFromFirestore() async {
     List<TableRow> rows = [];
 
     // Adding column header row
@@ -427,7 +490,7 @@ class _ResultsWelaawaState extends State<ResultsPorondam> {
         children: [
           TableCell(
             child: Container(
-              height: 40.0, // Adjust the height as needed
+              height: 40.0,
               padding: EdgeInsets.all(8.0),
               color: Colors.blue,
               child: Center(
@@ -435,7 +498,7 @@ class _ResultsWelaawaState extends State<ResultsPorondam> {
                   'පොරොන්දම',
                   style: GoogleFonts.notoSerifSinhala(
                     color: Colors.white,
-                    fontSize: 12.0, // Adjust the font size as needed
+                    fontSize: 12.0,
                   ),
                   textAlign: TextAlign.center,
                 ),
@@ -497,38 +560,77 @@ class _ResultsWelaawaState extends State<ResultsPorondam> {
       ),
     );
 
-    // Adding data rows
-    for (int i = 0; i < 20; i++) {
-      rows.add(
-        TableRow(
-          children: [
-            TableCell(
-              child: Container(
-                padding: EdgeInsets.all(8.0),
-                child: Text('Row $i, Col 0'),
-              ),
+    try {
+      // Fetching data from Firestore
+      // Iterate through the outer collection
+      QuerySnapshot outerQuerySnapshot = await FirebaseFirestore.instance
+          .collection('nakath_porondam_results')
+          .get();
+      for (QueryDocumentSnapshot outerDoc in outerQuerySnapshot.docs) {
+        // Fetch data from the inner collection (replace 'inner_collection' with your actual inner collection name)
+        QuerySnapshot innerQuerySnapshot = await FirebaseFirestore.instance
+            .collection(
+                'nakath_porondam_results/${widget.data}/wisi_porondam_data_table')
+            .get();
+
+        // Adding data rows from Firestore data
+        for (QueryDocumentSnapshot innerDoc in innerQuerySnapshot.docs) {
+          rows.add(
+            TableRow(
+              children: [
+                TableCell(
+                  child: Container(
+                    padding: EdgeInsets.all(8.0),
+                    child: Text(
+                      innerDoc['porondama'] ?? '',
+                      style: GoogleFonts.notoSerifSinhala(fontSize: 12),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                ),
+                TableCell(
+                  child: Container(
+                    padding: EdgeInsets.all(8.0),
+                    child: Text(innerDoc['sthrii'] ?? '',
+                        style: GoogleFonts.notoSerifSinhala(fontSize: 12),
+                        textAlign: TextAlign.center),
+                  ),
+                ),
+                TableCell(
+                  child: Container(
+                    padding: EdgeInsets.all(8.0),
+                    child: Text(innerDoc['purusha'] ?? '',
+                        style: GoogleFonts.notoSerifSinhala(fontSize: 12),
+                        textAlign: TextAlign.center),
+                  ),
+                ),
+                TableCell(
+                  child: Container(
+                    padding: EdgeInsets.all(8.0),
+                    child: Text(
+                      innerDoc['result'] ?? '',
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: (innerDoc['result'] == 'ශුභයි')
+                            ? Colors.green
+                            : (innerDoc['result'] == 'අශුභයි')
+                                ? Colors.red
+                                : Color.fromARGB(255, 0, 255, 149),
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                ),
+              ],
             ),
-            TableCell(
-              child: Container(
-                padding: EdgeInsets.all(8.0),
-                child: Text('Row $i, Col 1'),
-              ),
-            ),
-            TableCell(
-              child: Container(
-                padding: EdgeInsets.all(8.0),
-                child: Text('Row $i, Col 2'),
-              ),
-            ),
-            TableCell(
-              child: Container(
-                padding: EdgeInsets.all(8.0),
-                child: Text('Row $i, Col 3'),
-              ),
-            ),
-          ],
-        ),
-      );
+          );
+        }
+      }
+    } catch (error) {
+      // Handle the error here, you can print it or show a user-friendly message
+      print('Error fetching data: $error');
+      // You might want to return an empty list or handle it differently based on your use case
+      return [];
     }
 
     return rows;
