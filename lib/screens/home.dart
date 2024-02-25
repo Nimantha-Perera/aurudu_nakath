@@ -613,12 +613,12 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
           ),
-          // Container(
-          //   child: CustomBannerAd(
-          //     adSize: AdSize.banner,
-          //     adUnitId: 'ca-app-pub-7834397003941676/2610223957',
-          //   ),
-          // )
+          Container(
+            child: CustomBannerAd(
+              adSize: AdSize.banner,
+              adUnitId: 'ca-app-pub-7834397003941676/2610223957',
+            ),
+          )
         ],
       ),
     );
