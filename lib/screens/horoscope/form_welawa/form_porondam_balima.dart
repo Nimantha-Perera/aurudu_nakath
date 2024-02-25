@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:ffi';
 import 'dart:io';
 import 'dart:math';
@@ -8,9 +9,12 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:lottie/lottie.dart';
+import 'package:mailer/mailer.dart' as mailer;
+import 'package:mailer/smtp_server/gmail.dart';
 import 'package:mime/mime.dart';
 
 class FormPorondam extends StatefulWidget {
@@ -29,6 +33,7 @@ class _FormWelaawaState extends State<FormPorondam> {
   TextEditingController selectedName = TextEditingController();
   TextEditingController selectedName2 = TextEditingController();
   TextEditingController additionalInfo = TextEditingController();
+  TextEditingController email = TextEditingController();
   String filePath = '';
   String filePath2 = '';
   bool isLoading = false;
@@ -129,7 +134,7 @@ class _FormWelaawaState extends State<FormPorondam> {
 
         firebase_storage.Reference reference =
             firebase_storage.FirebaseStorage.instance.ref().child(
-                '$boyname+" "+$girlname/$fileName'); // Include folder name in reference
+                '$boyname" "$girlname/$fileName'); // Include folder name in reference
 
         final metadata = firebase_storage.SettableMetadata(
           contentType:
@@ -211,7 +216,7 @@ class _FormWelaawaState extends State<FormPorondam> {
                     key: Key('unique_key'),
                     keyboardType: TextInputType.name,
                     style: TextStyle(
-                      fontSize: 12, // Adjust text size that user inputs
+                      fontSize: 15, // Adjust text size that user inputs
                     ),
                     decoration: InputDecoration(
                       border: OutlineInputBorder(), // Added border
@@ -260,7 +265,9 @@ class _FormWelaawaState extends State<FormPorondam> {
                                 ? DateFormat('yyyy-MM-dd')
                                     .format(selectedDate.toLocal())
                                 : 'Add birthday',
-                            style: TextStyle(fontSize: 13),
+                            style: TextStyle(
+                              fontSize: 15,
+                            ),
                           ),
                         ),
                         SizedBox(width: 20),
@@ -274,7 +281,7 @@ class _FormWelaawaState extends State<FormPorondam> {
 
                   DropdownButtonFormField<String>(
                     style: TextStyle(
-                      fontSize: 12,
+                      fontSize: 15,
                       color: Color.fromARGB(
                           255, 0, 0, 0), // Adjust text size that user inputs
                     ),
@@ -348,7 +355,7 @@ class _FormWelaawaState extends State<FormPorondam> {
                     key: Key('unique_key2'),
                     keyboardType: TextInputType.name,
                     style: TextStyle(
-                      fontSize: 12, // Adjust text size that user inputs
+                      fontSize: 15, // Adjust text size that user inputs
                     ),
                     decoration: InputDecoration(
                       border: OutlineInputBorder(), // Added border
@@ -396,7 +403,7 @@ class _FormWelaawaState extends State<FormPorondam> {
                                 ? DateFormat('yyyy-MM-dd')
                                     .format(selectedDate2.toLocal())
                                 : 'Add birthday',
-                            style: TextStyle(fontSize: 13),
+                            style: TextStyle(fontSize: 15),
                           ),
                         ),
                         SizedBox(width: 20),
@@ -410,7 +417,7 @@ class _FormWelaawaState extends State<FormPorondam> {
 
                   DropdownButtonFormField<String>(
                     style: TextStyle(
-                      fontSize: 12,
+                      fontSize: 15,
                       color: Color.fromARGB(
                           255, 0, 0, 0), // Adjust text size that user inputs
                     ),
@@ -418,7 +425,8 @@ class _FormWelaawaState extends State<FormPorondam> {
                       border: OutlineInputBorder(),
                       labelText: 'උපන් දිස්ත්‍රික්කය (ගැහැනු)',
                       labelStyle: GoogleFonts.notoSerifSinhala(
-                          fontSize: 12), // Adjust font size here
+                        fontSize: 15,
+                      ), // Adjust font size here
                       prefixIcon: Icon(Icons.map), // Updated icon
                     ),
                     items: sriLankaDistricts
@@ -433,6 +441,30 @@ class _FormWelaawaState extends State<FormPorondam> {
                       });
                     },
                     value: selectedDistrict2,
+                  ),
+                  SizedBox(height: 20.0),
+                  TextFormField(
+                    controller: email,
+                    key: Key('unique_key3'),
+                    keyboardType: TextInputType.emailAddress,
+                    style: TextStyle(
+                      fontSize: 15, // Adjust text size that user inputs
+                    ),
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(), // Added border
+                      labelText: 'ඊමේල් ලිපිනයක් ඇතුලත් කරන්න.',
+                      labelStyle: GoogleFonts.notoSerifSinhala(
+                        fontSize: 12,
+                      ), // Adjust font size here
+                      prefixIcon: Icon(
+                          Icons.email), // Changed to prefixIcon for alignment
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'ඊමේල් ලිපිනයක් අවශ්‍යයි';
+                      }
+                      return null; // Return null if the input is valid
+                    },
                   ),
                   SizedBox(height: 20.0),
 
@@ -585,21 +617,33 @@ class _FormWelaawaState extends State<FormPorondam> {
       isLoading = true;
     });
     if (filePath.isEmpty) {
-      _showErrorDialog("Please select a file.");
+      _showErrorDialog("කරුණාකර ගොනුවක් තෝරන්න.");
+      isLoading = false;
     } else if (filePath2.isEmpty) {
-      _showErrorDialog("Please select a second file.");
+      _showErrorDialog("කරුණාකර දෙවන ගොනුවක් තෝරන්න.");
+      isLoading = false;
     } else if (selectedName.text.isEmpty) {
-      _showErrorDialog("Please enter a name.");
+      _showErrorDialog("කරුණාකර නම ඇතුළත් කරන්න.");
+      isLoading = false;
     } else if (selectedTime == null) {
-      _showErrorDialog("Please select a time.");
+      _showErrorDialog("කරුණාකර කාලයක් තෝරන්න.");
+      isLoading = false;
     } else if (selectedDistrict == null) {
-      _showErrorDialog("Please select a district.");
+      _showErrorDialog("කරුණාකර දිස්ත්‍රික්කයක් තෝරන්න.");
+      isLoading = false;
     } else if (selectedName2.text.isEmpty) {
-      _showErrorDialog("Please enter the second name.");
+      _showErrorDialog("කරුණාකර දෙවන නමක් ඇතුළත් කරන්න.");
+      isLoading = false;
     } else if (selectedDistrict2 == null) {
-      _showErrorDialog("Please select the second district.");
+      _showErrorDialog("කරුණාකර දෙවන දිස්ත්‍රික්කයක් තෝරන්න.");
+      isLoading = false;
     } else {
       try {
+        // Generate a random integer with a length of 6
+        int randomNumber = Random().nextInt(999999); // 6-digit number
+
+        // Add '#' at the beginning
+        String result = '#$randomNumber';
         // Upload the first file
         await _uploadFile(filePath);
 
@@ -620,9 +664,31 @@ class _FormWelaawaState extends State<FormPorondam> {
           'නම_ස්ත්‍රී': selectedName2.text,
           'උපන්_දිස්ත්‍රික්කය_ස්ත්‍රී': selectedDistrict2,
           'උපන්_දිනය_ස්ත්‍රී': selectedDate2,
+          'ඊමේල්': email.text,
           'වැඩි_විස්තර': additionalInfo.text,
+          'හෑශ්_කේතය': result,
+
           // 'ස්ත්‍රී_පුරුශ': isMale ? 'Male' : (isFemale ? 'Female' : ''),
         });
+
+        // Usage
+        String recipientEmail = email.text;
+        String emailSubject = 'ඔබගේ නැකැත් App පොරොන්දම් හෑශ් කේතය';
+        String emailBody = 'ඔබගේ නැකැත් App පොරොන්දම් බැලීම සඳහා අදාල වන හෑශ් කේතය වන්නෙ: $result';
+
+        sendEmail(recipientEmail, emailSubject, emailBody);
+
+        // Access the Firestore instance
+        FirebaseFirestore firestore2 = FirebaseFirestore.instance;
+
+        // Reference to nakath_porondam_results collection and set document ID
+        DocumentReference resultDocument =
+            firestore.collection('nakath_porondam_results').doc(result);
+        // Create an empty Map or add your fields accordingly
+        Map<String, dynamic> emptyData = {};
+
+        // Add an empty document to the 'nakath_porondam_results' collection
+        await resultDocument.set(emptyData);
 
         // Display a success message using showDialog
         showDialog(
@@ -642,8 +708,8 @@ class _FormWelaawaState extends State<FormPorondam> {
                 ),
               ),
               content: Container(
-                width: 300, 
-                height: 290,// Set the width of the content container
+                width: 300,
+                height: 290, // Set the width of the content container
                 child: Column(
                   children: [
                     Lottie.network(
@@ -654,7 +720,7 @@ class _FormWelaawaState extends State<FormPorondam> {
                     ),
                     Center(
                       child: Text(
-                        "ඔබගේ තොරතුරු සාර්ථකව ඉදිරිපත් කර ඇත. දින 1-2ක් ඇතුළත WhatsApp හෝ විද්‍යුත් තැපෑල හරහා ඔබගේ හමුවීම් විස්තර සහිත තහවුරු කිරීමේ කේතයක් ඔබට ලැබෙනු ඇත. ඔබට එය නොලැබුනේ නම් කරුණාකර අපට දැනුම් දෙන්න.",
+                        "ඔබගේ තොරතුරු සාර්ථකව ඉදිරිපත් කර ඇත. WhatsApp හෝ විද්‍යුත් තැපෑල හරහා ඔබගේ හමුවීම් විස්තර සහිත තහවුරු කිරීමේ කේතයක් ඔබට ලැබෙනු ඇත. ඔබට එය නොලැබුනේ නම් කරුණාකර අපට දැනුම් දෙන්න.",
                         style: GoogleFonts.notoSerifSinhala(
                           color: Colors.black,
                           fontSize: 14,
@@ -745,6 +811,27 @@ class _FormWelaawaState extends State<FormPorondam> {
         );
       },
     );
+  }
+}
+
+void sendEmail(String recipientEmail, String subject, String body) async {
+  // Replace these with your email configuration
+  final smtpServer = gmail('nakathapp@gmail.com', 'ictd xqeg sshg mjwt');
+
+  // Create a message
+  final message = mailer.Message()
+    ..from = mailer.Address('nakathapp@gmail.com', 'නැකැත් App')
+    ..recipients.add(recipientEmail)
+    ..subject = subject
+    ..text = body;
+
+  try {
+    // Send the email
+    final sendReport = await mailer.send(message, smtpServer);
+
+    print('Message sent: ' + sendReport.toString());
+  } catch (e) {
+    print('Error sending email: $e');
   }
 }
 

@@ -12,6 +12,11 @@ import 'package:pdf/widgets.dart' as pdfLib;
 var name;
 var details;
 var image;
+var lagnaya;
+var nawanshakaya;
+var ganaya;
+var birth_time;
+var upan_nakatha;
 
 class ResultsWelaawa extends StatefulWidget {
   final String data;
@@ -44,6 +49,11 @@ class _ResultsWelaawaState extends State<ResultsWelaawa> {
         name = data?['name'] as String?;
         details = data?['details'] as String?;
         image = data?['image'] as String?;
+        lagnaya = data?['lagnaya'] as String?;
+        nawanshakaya = data?['nawanshakaya'] as String?;
+        ganaya = data?['ganaya'] as String?;
+        birth_time = data?['birth_time'] as String?;
+        upan_nakatha = data?['upan_nakatha'] as String?;
 
         if (name != null && name.isNotEmpty ||
             details != null && details.isNotEmpty) {
@@ -105,6 +115,7 @@ class _ResultsWelaawaState extends State<ResultsWelaawa> {
         padding: const EdgeInsets.all(8.0),
         child: RefreshIndicator(
           onRefresh: _refresh,
+          
           child: SingleChildScrollView(
             child: Column(
               children: [
@@ -112,6 +123,7 @@ class _ResultsWelaawaState extends State<ResultsWelaawa> {
                   Container(
                     child: Image.asset("assets/arimbuwa/arimbuwa.png"),
                   ),
+                   if (DataIstAvailble == false)
                 Container(
                   alignment: Alignment.center,
                   margin: EdgeInsets.only(top: 10, bottom: 10),
@@ -161,6 +173,7 @@ class _ResultsWelaawaState extends State<ResultsWelaawa> {
                 //     ),
                 //   ),
                 // if (DataIstAvailble == false)
+                  if (DataIstAvailble == false)
                 Container(
                   child: Card(
                     child: Column(children: [
@@ -170,34 +183,35 @@ class _ResultsWelaawaState extends State<ResultsWelaawa> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Text(
-                                "ලග්නය: මේශ",
+                                "ලග්නය: $lagnaya",
                                 style: GoogleFonts.notoSerifSinhala(
                                     fontSize: 13, color: Colors.blue),
                               ),
                               Text(
-                                "නවාංශකය: මේශ",
+                                "නවාංශකය: $nawanshakaya",
                                 style: GoogleFonts.notoSerifSinhala(
                                     fontSize: 13, color: Colors.green),
                               ),
                               Text(
-                                "ඝනය: රාක්ශ",
+                                "ඝනය: $ganaya",
                                 style: GoogleFonts.notoSerifSinhala(
                                     fontSize: 13, color: Colors.red),
                               ),
                             ]),
                       ),
+                        if (DataIstAvailble == false)
                       Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Text(
-                                "උපන් වෙලාව: උදේ 8.30",
+                                "උපන් වෙලාව: $birth_time",
                                 style: GoogleFonts.notoSerifSinhala(
                                     fontSize: 13, color: Colors.orange),
                               ),
                               Text(
-                                "උපන් නැකත: සුවන",
+                                "උපන් නැකත: $upan_nakatha",
                                 style: GoogleFonts.notoSerifSinhala(
                                     fontSize: 13, color: Colors.purple),
                               ),
@@ -206,7 +220,7 @@ class _ResultsWelaawaState extends State<ResultsWelaawa> {
                     ]),
                   ),
                 ),
-
+                if (DataIstAvailble == false)
                 Column(
                   children: [
                     Container(
@@ -247,10 +261,11 @@ class _ResultsWelaawaState extends State<ResultsWelaawa> {
                       ),
                     ),
                   ),
-
+       if (DataIstAvailble == false)
                 Container(
                   child: Image.asset("assets/arimbuwa/arimbuwa_end.png"),
                 ),
+                 if (DataIstAvailble == false)
                 Center(
                   child: Text(
                     "මෙම වේලාව සංස්තෘත මූලධර්ම වලට අනුව නිර්මාණය කර ඇත",

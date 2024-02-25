@@ -2,10 +2,13 @@ import 'dart:ffi';
 import 'dart:math';
 
 import 'package:aurudu_nakath/screens/home.dart';
+import 'package:aurudu_nakath/screens/horoscope/form_welawa/form_porondam_balima.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lottie/lottie.dart';
+import 'package:mailer/smtp_server/gmail.dart';
+import 'package:mailer/mailer.dart' as mailer;
 
 class FormWelaawa extends StatefulWidget {
   const FormWelaawa({Key? key}) : super(key: key);
@@ -21,6 +24,7 @@ class _FormWelaawaState extends State<FormWelaawa> {
   String? selectedDistrict;
   TextEditingController selectedName = TextEditingController();
   TextEditingController additionalInfo = TextEditingController();
+  TextEditingController email = TextEditingController();
 
   Future<void> _selectTime(BuildContext context) async {
     final TimeOfDay? pickedTime = await showTimePicker(
@@ -96,7 +100,7 @@ class _FormWelaawaState extends State<FormWelaawa> {
                     key: Key('unique_key'),
                     keyboardType: TextInputType.name,
                     style: TextStyle(
-                      fontSize: 12, // Adjust text size that user inputs
+                      fontSize: 15, // Adjust text size that user inputs
                     ),
                     decoration: InputDecoration(
                       border: OutlineInputBorder(), // Added border
@@ -120,7 +124,7 @@ class _FormWelaawaState extends State<FormWelaawa> {
                           20.0), // Increased space for better visual separation
                   DropdownButtonFormField<String>(
                     style: TextStyle(
-                      fontSize: 12,
+                      fontSize: 15,
                       color: Color.fromARGB(
                           255, 0, 0, 0), // Adjust text size that user inputs
                     ),
@@ -158,7 +162,7 @@ class _FormWelaawaState extends State<FormWelaawa> {
                     controller: additionalInfo,
                     key: Key('unique_2key'),
                     style: TextStyle(
-                      fontSize: 12, // Adjust text size that user inputs
+                      fontSize: 15, // Adjust text size that user inputs
                     ),
                     decoration: InputDecoration(
                       border: OutlineInputBorder(), // Added border
@@ -213,6 +217,31 @@ class _FormWelaawaState extends State<FormWelaawa> {
                     ],
                   ),
                   SizedBox(height: 20.0),
+                  TextFormField(
+                    controller: email,
+                    key: Key('unique_key3'),
+                    keyboardType: TextInputType.emailAddress,
+                    style: TextStyle(
+                      fontSize: 15, // Adjust text size that user inputs
+                    ),
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(), // Added border
+                      labelText: 'ඊමේල් ලිපිනයක් ඇතුලත් කරන්න.',
+                      labelStyle: GoogleFonts.notoSerifSinhala(
+                        fontSize: 12,
+                      ), // Adjust font size here
+                      prefixIcon: Icon(
+                          Icons.email), // Changed to prefixIcon for alignment
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'ඊමේල් ලිපිනයක් අවශ්‍යයි';
+                      }
+                      return null; // Return null if the input is valid
+                    },
+                  ),
+            
+                  SizedBox(height: 20.0),
                   Container(
                     width: double.infinity,
                     child: ElevatedButton(
@@ -257,11 +286,16 @@ class _FormWelaawaState extends State<FormWelaawa> {
       try {
         // Access the Firestore instance
         FirebaseFirestore firestore = FirebaseFirestore.instance;
+         // Generate a random integer with a length of 6
+        int randomNumber = Random().nextInt(99999); // 6-digit number
+
+        // Add '#' at the beginning
+        String result = '#$randomNumber';
 
         // Create a reference to a new document
         CollectionReference formCollection =
             firestore.collection('welawa_user_details');
-
+          String username = selectedName.text;
         // Add data to the document
         await formCollection.add({
           'නම': selectedName.text,
@@ -269,73 +303,94 @@ class _FormWelaawaState extends State<FormWelaawa> {
           'උපන්_වෙලාව': selectedTime.format(context),
           'වැඩි_විස්තර': additionalInfo.text,
           'ස්ත්‍රී_පුරුශ': isMale ? 'Male' : (isFemale ? 'Female' : ''),
+          'ර්‍ර්මේල්': email.text,
+          'හෑශ්_කේතය': result
         });
+     String recipientEmail = email.text;
+        String emailSubject = 'හෙලෝ, ඔබගේ නැකැත් App පොරොන්දම් හෑශ් කේතය';
+        String emailBody = '$username ඔබගේ නැකැත් App පොරොන්දම් බැලීම සඳහා  අදාල වන හෑශ් කේතය වන්නෙ: $result';
 
+        sendEmail(recipientEmail, emailSubject, emailBody);
+
+        // Access the Firestore instance
+        FirebaseFirestore firestore2 = FirebaseFirestore.instance;
+
+        // Reference to nakath_porondam_results collection and set document ID
+        DocumentReference resultDocument =
+            firestore.collection('nakath_welawa_results').doc(result);
+        // Create an empty Map or add your fields accordingly
+        Map<String, dynamic> emptyData = {};
+
+        // Add an empty document to the 'nakath_porondam_results' collection
+        await resultDocument.set(emptyData);
     // Display a success message using showDialog
     showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          backgroundColor: Color.fromARGB(255, 0, 241, 169),
-          title: Text(
-            "Success",
-            style: TextStyle(
-              color: Color(0xFF585858),
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          content: Container(
-            child: Column(
-              children: [
-                Lottie.network(
-                  'https://lottie.host/a97e028a-48dd-4549-8f53-68060d76c5b7/Fe6RAnfouo.json',
-                  height: 200,
-                  width: 200,
-                  repeat: false
-                ),
-                Center(
-                  child: Text(
-                    "ඔබගේ තොරතුරු සාර්ථකව ඉදිරිපත් කර ඇත. ඔබට දින 1,2 ත් අතර කාලය තුල ඔබගේ වේලාපත බැලීම සඳහා කේතයක් WhatsApp හා ඊමේල් මාර්ගයෙන් අප විසින් ඔබට ලැබීමට සලස්වමු. ඔබට ස්තූතී නැකැත් App හා නොබැඳිව රැදී සිටින්න.",
-                    style: GoogleFonts.notoSerifSinhala(
-                      color: Color.fromARGB(255, 255, 255, 255),
-                      fontSize: 14,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                // Add any action you want here, like navigating to another screen
-                // Clear the form fields
-                selectedName.clear();
-                additionalInfo.clear();
-                selectedTime = TimeOfDay.now();
-                selectedDistrict = null;
-
-                Navigator.of(context).pushReplacement(
-                  MaterialPageRoute(
-                    builder: (context) => HomeScreen(),
-                  ),
-                );
-              },
-              child: Text(
-                "හරි",
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(15.0),
+              ),
+              backgroundColor: Colors.white, // Set the background color
+              title: Text(
+                "Success",
                 style: TextStyle(
-                  color: Color(0xFFFFBB00),
-                  fontSize: 16,
+                  color: Color(0xFF585858),
+                  fontSize: 18,
                   fontWeight: FontWeight.bold,
                 ),
               ),
-            ),
-          ],
+              content: Container(
+                width: 300,
+                height: 290, // Set the width of the content container
+                child: Column(
+                  children: [
+                    Lottie.network(
+                      'https://lottie.host/a97e028a-48dd-4549-8f53-68060d76c5b7/Fe6RAnfouo.json',
+                      height: 150, // Set the height of the Lottie animation
+                      width: 150, // Set the width of the Lottie animation
+                      repeat: false,
+                    ),
+                    Center(
+                      child: Text(
+                        "ඔබගේ තොරතුරු සාර්ථකව ඉදිරිපත් කර ඇත. WhatsApp හෝ විද්‍යුත් තැපෑල හරහා ඔබගේ හමුවීම් විස්තර සහිත තහවුරු කිරීමේ කේතයක් ඔබට ලැබෙනු ඇත. ඔබට එය නොලැබුනේ නම් කරුණාකර අපට දැනුම් දෙන්න.",
+                        style: GoogleFonts.notoSerifSinhala(
+                          color: Colors.black,
+                          fontSize: 14,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    selectedName.clear();
+                    additionalInfo.clear();
+                    selectedTime = TimeOfDay.now();
+                    selectedDistrict = null;
+
+                    Navigator.of(context).pushReplacement(
+                      MaterialPageRoute(
+                        builder: (context) => HomeScreen(),
+                      ),
+                    );
+                  },
+                  child: Text(
+                    "හරි",
+                    style: GoogleFonts.notoSerifSinhala(
+                      color: Color(0xFFFFBB00),
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ],
+            );
+          },
         );
-      },
-    );
 
       } catch (error) {
         // Handle errors
@@ -383,6 +438,27 @@ class _FormWelaawaState extends State<FormWelaawa> {
         );
       },
     );
+  }
+}
+
+void sendEmail(String recipientEmail, String subject, String body) async {
+  // Replace these with your email configuration
+  final smtpServer = gmail('nakathapp@gmail.com', 'ictd xqeg sshg mjwt');
+
+  // Create a message
+  final message = mailer.Message()
+    ..from = mailer.Address('nakathapp@gmail.com', 'නැකැත් App')
+    ..recipients.add(recipientEmail)
+    ..subject = subject
+    ..text = body;
+
+  try {
+    // Send the email
+    final sendReport = await mailer.send(message, smtpServer);
+
+    print('Message sent: ' + sendReport.toString());
+  } catch (e) {
+    print('Error sending email: $e');
   }
 }
 

@@ -82,7 +82,7 @@ class _ResultsWelaawaState extends State<ResultsPorondam> {
           });
         } else {
           setState(() {
-            firestoreResponse = "ඔබගේ පොරොන්දම සැකසෙමින් වෙමින් පවතී";
+            firestoreResponse = "ඔබගේ පොරොන්දම සැකසෙමින් පවතී";
             DataIstAvailble = true;
           });
         }
@@ -248,75 +248,78 @@ class _ResultsWelaawaState extends State<ResultsPorondam> {
                   Container(
                     child: Image.asset("assets/arimbuwa/arimbuwa_end.png"),
                   ),
-                Padding(
-                  padding: const EdgeInsets.all(15.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Image.asset(
-                        'assets/monn_sun/sun.png',
-                        width: 100, // Replace with your image path
-                      ),
-                      Image.asset(
-                        'assets/monn_sun/moon.png',
-                        width: 100,
-                      )
-                    ],
+                if (DataIstAvailble == false)
+                  Padding(
+                    padding: const EdgeInsets.all(15.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Image.asset(
+                          'assets/monn_sun/sun.png',
+                          width: 100, // Replace with your image path
+                        ),
+                        Image.asset(
+                          'assets/monn_sun/moon.png',
+                          width: 100,
+                        )
+                      ],
+                    ),
                   ),
-                ),
-                Container(
-                  alignment: Alignment.center,
-                  margin: EdgeInsets.only(top: 10, bottom: 10),
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(
-                        8.0), // Add your desired border radius
-                    color: Color.fromARGB(255, 255, 255,
-                        255), // Add your desired background color
-                  ),
-                  padding: EdgeInsets.all(8.0), // Add your desired padding
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Column(
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.only(left: 10),
-                            child: Text(
-                              name ??
-                                  '', // Display the name if available, otherwise an empty string
+                if (DataIstAvailble == false)
+                  Container(
+                    alignment: Alignment.center,
+                    margin: EdgeInsets.only(top: 10, bottom: 10),
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(
+                          8.0), // Add your desired border radius
+                      color: Color.fromARGB(255, 255, 255,
+                          255), // Add your desired background color
+                    ),
+                    padding: EdgeInsets.all(8.0), // Add your desired padding
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Column(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.only(left: 10),
+                              child: Text(
+                                name ??
+                                    '', // Display the name if available, otherwise an empty string
 
-                              style: GoogleFonts.notoSerifSinhala(
-                                fontSize: 12,
-                                // Add any additional styling here, such as fontSize, fontWeight, etc.
-                                color: const Color.fromARGB(255, 88, 88,
-                                    88), // Add your desired text color
+                                style: GoogleFonts.notoSerifSinhala(
+                                  fontSize: 12,
+                                  // Add any additional styling here, such as fontSize, fontWeight, etc.
+                                  color: const Color.fromARGB(255, 88, 88,
+                                      88), // Add your desired text color
+                                ),
                               ),
                             ),
-                          ),
-                        ],
-                      ),
-                      Column(
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.only(right: 10),
-                            child: Text(
-                              name2 ??
-                                  '', // Display the name if available, otherwise an empty string
+                          ],
+                        ),
+                        if (DataIstAvailble == false)
+                          Column(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.only(right: 10),
+                                child: Text(
+                                  name2 ??
+                                      '', // Display the name if available, otherwise an empty string
 
-                              style: GoogleFonts.notoSerifSinhala(
-                                fontSize: 12,
-                                // Add any additional styling here, such as fontSize, fontWeight, etc.
-                                color: const Color.fromARGB(255, 88, 88,
-                                    88), // Add your desired text color
+                                  style: GoogleFonts.notoSerifSinhala(
+                                    fontSize: 12,
+                                    // Add any additional styling here, such as fontSize, fontWeight, etc.
+                                    color: const Color.fromARGB(255, 88, 88,
+                                        88), // Add your desired text color
+                                  ),
+                                ),
                               ),
-                            ),
+                            ],
                           ),
-                        ],
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
                 if (DataIstAvailble == false &&
                     image != null &&
                     image.isNotEmpty)
@@ -362,92 +365,96 @@ class _ResultsWelaawaState extends State<ResultsPorondam> {
                       ],
                     ),
                   ),
-                Container(
-                  child: Card(
-                    child: Column(children: [
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                "දස පොරොන්දම: $dhasa_porondama",
-                                style: GoogleFonts.notoSerifSinhala(
-                                    fontSize: 13, color: Colors.blue),
-                              ),
-                              Text(
-                                "අෂ්ට කූඨය: $ashta_kutaya",
-                                style: GoogleFonts.notoSerifSinhala(
-                                    fontSize: 13, color: Colors.green),
-                              ),
-                            ]),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text(
-                                "විසි පොරොන්දම: $wisi_porondama",
-                                style: GoogleFonts.notoSerifSinhala(
-                                    fontSize: 13, color: Colors.orange),
-                              ),
-                            ]),
-                      ),
-                    ]),
-                  ),
-                ),
-                Column(
-                  children: [
-                    Container(
-                        width: double.infinity,
-                        margin: EdgeInsets.only(top: 10, bottom: 10),
-                        child: Card(
-                            child: Padding(
+                if (DataIstAvailble == false)
+                  Container(
+                    child: Card(
+                      child: Column(children: [
+                        Padding(
                           padding: const EdgeInsets.all(8.0),
-                          child: Text(
-                            // details ?? '',
-                            "ඔබගේ පොරොන්දම $result_porondama",
-                            style: GoogleFonts.notoSerifSinhala(),
-                          ),
-                        ))),
-                  ],
-                ),
-                FutureBuilder<List<TableRow>>(
-                  future: _buildRowsFromFirestore(),
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return Center(child: CircularProgressIndicator());
-                    } else if (snapshot.hasError) {
-                      return Center(child: Text('Error: ${snapshot.error}'));
-                    } else {
-                      return SingleChildScrollView(
-                        scrollDirection: Axis.horizontal,
-                        child: Table(
-                          border: TableBorder.all(),
-                          columnWidths: const <int, TableColumnWidth>{
-                            0: FixedColumnWidth(85.0),
-                            1: FixedColumnWidth(85.0),
-                            2: FixedColumnWidth(85.0),
-                            3: FixedColumnWidth(85.0),
-                          },
-                          children: snapshot.data!.map((row) => row).toList(),
+                          child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  "දස පොරොන්දම: $dhasa_porondama",
+                                  style: GoogleFonts.notoSerifSinhala(
+                                      fontSize: 13, color: Colors.blue),
+                                ),
+                                Text(
+                                  "අෂ්ට කූඨය: $ashta_kutaya",
+                                  style: GoogleFonts.notoSerifSinhala(
+                                      fontSize: 13, color: Colors.green),
+                                ),
+                              ]),
                         ),
-                      );
-                    }
-                  },
-                ),
-                 Padding(
-                   padding: const EdgeInsets.all(8.0),
-                   child: Center(
-                    child: Text(
-                      "මෙම පොරොන්දම සංස්තෘත මූලධර්ම වලට අනුව නිර්මාණය කර ඇත",
-                      style: GoogleFonts.notoSerifSinhala(fontSize: 10),
-                      textAlign:
-                          TextAlign.center, // This centers the text horizontally
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  "විසි පොරොන්දම: $wisi_porondama",
+                                  style: GoogleFonts.notoSerifSinhala(
+                                      fontSize: 13, color: Colors.orange),
+                                ),
+                              ]),
+                        ),
+                      ]),
                     ),
-                                 ),
-                 ),
+                  ),
+                if (DataIstAvailble == false)
+                  Column(
+                    children: [
+                      Container(
+                          width: double.infinity,
+                          margin: EdgeInsets.only(top: 10, bottom: 10),
+                          child: Card(
+                              child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(
+                              // details ?? '',
+                              "ඔබගේ පොරොන්දම $result_porondama",
+                              style: GoogleFonts.notoSerifSinhala(),
+                            ),
+                          ))),
+                    ],
+                  ),
+                if (DataIstAvailble == false)
+                  FutureBuilder<List<TableRow>>(
+                    future: _buildRowsFromFirestore(),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return Center(child: CircularProgressIndicator());
+                      } else if (snapshot.hasError) {
+                        return Center(child: Text('Error: ${snapshot.error}'));
+                      } else {
+                        return SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          child: Table(
+                            border: TableBorder.all(),
+                            columnWidths: const <int, TableColumnWidth>{
+                              0: FixedColumnWidth(85.0),
+                              1: FixedColumnWidth(85.0),
+                              2: FixedColumnWidth(85.0),
+                              3: FixedColumnWidth(85.0),
+                            },
+                            children: snapshot.data!.map((row) => row).toList(),
+                          ),
+                        );
+                      }
+                    },
+                  ),
+                if (DataIstAvailble == false)
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Center(
+                      child: Text(
+                        "මෙම පොරොන්දම සංස්තෘත මූලධර්ම වලට අනුව නිර්මාණය කර ඇත",
+                        style: GoogleFonts.notoSerifSinhala(fontSize: 10),
+                        textAlign: TextAlign
+                            .center, // This centers the text horizontally
+                      ),
+                    ),
+                  ),
                 if (DataIstAvailble == true)
                   Padding(
                     padding: const EdgeInsets.all(8.0),
@@ -563,69 +570,71 @@ class _ResultsWelaawaState extends State<ResultsPorondam> {
     try {
       // Fetching data from Firestore
       // Iterate through the outer collection
-      QuerySnapshot outerQuerySnapshot = await FirebaseFirestore.instance
-          .collection('nakath_porondam_results')
-          .get();
-      for (QueryDocumentSnapshot outerDoc in outerQuerySnapshot.docs) {
-        // Fetch data from the inner collection (replace 'inner_collection' with your actual inner collection name)
-        QuerySnapshot innerQuerySnapshot = await FirebaseFirestore.instance
-            .collection(
-                'nakath_porondam_results/${widget.data}/wisi_porondam_data_table')
-            .get();
+      // Fetching data from Firestore
+// Iterate through the outer collection
+QuerySnapshot outerQuerySnapshot = await FirebaseFirestore.instance
+    .collection('nakath_porondam_results')
+    .get();
+for (QueryDocumentSnapshot outerDoc in outerQuerySnapshot.docs) {
+    // Fetch data from the inner collection
+    QuerySnapshot innerQuerySnapshot = await outerDoc.reference
+        .collection('wisi_porondam_data_table')
+        .get();
 
-        // Adding data rows from Firestore data
-        for (QueryDocumentSnapshot innerDoc in innerQuerySnapshot.docs) {
-          rows.add(
+    // Adding data rows from Firestore data
+    for (QueryDocumentSnapshot innerDoc in innerQuerySnapshot.docs) {
+        rows.add(
             TableRow(
-              children: [
-                TableCell(
-                  child: Container(
-                    padding: EdgeInsets.all(8.0),
-                    child: Text(
-                      innerDoc['porondama'] ?? '',
-                      style: GoogleFonts.notoSerifSinhala(fontSize: 12),
-                      textAlign: TextAlign.center,
+                children: [
+                    TableCell(
+                        child: Container(
+                            padding: EdgeInsets.all(8.0),
+                            child: Text(
+                                innerDoc['porondama'] ?? '',
+                                style: GoogleFonts.notoSerifSinhala(fontSize: 12),
+                                textAlign: TextAlign.center,
+                            ),
+                        ),
                     ),
-                  ),
-                ),
-                TableCell(
-                  child: Container(
-                    padding: EdgeInsets.all(8.0),
-                    child: Text(innerDoc['sthrii'] ?? '',
-                        style: GoogleFonts.notoSerifSinhala(fontSize: 12),
-                        textAlign: TextAlign.center),
-                  ),
-                ),
-                TableCell(
-                  child: Container(
-                    padding: EdgeInsets.all(8.0),
-                    child: Text(innerDoc['purusha'] ?? '',
-                        style: GoogleFonts.notoSerifSinhala(fontSize: 12),
-                        textAlign: TextAlign.center),
-                  ),
-                ),
-                TableCell(
-                  child: Container(
-                    padding: EdgeInsets.all(8.0),
-                    child: Text(
-                      innerDoc['result'] ?? '',
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: (innerDoc['result'] == 'ශුභයි')
-                            ? Colors.green
-                            : (innerDoc['result'] == 'අශුභයි')
-                                ? Colors.red
-                                : Color.fromARGB(255, 0, 255, 149),
-                      ),
-                      textAlign: TextAlign.center,
+                    TableCell(
+                        child: Container(
+                            padding: EdgeInsets.all(8.0),
+                            child: Text(innerDoc['sthrii'] ?? '',
+                                style: GoogleFonts.notoSerifSinhala(fontSize: 12),
+                                textAlign: TextAlign.center),
+                        ),
                     ),
-                  ),
-                ),
-              ],
+                    TableCell(
+                        child: Container(
+                            padding: EdgeInsets.all(8.0),
+                            child: Text(innerDoc['purusha'] ?? '',
+                                style: GoogleFonts.notoSerifSinhala(fontSize: 12),
+                                textAlign: TextAlign.center),
+                        ),
+                    ),
+                    TableCell(
+                        child: Container(
+                            padding: EdgeInsets.all(8.0),
+                            child: Text(
+                                innerDoc['result'] ?? '',
+                                style: TextStyle(
+                                    fontSize: 12,
+                                    color: (innerDoc['result'] == 'ශුභයි')
+                                        ? Colors.green
+                                        : (innerDoc['result'] == 'අශුභයි')
+                                        ? Colors.red
+                                        : Color.fromARGB(255, 0, 255, 149),
+                                ),
+                                textAlign: TextAlign.center,
+                            ),
+                        ),
+                    ),
+                ],
             ),
-          );
-        }
-      }
+        );
+    }
+}
+
     } catch (error) {
       // Handle the error here, you can print it or show a user-friendly message
       print('Error fetching data: $error');

@@ -247,7 +247,7 @@ class _MenuState extends State<Menu> {
                                   Container(
                                     margin: EdgeInsets.only(top: 0),
                                     child: Text(
-                                      'මෙම සේවාව සඳහා රු 1000/= ක මුදලක් අයකරන අතර පහත ඇති ගිනුමට මුදල් බැර කර මුදල් ගෙවූ බවට තහවුරු කිරීමට ඔබගේ රිසිට්පත පහතින් ඇති WhatsApp බොත්තම ක්ලික් කර අපට ඉදිරිපත් කර. ලබාදෙන උපදෙස් පිලිපදින්න.',
+                                      'මෙම සේවාව සඳහා රු 800/= ක මුදලක් අයකරන අතර පහත ඇති ගිනුමට මුදල් බැර කර මුදල් ගෙවූ බවට තහවුරු කිරීමට ඔබගේ රිසිට්පත පහතින් ඇති WhatsApp බොත්තම ක්ලික් කර අපට ඉදිරිපත් කර. ලබාදෙන උපදෙස් පිලිපදින්න.',
                                       style: GoogleFonts.notoSerifSinhala(
                                           fontSize: 14, color: Colors.white),
                                       textAlign: TextAlign.center,
@@ -453,7 +453,7 @@ class _MenuState extends State<Menu> {
                                   Container(
                                     margin: EdgeInsets.only(top: 0),
                                     child: Text(
-                                      'මෙම සේවාව සඳහා රු 1500/= ක මුදලක් අයකරන අතර පහත ඇති ගිනුමට මුදල් බැර කර මුදල් ගෙවූ බවට තහවුරු කිරීමට ඔබගේ රිසිට්පත පහතින් ඇති WhatsApp බොත්තම ක්ලික් කර අපට ඉදිරිපත් කර. ලබාදෙන උපදෙස් පිලිපදින්න.',
+                                      'මෙම සේවාව සඳහා රු 1100/= ක මුදලක් අයකරන අතර පහත ඇති ගිනුමට මුදල් බැර කර මුදල් ගෙවූ බවට තහවුරු කිරීමට ඔබගේ රිසිට්පත පහතින් ඇති WhatsApp බොත්තම ක්ලික් කර අපට ඉදිරිපත් කර. ලබාදෙන උපදෙස් පිලිපදින්න.',
                                       style: GoogleFonts.notoSerifSinhala(
                                           fontSize: 14, color: Colors.white),
                                       textAlign: TextAlign.center,
