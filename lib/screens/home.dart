@@ -1,9 +1,18 @@
+import 'dart:async';
+
+import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:aurudu_nakath/Ads/constombannerad.dart';
 import 'package:aurudu_nakath/Ads/init_ads.dart';
+import 'package:aurudu_nakath/Image_chache_Save/img_chanche.dart';
 import 'package:aurudu_nakath/screens/hela_ai.dart';
 import 'package:aurudu_nakath/screens/help.dart';
+import 'package:aurudu_nakath/screens/horoscope/compass.dart';
+import 'package:aurudu_nakath/screens/horoscope/menu.dart';
 import 'package:aurudu_nakath/screens/raahu_kalaya.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 
@@ -15,18 +24,18 @@ class HomeScreen extends StatefulWidget {
   @override
   _HomeScreenState createState() => _HomeScreenState();
 }
- InterstitialAdManager adManager = InterstitialAdManager();
 
+bool showImage = false;
 
+InterstitialAdManager adManager = InterstitialAdManager();
 
 class _HomeScreenState extends State<HomeScreen> {
-
   void initState() {
     super.initState();
     // Initialize the interstitial ad when the widget is created
     adManager.initInterstitialAd();
-
-    
+    ImageUtils.precacheImage(context);
+    checkFirebaseDatabase();
   }
 
   Future<bool> _onWillPop() async {
@@ -38,15 +47,59 @@ class _HomeScreenState extends State<HomeScreen> {
     return true; // Allow the app to close if the ad is not loaded
   }
 
+// Method to check Firebase database value
+// Method to check Firebase database value
+  void checkFirebaseDatabase() {
+    DatabaseReference databaseReference =
+        FirebaseDatabase.instance.reference().child('happy_new_year');
 
+    // Use 'onValue' instead of 'once' to receive a continuous stream of events
+    databaseReference
+        .child('check_value')
+        .onValue
+        .listen((DatabaseEvent event) {
+      if (event.snapshot.value != null) {
+        bool firebaseBoolValue = event.snapshot.value as bool;
 
- 
-
-
+        // Update the UI based on the boolean value
+        setState(() {
+          showImage = firebaseBoolValue;
+        });
+      } else {
+        // Handle the case where the snapshot is null or doesn't contain data
+        print('Firebase database value is null or does not contain data');
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      floatingActionButton: SpeedDial(
+          backgroundColor: Colors.red,
+          animatedIcon: AnimatedIcons.menu_close,
+          children: [
+            SpeedDialChild(
+                backgroundColor: const Color.fromARGB(255, 255, 255, 255),
+                child: Icon(Icons.help),
+                label: 'උදව්',
+                labelStyle: GoogleFonts.notoSerifSinhala(),
+                onTap: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(builder: (context) => Help()),
+                  );
+                }),
+            SpeedDialChild(
+                backgroundColor: const Color.fromARGB(255, 255, 255, 255),
+                child: Icon(Icons.compass_calibration),
+                label: 'මාලිමාව',
+                labelStyle: GoogleFonts.notoSerifSinhala(),
+                onTap: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(builder: (context) => Compass()),
+                  );
+                })
+          ]),
       body: Stack(
         children: <Widget>[
           Positioned.fill(
@@ -55,31 +108,85 @@ class _HomeScreenState extends State<HomeScreen> {
               fit: BoxFit.cover,
             ),
           ),
-          Container(
-            margin: EdgeInsets.only(top: 100, left: 20),
-            child: Text(
-              'නැකැත් App වෙත,\nසාදරයෙන් පිලිගනිමු',
-              style: GoogleFonts.notoSerifSinhala(
-                  fontSize: 20, color: Colors.white),
-            ),
-          ),
+
           Container(
             margin: EdgeInsets.all(16),
             child: Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
+                  if (showImage == false)
+                    Container(
+                      padding: EdgeInsets.only(bottom: 50),
+                      margin: EdgeInsets.only(
+                          left: 0, top: 20), // Adjust the top value as needed
+                      child: SizedBox(
+                        height: 30,
+                        child: FadeAnimatedTextKit(
+                          text: [
+                            'නැකැත් App වෙත',
+                            'සාදරයෙන් පිලිගනිමු',
+                          ],
+                          textStyle: GoogleFonts.notoSerifSinhala(
+                            fontSize: 20,
+                            color: Colors.white,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    )
+                  else if (showImage == true)
+                    Center(
+                      child: Container(
+                        padding: EdgeInsets.only(bottom: 50),
+                        margin: EdgeInsets.only(
+                            left: 0, top: 20), // Adjust the top value as needed
+                        child: SizedBox(
+                          height: 30,
+                          width: 250.0,
+                          child: DefaultTextStyle(
+                            style: GoogleFonts.notoSerif(
+                              textStyle: const TextStyle(
+                                fontSize: 16.0,
+                              ),
+                            ),
+                            child: Center(
+                              child: AnimatedTextKit(
+                                animatedTexts: [
+                                  TyperAnimatedText(
+                                    'සාමය සතුට සපිරුනු',
+                                    textStyle: GoogleFonts.notoSerifSinhala(
+                                        color: Colors.white, fontSize: 16),
+                                  ),
+                                  TyperAnimatedText(
+                                    'ඔබ සැමට',
+                                    textStyle: GoogleFonts.notoSerifSinhala(
+                                        color: Colors.white, fontSize: 16),
+                                  ),
+                                  TyperAnimatedText(
+                                    'සුභ අලුත් අවුරුද්දක් වේවා',
+                                    textStyle: GoogleFonts.notoSerifSinhala(
+                                        color: Colors.white, fontSize: 16),
+                                  ),
+                                ],
+                                onTap: () {
+                                  print("Tap Event");
+                                },
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       Expanded(
                         child: InkWell(
                           onTap: () {
+                            //Ads Load
+                            // adManager.showInterstitialAd();
 
-                            //Ads Load 
-                              // adManager.showInterstitialAd();
-
-                            
                             Navigator.of(context).push(
                               MaterialPageRoute(
                                 builder: (context) {
@@ -87,7 +194,6 @@ class _HomeScreenState extends State<HomeScreen> {
                                 },
                               ),
                             );
-                        
                           },
                           child: Container(
                             height: 100,
@@ -112,15 +218,17 @@ class _HomeScreenState extends State<HomeScreen> {
                                 ),
                                 child: Stack(
                                   children: [
-                                    Center(
-                                      child: Text(
-                                        'අවුරුදු නැකැත්',
-                                        style: GoogleFonts.notoSerifSinhala(
-                                          fontSize: 14,
-                                          color: const Color.fromARGB(
-                                              255, 255, 255, 255),
-                                          fontWeight: FontWeight
-                                              .bold, // Add this line to make the text bold
+                                    Container(
+                                      child: Center(
+                                        child: Text(
+                                          'අවුරුදු නැකැත්',
+                                          style: GoogleFonts.notoSerifSinhala(
+                                            fontSize: 14,
+                                            color: const Color.fromARGB(
+                                                255, 255, 255, 255),
+                                            fontWeight: FontWeight
+                                                .bold, // Add this line to make the text bold
+                                          ),
                                         ),
                                       ),
                                     ),
@@ -148,8 +256,8 @@ class _HomeScreenState extends State<HomeScreen> {
                       Expanded(
                         child: GestureDetector(
                           onTap: () {
-                             //Ads Load 
-                              // adManager.showInterstitialAd();
+                            //Ads Load
+                            // adManager.showInterstitialAd();
                             Navigator.of(context).push(
                               MaterialPageRoute(
                                 builder: (context) {
@@ -222,8 +330,8 @@ class _HomeScreenState extends State<HomeScreen> {
                       Expanded(
                         child: InkWell(
                           onTap: () {
-                             //Ads Load 
-                              // adManager.showInterstitialAd();
+                            //Ads Load
+                            // adManager.showInterstitialAd();
                             Navigator.of(context).push(
                               MaterialPageRoute(
                                 builder: (context) {
@@ -292,8 +400,8 @@ class _HomeScreenState extends State<HomeScreen> {
                         child: InkWell(
                           onTap: () {
                             // Handle tap for "රාහු කාලය"
-                             //Ads Load 
-                              // adManager.showInterstitialAd();
+                            //Ads Load
+                            // adManager.showInterstitialAd();
                             Navigator.of(context).push(
                               MaterialPageRoute(
                                 builder: (context) {
@@ -366,8 +474,8 @@ class _HomeScreenState extends State<HomeScreen> {
                       Expanded(
                         child: InkWell(
                           onTap: () {
-                             //Ads Load 
-                              // adManager.showInterstitialAd();
+                            //Ads Load
+                            // adManager.showInterstitialAd();
                             Navigator.of(context).push(
                               MaterialPageRoute(
                                 builder: (context) {
@@ -436,12 +544,12 @@ class _HomeScreenState extends State<HomeScreen> {
                       Expanded(
                         child: GestureDetector(
                           onTap: () {
-                             //Ads Load 
-                              // adManager.showInterstitialAd();
-                             Navigator.of(context).push(
+                            //Ads Load
+                            // adManager.showInterstitialAd();
+                            Navigator.of(context).push(
                               MaterialPageRoute(
                                 builder: (context) {
-                                  return Help();
+                                  return Menu();
                                 },
                               ),
                             );
@@ -469,7 +577,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   children: [
                                     Center(
                                       child: Text(
-                                        'උදව්',
+                                        'ජ්‍යෝතීෂ්‍ය සේවාව',
                                         style: GoogleFonts.notoSerifSinhala(
                                           fontSize: 14,
                                           color: const Color.fromARGB(

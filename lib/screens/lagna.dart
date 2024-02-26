@@ -1,4 +1,5 @@
 import 'package:aurudu_nakath/Ads/init_ads.dart';
+import 'package:aurudu_nakath/Image_chache_Save/img_chanche.dart';
 import 'package:aurudu_nakath/User_backClicked/back_clicked.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
@@ -19,7 +20,7 @@ class _LagnaPalapalaState extends State<LagnaPalapala> {
    @override
   void initState() {
     super.initState();
-   
+    ImageUtils.precacheImage(context);
     interstitialAdManager.initInterstitialAd();
 
   }
@@ -35,6 +36,7 @@ class _LagnaPalapalaState extends State<LagnaPalapala> {
       },
       child: Scaffold(
         appBar: AppBar(
+          centerTitle: true,
           backgroundColor: Color(0xFF6D003B),
           title: Text('ලග්න පලාඵල', style: GoogleFonts.notoSerifSinhala(fontSize: 14)),
         ),

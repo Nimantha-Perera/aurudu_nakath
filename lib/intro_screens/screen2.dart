@@ -27,7 +27,7 @@ class IntroPage2 extends StatelessWidget {
             ),
           ),
           Container(
-            margin: EdgeInsets.only(top: 50),
+           
             child: Lottie.network(
               'https://lottie.host/c709618b-400d-4773-9f6d-d266522baedf/8F9nYGiIv7.json',
               height: 400,
