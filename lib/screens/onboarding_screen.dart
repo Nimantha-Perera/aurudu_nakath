@@ -45,8 +45,7 @@ class _OnboardingState extends State<Onboarding> {
 
 
                       style: ElevatedButton.styleFrom(
-                        minimumSize: Size(100, 40),
-                        primary: Colors.white,
+                        minimumSize: Size(100, 40), backgroundColor: Colors.white,
 
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(50.0), // Adjust as needed
@@ -84,8 +83,7 @@ class _OnboardingState extends State<Onboarding> {
                     onLastPage
                         ? ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                        minimumSize: Size(100, 40),
-                        primary: Colors.white,
+                        minimumSize: Size(100, 40), backgroundColor: Colors.white,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(50.0), // Adjust as needed
                         ),
@@ -105,8 +103,7 @@ class _OnboardingState extends State<Onboarding> {
                     )
                         : ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                        minimumSize: Size(100, 40),
-                        primary: Colors.white,
+                        minimumSize: Size(100, 40), backgroundColor: Colors.white,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(50.0), // Adjust as needed
                         ),

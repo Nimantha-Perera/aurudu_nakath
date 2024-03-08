@@ -301,7 +301,7 @@ class _AuruduNakathScreenState extends State<AuruduNakathScreen> {
         onPressed: _loadMoreData,
         child: Text('තව බලන්න'),
         style: ElevatedButton.styleFrom(
-          primary: Color.fromARGB(255, 255, 238, 0),
+          backgroundColor: Color.fromARGB(255, 255, 238, 0),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(20),
           ),

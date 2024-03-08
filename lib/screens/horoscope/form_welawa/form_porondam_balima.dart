@@ -593,7 +593,7 @@ class _FormWelaawaState extends State<FormPorondam> {
                               style: TextStyle(fontSize: 12),
                             ),
                       style: ElevatedButton.styleFrom(
-                        primary: isLoading ? Colors.grey : Colors.teal,
+                        backgroundColor: isLoading ? Colors.grey : Colors.teal,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10.0),
                         ),
