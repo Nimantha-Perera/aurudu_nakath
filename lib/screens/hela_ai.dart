@@ -459,6 +459,7 @@ class _ChatScreenState extends State<HelaChatAI> {
             ),
           ),
           centerTitle: true,
+          foregroundColor: Colors.white,
           backgroundColor: Color(0xFF6D003B),
         ),
         body: Stack(

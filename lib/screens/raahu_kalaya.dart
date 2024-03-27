@@ -34,6 +34,7 @@ class _RaahuKaalayaState extends State<RaahuKaalaya> {
       },
       child: Scaffold(
         appBar: AppBar(
+          foregroundColor: Colors.white,
           backgroundColor: Color(0xFF6D003B),
           centerTitle: true,
           title: Text(

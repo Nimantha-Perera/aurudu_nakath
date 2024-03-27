@@ -18,6 +18,7 @@ import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import 'aurudu_nakath.dart';
 import 'lagna.dart';
@@ -113,34 +114,25 @@ class _HomeScreenState extends State<HomeScreen> {
               fit: BoxFit.cover,
             ),
           ),
-          Positioned(
-            top: 0,
-            left: 0,
-            right: 0,
-            child: FutureBuilder(
-              future: rootBundle.loadString('assets/index.html'),
-              builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
-                if (snapshot.hasData) {
-                  return Html(
-                    data: snapshot.data,
-                  );
-                } else {
-                  return CircularProgressIndicator(); // or any other loading indicator
-                }
-              },
-            ),
-          ),
-          // Positioned(
-          //   top: 0,
-          //   left: 0,
-          //   right: 0,
-          //   child: Container(
-          //     child: CustomBannerAd(
-          //       adSize: AdSize.banner,
-          //       adUnitId: 'ca-app-pub-7834397003941676/2610223957',
-          //     ),
-          //   ),
-          // ),
+         Positioned(
+  top: 0,
+  left: 0,
+  right: 0,
+  child: GestureDetector(
+    onTap: () async {
+      const url = 'https://play.google.com/store/apps/details?id=com.hela_ai.hela_ai'; // Replace this with your link
+      if (await canLaunch(url)) {
+        await launch(url);
+      } else {
+        throw 'Could not launch $url';
+      }
+    },
+    child: Container(
+      child: Image.asset('assets/helagpt_bannerad.png'),
+    ),
+  ),
+),
+
           Container(
             margin: EdgeInsets.all(16),
             child: Center(

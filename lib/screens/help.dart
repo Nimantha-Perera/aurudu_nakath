@@ -35,6 +35,7 @@ class _HelpState extends State<Help> {
       child: Scaffold(
         appBar: AppBar(
           backgroundColor: Color(0xFF6D003B),
+          foregroundColor: Colors.white,
           centerTitle: true,
           title:
               Text('උදව්', style: GoogleFonts.notoSerifSinhala(fontSize: 14)),
