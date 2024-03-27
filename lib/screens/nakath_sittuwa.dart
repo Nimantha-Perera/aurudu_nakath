@@ -98,9 +98,11 @@ class _NakathSittuwaState extends State<NakathSittuwa> {
       child: Scaffold(
         appBar: AppBar(
           centerTitle: true,
+           iconTheme: IconThemeData(color: Colors.white),
           backgroundColor: Color(0xFF6D003B),
           title: Text("අලුත් අවුරුදු නැකැත්",style: GoogleFonts.notoSerifSinhala(
                 fontSize: 14.0,
+                color: Colors.white,
               ),),
         ),
         body: Container(

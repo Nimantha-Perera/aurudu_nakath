@@ -12,6 +12,9 @@ import 'package:aurudu_nakath/screens/raahu_kalaya.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart';
+import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
@@ -77,6 +80,8 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       floatingActionButton: SpeedDial(
           backgroundColor: Colors.red,
+          foregroundColor: Colors.white,
+          iconTheme: IconThemeData(color: Colors.white),
           animatedIcon: AnimatedIcons.menu_close,
           children: [
             SpeedDialChild(
@@ -108,7 +113,23 @@ class _HomeScreenState extends State<HomeScreen> {
               fit: BoxFit.cover,
             ),
           ),
-
+          Positioned(
+            top: 0,
+            left: 0,
+            right: 0,
+            child: FutureBuilder(
+              future: rootBundle.loadString('assets/index.html'),
+              builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+                if (snapshot.hasData) {
+                  return Html(
+                    data: snapshot.data,
+                  );
+                } else {
+                  return CircularProgressIndicator(); // or any other loading indicator
+                }
+              },
+            ),
+          ),
           Container(
             margin: EdgeInsets.all(16),
             child: Center(
@@ -613,12 +634,6 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
           ),
-          Container(
-            child: CustomBannerAd(
-              adSize: AdSize.banner,
-              adUnitId: 'ca-app-pub-7834397003941676/2610223957',
-            ),
-          )
         ],
       ),
     );
