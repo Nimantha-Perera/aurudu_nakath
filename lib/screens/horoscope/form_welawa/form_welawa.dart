@@ -254,7 +254,7 @@ class _FormWelaawaState extends State<FormWelaawa> {
                         style: GoogleFonts.notoSerifSinhala(fontSize: 12),
                       ),
                       style: ElevatedButton.styleFrom(
-                        primary: Colors.teal,
+                        foregroundColor: Colors.teal,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10.0),
                         ),

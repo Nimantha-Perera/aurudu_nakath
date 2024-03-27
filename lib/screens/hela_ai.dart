@@ -595,7 +595,7 @@ Widget buildSuggestionButton(String suggestion) {
         _handleSubmitted(suggestion);
       },
       style: ElevatedButton.styleFrom(
-        primary: Color.fromARGB(255, 255, 217, 0), // Change the button color here
+        foregroundColor: Color.fromARGB(255, 255, 217, 0), // Change the button color here
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(10.0), // Change the border radius here
         ),
