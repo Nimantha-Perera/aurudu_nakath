@@ -130,6 +130,17 @@ class _HomeScreenState extends State<HomeScreen> {
               },
             ),
           ),
+          // Positioned(
+          //   top: 0,
+          //   left: 0,
+          //   right: 0,
+          //   child: Container(
+          //     child: CustomBannerAd(
+          //       adSize: AdSize.banner,
+          //       adUnitId: 'ca-app-pub-7834397003941676/2610223957',
+          //     ),
+          //   ),
+          // ),
           Container(
             margin: EdgeInsets.all(16),
             child: Center(
