@@ -19,13 +19,12 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 
 
-//Function Backgrund
-
-Future _firebaseBackgroundMessage(RemoteMessage message) async{
-  if(message.notification!=null){
-    print("Some NOtification Recved");
-  }
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  
+  print('Handling a background message ${message.messageId}');
 }
+
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await initializeDateFormatting('si_LK');
@@ -58,10 +57,8 @@ void main() async {
   //     ),
   //   ],
   // );
-  PushNotifications.intt();
-  //Listen to background notificationd
-  FirebaseMessaging.onBackgroundMessage(_firebaseBackgroundMessage);
-
+  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+  LocalNotificationService.initialize();
   runApp(MyApp());
 }
 
@@ -73,14 +70,46 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   Future<Widget>? _appWidget;
-  
+  String? _fcmToken;
 
   @override
-  void initState() {
-    super.initState();
-    _appWidget = _checkConnectivityAndFirstTime();
-    checkForUpdate();
-  }
+ void initState() {
+  super.initState();
+  _appWidget = _checkConnectivityAndFirstTime();
+  // _getFCMToken();
+  // _initializeFirebaseMessaging();
+}
+//  Future<void> _getFCMToken() async {
+//     String? token = await FirebaseMessaging.instance.getToken();
+//     setState(() {
+//       _fcmToken = token;
+//     });
+//     print("FCM Token: $_fcmToken");
+//   }
+void _initializeFirebaseMessaging() {
+  // Handling the initial message when the app is terminated
+  FirebaseMessaging.instance.getInitialMessage().then((message) {
+    if (message != null) {
+      print("app is terminated");
+      print('Handling a background message: ${message.messageId}');
+    }
+  }).catchError((error) {
+    print('Error handling initial message: $error');
+  });
+
+  // Listening for messages received while the app is in the foreground
+  FirebaseMessaging.onMessage.listen((message) {
+    print('Got a message whilst in the foreground!');
+    print('Message data: ${message.data}');
+    if (message.notification != null) {
+      print('Message also contained a notification: ${message.notification}');
+    }
+    LocalNotificationService.createNotifications(message);
+  });
+}
+
+
+
 
 
 

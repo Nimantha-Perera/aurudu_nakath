@@ -1,25 +1,55 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
-class PushNotifications {
-  static final _firebaseMessaging = FirebaseMessaging.instance;
+class LocalNotificationService {
+  static final FlutterLocalNotificationsPlugin _notificationsPlugin =
+      FlutterLocalNotificationsPlugin();
 
-  //requst Notificatins
-
-  static Future intt() async {
-    await _firebaseMessaging.requestPermission(
-      alert: true,
-      announcement: true,
-      badge: true,
-      carPlay: false,
-      criticalAlert: false,
-      provisional: false,
-      sound: true,
+  static void initialize() {
+    const InitializationSettings initializationSettings = InitializationSettings(
+      android: AndroidInitializationSettings('@mipmap/ic_launcher'),
     );
-
-    final token = await _firebaseMessaging.getToken();
-
-    print("Device Token: $token");
+    _notificationsPlugin.initialize(
+      initializationSettings,
+    );
   }
 
-  // get the device fcm token
+  static Future<void> createNotifications(RemoteMessage message) async {
+    try {
+      final id = DateTime.now().millisecondsSinceEpoch ~/ 1000;
+      const NotificationDetails notificationDetails = NotificationDetails(
+        android: AndroidNotificationDetails(
+          'pushnotifications',
+          'pushnotificationschannel',
+          importance: Importance.max,
+          priority: Priority.high,
+        ),
+      );
+      await _notificationsPlugin.show(
+        id,
+        message.notification!.title ?? '',
+        message.notification!.body ?? '',
+        notificationDetails,
+      );
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  static void showNotification({required String title, required String body}) {
+    const NotificationDetails notificationDetails = NotificationDetails(
+      android: AndroidNotificationDetails(
+        'channel_id',
+        'channel_name',
+        importance: Importance.max,
+        priority: Priority.high,
+      ),
+    );
+    _notificationsPlugin.show(
+      0,
+      title,
+      body,
+      notificationDetails,
+    );
+  }
 }

@@ -48,8 +48,8 @@
         android:name="com.google.android.gms.ads.APPLICATION_ID"
         android:value="ca-app-pub-7834397003941676~9303624810"/>        
         <meta-data
-        android:name="com.google.firebase.messaging.default_notification_icon"
-        android:resource="@mipmap/ic_launcher" />
+        android:name="com.google.firebase.messaging.default_notification_id"
+        android:value="pushnotifications" />
 
     </application>
 </manifest>
