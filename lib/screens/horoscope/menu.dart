@@ -396,6 +396,7 @@ class _MenuState extends State<Menu> {
                         textAlign: TextAlign.center,
                         style: GoogleFonts.notoSerifSinhala(
                           fontSize: 14.0,
+                           color: Colors.white,
                         ),
                       ),
                     ),
@@ -602,6 +603,7 @@ class _MenuState extends State<Menu> {
                         textAlign: TextAlign.center,
                         style: GoogleFonts.notoSerifSinhala(
                           fontSize: 14.0,
+                           color: Colors.white,
                         ),
                       ),
                     ),

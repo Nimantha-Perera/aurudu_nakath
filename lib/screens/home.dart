@@ -114,25 +114,29 @@ class _HomeScreenState extends State<HomeScreen> {
               fit: BoxFit.cover,
             ),
           ),
-         Positioned(
-  top: 0,
-  left: 0,
-  right: 0,
-  child: GestureDetector(
-    onTap: () async {
-      const url = 'https://play.google.com/store/apps/details?id=com.hela_ai.hela_ai'; // Replace this with your link
-      if (await canLaunch(url)) {
-        await launch(url);
-      } else {
-        throw 'Could not launch $url';
-      }
-    },
-    child: Container(
-      child: Image.asset('assets/helagpt_bannerad.png'),
-    ),
-  ),
-),
-
+          Positioned(
+            top: 0,
+            left: 0,
+            right: 0,
+            child: GestureDetector(
+              onTap: () async {
+                const url =
+                    'https://play.google.com/store/apps/details?id=com.hela_ai.hela_ai'; // Replace this with your link
+                if (await canLaunch(url)) {
+                  await launch(url);
+                } else {
+                  throw 'Could not launch $url';
+                }
+              },
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Container(
+                  margin: EdgeInsets.only(top: 10),
+                  child: Image.asset('assets/helagpt_bannerad.png'),
+                ),
+              ),
+            ),
+          ),
           Container(
             margin: EdgeInsets.all(16),
             child: Center(
