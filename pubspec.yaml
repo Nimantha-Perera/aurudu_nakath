@@ -84,6 +84,7 @@ dependencies:
   flutter_html: ^3.0.0-beta.2
   webview_flutter: ^4.7.0
   webview_flutter_plus: ^0.4.4
+  carousel_slider: ^4.2.1
 
 dev_dependencies:
   flutter_test:
@@ -100,9 +101,9 @@ dev_dependencies:
 flutter_launcher_icons:
   android: true
   ios: true
-  image_path: "assets/icon/ic_launcher.png"
+  image_path: "assets/icon/ic_nakath.png"
   adaptive_icon_background: "#ffffff"
-  adaptive_icon_foreground: "assets/icon/ic_launcher.png"
+  adaptive_icon_foreground: "assets/icon/ic_nakath.png"
 
 flutter_native_splash:
   color: "#ffffff"
