@@ -39,6 +39,10 @@ int myCurrentIndex = 0;
 
 InterstitialAdManager adManager = InterstitialAdManager();
 
+late Timer timer;
+late DateTime futureDate1;
+late DateTime futureDate2;
+
 class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
@@ -47,6 +51,58 @@ class _HomeScreenState extends State<HomeScreen> {
     adManager.initInterstitialAd();
     ImageUtils.precacheImage(context);
     checkFirebaseDatabase();
+
+    countdownText1 = 'ගනනය කරමින්...';
+    countdownText2 = 'ගනනය කරමින්...';
+    ImageUtils.precacheImage(context);
+
+    // Future dates
+    futureDate1 = DateTime(2024, 4, 13);
+    futureDate2 = DateTime(2024, 4, 13, 21, 5);
+
+    // Initialize timer to update countdown every second
+    timer = Timer.periodic(Duration(seconds: 1), (Timer t) {
+      setState(() {
+        // Recalculate the differences every second
+        Duration difference1 = futureDate1.difference(DateTime.now());
+        Duration difference2 = futureDate2.difference(DateTime.now());
+
+        updateCountdown(1, difference1); // Update the first countdown
+        updateCountdown(2, difference2); // Update the second countdown
+      });
+    });
+  }
+
+  late String countdownText1;
+  late String countdownText2;
+
+  void updateCountdown(int counterIndex, Duration difference) {
+    String countdownText;
+
+    if (difference.inSeconds <= 0) {
+      countdownText = 'අලුත් අවුරුදු ලබා අවසන්';
+    } else {
+      int days = difference.inDays;
+      int hours = difference.inHours % 24;
+      int minutes = difference.inMinutes % 60;
+      int seconds = difference.inSeconds % 60;
+
+      countdownText =
+          'දින: $days  පැය: $hours  මිනිත්තු: $minutes  තත්පර: $seconds';
+    }
+
+    // Assign the appropriate countdown text based on the counter index
+    if (counterIndex == 1) {
+      setState(() {
+        // Assign the countdown text for the first counter
+        countdownText1 = countdownText;
+      });
+    } else if (counterIndex == 2) {
+      setState(() {
+        // Assign the countdown text for the second counter
+        countdownText2 = countdownText;
+      });
+    }
   }
 
   Future<bool> _onWillPop() async {
@@ -169,72 +225,59 @@ class _HomeScreenState extends State<HomeScreen> {
             //     ),
             //   ),
             // ),
-            Column(
-              children: [
-                Container(
-                  color: Color.fromARGB(255, 255, 255, 255),
-                  margin: EdgeInsets.only(top: 0),
-                  child: Padding(
-                    padding: const EdgeInsets.only(top: 50, bottom: 10),
-                    child: CarouselSlider(
-                      options: CarouselOptions(
-                        autoPlay: true,
-                        height: 100,
-                        autoPlayCurve: Curves.fastOutSlowIn,
-                        autoPlayAnimationDuration:
-                            const Duration(milliseconds: 800),
-                        autoPlayInterval: const Duration(seconds: 15),
-                        enlargeCenterPage: true,
-                        aspectRatio: 2.0,
-                        onPageChanged: (index, reason) {
-                          setState(() {
-                            myCurrentIndex = index;
-                          });
-                        },
+            Container(
+              width: double.infinity,
+              height: 150,
+              color: const Color.fromARGB(255, 255, 255, 255),
+              child: Padding(
+                padding: const EdgeInsets.only(top: 50, left: 25, right: 25),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "ලඟම නැකත",
+                      style: GoogleFonts.notoSerifSinhala(
+                        fontSize: 16,
+                        color: Color.fromARGB(255, 255, 187, 0),
                       ),
-                      items: myItems.map((item) {
-                        return Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10),
-                            boxShadow: [
-                              BoxShadow(
-                                color: const Color.fromARGB(255, 219, 219, 219)
-                                    .withOpacity(0.5),
-                                spreadRadius: 1,
-                                blurRadius: 4,
-                                offset:
-                                    Offset(0, 3), // changes position of shadow
+                      textAlign: TextAlign.start,
+                    ),
+                    Center(
+                      child: Container(
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                          border: Border.all(
+                            color: Color.fromARGB(255, 207, 207, 207), // Choose your desired border color
+                            width: 2.0, // Adjust the border width as needed
+                          ),
+                          borderRadius: BorderRadius.circular(
+                              10.0), // Adjust the border radius as needed
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Column(
+                            children: [
+                              Text(
+                                'අලුත් අවුරුදු උදාවිමට තව',
+                                style: GoogleFonts.notoSerifSinhala(
+                                  fontSize: 10,
+                                ),
+                              ),
+                              SizedBox(
+                                height: 10,
+                              ),
+                              Text(
+                                "$countdownText1",
+                                style: GoogleFonts.notoSerifSinhala(),
                               ),
                             ],
                           ),
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(10),
-                            child: SizedBox(
-                              width: double.infinity,
-                              child: item,
-                            ),
-                          ),
-                        );
-                      }).toList(),
-                    ),
-                  ),
+                        ),
+                      ),
+                    )
+                  ],
                 ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: AnimatedSmoothIndicator(
-                    activeIndex: myCurrentIndex,
-                    count: myItems.length,
-                    effect: WormEffect(
-                      dotHeight: 4,
-                      dotWidth: 4,
-                      spacing: 10,
-                      dotColor: Colors.grey.shade200,
-                      activeDotColor: Color.fromARGB(255, 255, 145, 0),
-                      paintStyle: PaintingStyle.fill,
-                    ),
-                  ),
-                ),
-              ],
+              ),
             ),
 
             Container(
