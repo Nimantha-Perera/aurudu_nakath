@@ -354,6 +354,7 @@ class _AuruduNakathScreenState extends State<AuruduNakathScreen> {
       appBar: AppBar(
         backgroundColor: Color(0xFF6D003B),
         centerTitle: true,
+        foregroundColor: Colors.white,
         title: Text(
           '2024 ලිත',
           style: GoogleFonts.notoSerifSinhala(

@@ -56,7 +56,7 @@ List<String> indexNames = [
   'සිංහල දෙමළ අලුත් අවුරුද්ද උදාව සඳහා තව',
   'කිරි ඉතිරවීම සඳහා තව',
   'වැඩ ඇල්ලීම ,හනුදෙනු කිරීම සහ ආහාර අනුභවය'
-  'හිස තෙල් ගෑම සඳහා තව',
+      'හිස තෙල් ගෑම සඳහා තව',
   'රැකී රක්ශා සඳහා පිටත්ව යෑම සඳහා තව',
   'පැල සිටුවීම සඳහා තව',
 ];
@@ -107,15 +107,21 @@ class _HomeScreenState extends State<HomeScreen> {
     int minutes = duration.inMinutes.remainder(60);
     int seconds = duration.inSeconds.remainder(60);
 
-    if (days == 0) {
-      return "පැය $hours මිනිත්තු $minutes තත්පර $seconds";
-    } else if (hours == 0) {
-      return "මිනිත්තු $minutes තත්පර $seconds";
-    } else if (minutes == 0) {
-      return "තත්පර $seconds";
-    } else
-      return "දින $days පැය $hours මිනිත්තු $minutes තත්පර $seconds";
+   if (days == 0) {
+    if (hours == 0) {
+        if (minutes == 0) {
+            return "තත්පර $seconds";
+        } else {
+            return "මිනිත්තු $minutes තත්පර $seconds";
+        }
+    } else {
+        return "පැය $hours මිනිත්තු $minutes තත්පර $seconds";
+    }
+} else {
+    return "දින $days පැය $hours මිනිත්තු $minutes තත්පර $seconds";
+}
   }
+
 
   Future<bool> _onWillPop() async {
     // Show ad when the back button is pressed
@@ -277,7 +283,6 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                     ),
                   ),
-            
                 if (!showTimeCount) // Show indicator when showTimeCount is false
                   Padding(
                     padding: const EdgeInsets.all(8.0),

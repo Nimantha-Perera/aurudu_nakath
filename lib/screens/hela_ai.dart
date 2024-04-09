@@ -45,7 +45,6 @@ class _ChatScreenState extends State<HelaChatAI> {
   final List<ChatMessage> _messages = [];
   bool isSendButtonEnabled = false;
 
-
   InterstitialAdManager interstitialAdManager = InterstitialAdManager();
 
   void _handleSubmitted(String text) {
@@ -231,64 +230,64 @@ class _ChatScreenState extends State<HelaChatAI> {
         _simulateTyping(defaultResponse, false);
       });
     } else if (lowercaseText.startsWith("#")) {
-  // Extract the user-entered code excluding the "#" symbol
-  String userEnteredCode = lowercaseText.substring(1);
+      // Extract the user-entered code excluding the "#" symbol
+      String userEnteredCode = lowercaseText.substring(1);
 
-  FirebaseFirestore.instance
-      .collection('nakath_welawa_results')
-      .where(FieldPath.documentId, isEqualTo: "#" + userEnteredCode)
-      .get()
-      .then((QuerySnapshot welawaSnapshot) {
-    if (welawaSnapshot.docs.isNotEmpty && userEnteredCode.length >= 5 ) {
-      // Document with the matching ID exists in 'nakath_welawa_results' collection and 5th character is '5'
-      String welawaResponse = "ඔබගේ කේතය නිවැරදී";
-      Future.delayed(Duration(seconds: 1), () {
-        _simulateTyping(welawaResponse, false);
-      });
-
-      // Navigate to ResultsWelaawa
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => ResultsWelaawa(data: "#" + userEnteredCode),
-        ),
-      );
-    } else {
-      // Check 'nakath_porondam_results' if the 5th character is '6'
       FirebaseFirestore.instance
-          .collection('nakath_porondam_results')
+          .collection('nakath_welawa_results')
           .where(FieldPath.documentId, isEqualTo: "#" + userEnteredCode)
           .get()
-          .then((QuerySnapshot porondamSnapshot) {
-        if (porondamSnapshot.docs.isNotEmpty && userEnteredCode.length >= 6) {
-          // Document with the matching ID exists in 'nakath_porondam_results' collection and 5th character is '6'
-          String porondamResponse = "ඔබගේ කේතය නිවැරදී";
+          .then((QuerySnapshot welawaSnapshot) {
+        if (welawaSnapshot.docs.isNotEmpty && userEnteredCode.length >= 5) {
+          // Document with the matching ID exists in 'nakath_welawa_results' collection and 5th character is '5'
+          String welawaResponse = "ඔබගේ කේතය නිවැරදී";
           Future.delayed(Duration(seconds: 1), () {
-            _simulateTyping(porondamResponse, false);
+            _simulateTyping(welawaResponse, false);
           });
 
-
-          print("Entered User Code: Now Navigate to ResultsPorondam");
-
-          // Navigate to ResultsPorondam
+          // Navigate to ResultsWelaawa
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => ResultsPorondam(data: "#" + userEnteredCode),
+              builder: (context) => ResultsWelaawa(data: "#" + userEnteredCode),
             ),
           );
         } else {
-          // Document with the matching ID does not exist in either collection
-          String notFoundResponse = "සමාවන්න, ඔබේ කේතයේ කිසියම් වැරැද්දක් ඇත කරුනාකර නිවැරදි කේතය පරීක්ශා කර ඇතුලත් කරන්න.";
-          Future.delayed(Duration(seconds: 1), () {
-            _simulateTyping(notFoundResponse, false);
+          // Check 'nakath_porondam_results' if the 5th character is '6'
+          FirebaseFirestore.instance
+              .collection('nakath_porondam_results')
+              .where(FieldPath.documentId, isEqualTo: "#" + userEnteredCode)
+              .get()
+              .then((QuerySnapshot porondamSnapshot) {
+            if (porondamSnapshot.docs.isNotEmpty &&
+                userEnteredCode.length >= 6) {
+              // Document with the matching ID exists in 'nakath_porondam_results' collection and 5th character is '6'
+              String porondamResponse = "ඔබගේ කේතය නිවැරදී";
+              Future.delayed(Duration(seconds: 1), () {
+                _simulateTyping(porondamResponse, false);
+              });
+
+              print("Entered User Code: Now Navigate to ResultsPorondam");
+
+              // Navigate to ResultsPorondam
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) =>
+                      ResultsPorondam(data: "#" + userEnteredCode),
+                ),
+              );
+            } else {
+              // Document with the matching ID does not exist in either collection
+              String notFoundResponse =
+                  "සමාවන්න, ඔබේ කේතයේ කිසියම් වැරැද්දක් ඇත කරුනාකර නිවැරදි කේතය පරීක්ශා කර ඇතුලත් කරන්න.";
+              Future.delayed(Duration(seconds: 1), () {
+                _simulateTyping(notFoundResponse, false);
+              });
+            }
           });
         }
       });
-    }
-  });
-
-
 
       // හෑශ්ටැග් භාවිතයෙන් මාරු වීම
     } else if ("අවුරුදු නැකැත්" == lowercaseText) {
@@ -299,11 +298,10 @@ class _ChatScreenState extends State<HelaChatAI> {
           },
         ),
       );
-      String notFoundResponse =
-              "අවුරුදු නැකැත් විවෘත කලා  ✔";
-          Future.delayed(Duration(seconds: 1), () {
-            _simulateTyping(notFoundResponse, false);
-          });
+      String notFoundResponse = "අවුරුදු නැකැත් විවෘත කලා  ✔";
+      Future.delayed(Duration(seconds: 1), () {
+        _simulateTyping(notFoundResponse, false);
+      });
     } else if ("ලිත" == lowercaseText) {
       Navigator.of(context).push(
         MaterialPageRoute(
@@ -312,11 +310,10 @@ class _ChatScreenState extends State<HelaChatAI> {
           },
         ),
       );
-      String notFoundResponse =
-              "ලිත විවෘත කලා  ✔";
-          Future.delayed(Duration(seconds: 1), () {
-            _simulateTyping(notFoundResponse, false);
-          });
+      String notFoundResponse = "ලිත විවෘත කලා  ✔";
+      Future.delayed(Duration(seconds: 1), () {
+        _simulateTyping(notFoundResponse, false);
+      });
     } else if ("උදව්" == lowercaseText) {
       Navigator.of(context).push(
         MaterialPageRoute(
@@ -325,11 +322,10 @@ class _ChatScreenState extends State<HelaChatAI> {
           },
         ),
       );
-      String notFoundResponse =
-              "උදව් විවෘත කලා  ✔";
-          Future.delayed(Duration(seconds: 1), () {
-            _simulateTyping(notFoundResponse, false);
-          });
+      String notFoundResponse = "උදව් විවෘත කලා  ✔";
+      Future.delayed(Duration(seconds: 1), () {
+        _simulateTyping(notFoundResponse, false);
+      });
     } else {
       // Continue with the existing code for general cases
       DatabaseReference databaseReference =
@@ -400,7 +396,7 @@ class _ChatScreenState extends State<HelaChatAI> {
   @override
   void initState() {
     super.initState();
- ImageUtils.precacheImage(context);
+    ImageUtils.precacheImage(context);
     interstitialAdManager.initInterstitialAd();
   }
 
@@ -522,15 +518,16 @@ class _ChatScreenState extends State<HelaChatAI> {
                     buildSuggestionButton(
                       "ආයුබෝවන්",
                     ),
-                    buildSuggestionButton("කෝඩ් ඇතුලත් කිරීම"),
-                    buildSuggestionButton("උදව්"),
+                   
+                    
                     buildSuggestionButton("අවුරුදු නැකැත්"),
+                    buildSuggestionButton("උදව්"),
                     buildSuggestionButton("අද රාහු කාලය"),
                     buildSuggestionButton("අද මරු සිටින දිශාව"),
                     buildSuggestionButton("ලිත"),
                     buildSuggestionButton("ලග්න පලාපල"),
                     buildSuggestionButton("අද රාහු කාලය"),
-                    
+                     buildSuggestionButton("කේත ඇතුලත් කිරීම"),
                   ],
                 ),
               ],
@@ -538,73 +535,100 @@ class _ChatScreenState extends State<HelaChatAI> {
           ),
         ),
         Container(
-  margin: const EdgeInsets.symmetric(horizontal: 8.0),
-  child: Row(
-    children: <Widget>[
-      Flexible(
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: TextField(
-            controller: _textController,
-            onChanged: (text) {
-              // Update the state to enable/disable the button based on whether there is text
-              setState(() {
-                isSendButtonEnabled = text.isNotEmpty;
-              });
-            },
-            onSubmitted: _handleSubmitted,
-            style: TextStyle(fontSize: 12),
-            decoration: InputDecoration(
-              hintText: "ඔබට අවශ්‍ය විස්තරය කෙටියෙන් මෙහි ලියන්න",
-              filled: true,
-              fillColor: Colors.grey[200],
-              contentPadding: EdgeInsets.all(10.0),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(20.0),
-                borderSide: BorderSide.none,
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(20.0),
-                borderSide: BorderSide(
-                  color: Theme.of(context).colorScheme.secondary,
+          margin: const EdgeInsets.symmetric(horizontal: 8.0),
+          child: Row(
+            children: <Widget>[
+              Flexible(
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: TextField(
+                    controller: _textController,
+                    onChanged: (text) {
+                      // Update the state to enable/disable the button based on whether there is text
+                      setState(() {
+                        isSendButtonEnabled = text.isNotEmpty;
+                      });
+                    },
+                    onSubmitted: _handleSubmitted,
+                    style: TextStyle(fontSize: 12),
+                    decoration: InputDecoration(
+                      hintText: "ඔබට අවශ්‍ය විස්තරය කෙටියෙන් මෙහි ලියන්න",
+                      filled: true,
+                      fillColor: Colors.grey[200],
+                      contentPadding: EdgeInsets.all(10.0),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(20.0),
+                        borderSide: BorderSide.none,
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(20.0),
+                        borderSide: BorderSide(
+                          color: Theme.of(context).colorScheme.secondary,
+                        ),
+                      ),
+                      // suffixIcon: IconButton(
+                      //   icon: Icon(Icons.send),
+                      //   onPressed: isSendButtonEnabled
+                      //       ? () => _handleSubmitted(_textController.text)
+                      //       : null, // Disable the button if isSendButtonEnabled is false
+                      // ),
+                    ),
+                  ),
                 ),
               ),
-              suffixIcon: IconButton(
-                icon: Icon(Icons.send),
-                onPressed: isSendButtonEnabled
-                    ? () => _handleSubmitted(_textController.text)
-                    : null, // Disable the button if isSendButtonEnabled is false
-              ),
-            ),
+              SizedBox(height: 10.0),
+              if (isSendButtonEnabled)
+                IconButton(
+                  onPressed: () {
+                    _handleSubmitted(_textController.text);
+                    _textController.clear(); // Clear the text field
+                    setState(() {
+                      isSendButtonEnabled = false; // Disable the button
+                    });
+                  },
+                  icon: Icon(
+                    Icons.send,
+                    color: const Color.fromARGB(
+                        255, 243, 219, 0), // Set icon color to yellow
+                  ),
+                  style: ButtonStyle(
+                    backgroundColor: MaterialStateProperty.all<Color>(
+                        Colors.transparent), // Remove background color
+                    padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
+                        EdgeInsets.zero), // Remove padding
+                  ),
+                )
+            ],
           ),
         ),
-      ),
-    ],
-  ),
-),
-
       ],
     );
   }
 
-Widget buildSuggestionButton(String suggestion) {
-  return Container(
-    margin: EdgeInsets.symmetric(horizontal: 4.0),
-    child: ElevatedButton(
-      onPressed: () {
-        _textController.text = suggestion;
-        _handleSubmitted(suggestion);
-      },
-      style: ElevatedButton.styleFrom(
-        backgroundColor: Color.fromARGB(255, 255, 217, 0), // Change the button color here
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10.0), // Change the border radius here
+  Widget buildSuggestionButton(String suggestion) {
+    return Container(
+      margin: EdgeInsets.symmetric(horizontal: 4.0),
+      child: ElevatedButton(
+        onPressed: () {
+          _textController.text = suggestion;
+          _handleSubmitted(suggestion);
+        },
+        style: ElevatedButton.styleFrom(
+          backgroundColor:
+              Color.fromARGB(255, 255, 217, 0), // Change the button color here
+          shape: RoundedRectangleBorder(
+            borderRadius:
+                BorderRadius.circular(10.0), // Change the border radius here
+          ),
+        ),
+        child: Text(
+          suggestion,
+          style: GoogleFonts.notoSerifSinhala(
+              fontSize: 12, color: const Color.fromARGB(255, 77, 77, 77)),
         ),
       ),
-      child: Text(suggestion,style: GoogleFonts.notoSerifSinhala(fontSize: 12,color: const Color.fromARGB(255, 77, 77, 77)),),
-    ),
-  );
-}
+    );
+  }
 }
 
 class ChatMessage extends StatelessWidget {
