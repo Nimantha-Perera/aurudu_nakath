@@ -28,6 +28,7 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await initializeDateFormatting('si_LK');
+  
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp, // Or any other desired orientation
   ]);
@@ -75,6 +76,7 @@ class _MyAppState extends State<MyApp> {
   @override
  void initState() {
   super.initState();
+  checkForUpdate();
   _appWidget = _checkConnectivityAndFirstTime();
   // _getFCMToken();
   // _initializeFirebaseMessaging();
