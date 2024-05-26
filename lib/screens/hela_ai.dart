@@ -1,6 +1,7 @@
 import 'package:aurudu_nakath/Ads/init_ads.dart';
 import 'package:aurudu_nakath/Image_chache_Save/img_chanche.dart';
 import 'package:aurudu_nakath/User_backClicked/back_clicked.dart';
+import 'package:aurudu_nakath/review/rewiew.dart';
 import 'package:aurudu_nakath/screens/Results_Screens/result_screen_porondam.dart';
 import 'package:aurudu_nakath/screens/Results_Screens/result_screen_welawa.dart';
 import 'package:aurudu_nakath/screens/aurudu_nakath.dart';
@@ -10,6 +11,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:in_app_review/in_app_review.dart';
 
 List<String> keyWords_maru_sitna_disawa = [
   'maru sitina disawa',
@@ -35,6 +37,7 @@ List<String> Rahu_kalaya = [
   'ada rahukalaya'
 ];
 
+ Review review = Review();
 class HelaChatAI extends StatefulWidget {
   @override
   _ChatScreenState createState() => _ChatScreenState();
@@ -299,6 +302,8 @@ class _ChatScreenState extends State<HelaChatAI> {
         ),
       );
       String notFoundResponse = "අවුරුදු නැකැත් විවෘත කලා  ✔";
+      review.requestReview(context);
+      
       Future.delayed(Duration(seconds: 1), () {
         _simulateTyping(notFoundResponse, false);
       });
@@ -311,6 +316,7 @@ class _ChatScreenState extends State<HelaChatAI> {
         ),
       );
       String notFoundResponse = "ලිත විවෘත කලා  ✔";
+     review.requestReview(context);
       Future.delayed(Duration(seconds: 1), () {
         _simulateTyping(notFoundResponse, false);
       });
@@ -323,6 +329,7 @@ class _ChatScreenState extends State<HelaChatAI> {
         ),
       );
       String notFoundResponse = "උදව් විවෘත කලා  ✔";
+      review.requestReview(context);
       Future.delayed(Duration(seconds: 1), () {
         _simulateTyping(notFoundResponse, false);
       });

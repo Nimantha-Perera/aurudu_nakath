@@ -5,7 +5,12 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:in_app_review/in_app_review.dart';
 import 'package:url_launcher/url_launcher.dart';
+
+
+
+final InAppReview inAppReview = InAppReview.instance;
 
 class Help extends StatefulWidget {
   const Help({Key? key}) : super(key: key);
@@ -20,15 +25,21 @@ class _HelpState extends State<Help> {
   @override
   void initState() {
     super.initState();
+    
 
     interstitialAdManager.initInterstitialAd();
   }
+
+  
 
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
         BackButtonUtil.handleBackButton(interstitialAdManager);
+        if (await inAppReview.isAvailable()) {
+      inAppReview.requestReview();
+    }
 
         return true; // Return true to allow the back navigation
       },

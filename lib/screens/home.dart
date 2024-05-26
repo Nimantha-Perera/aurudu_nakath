@@ -61,66 +61,66 @@ List<String> indexNames = [
   'පැල සිටුවීම සඳහා තව',
 ];
 
-String getEventName(int index) {
-  if (index >= 0 && index < indexNames.length) {
-    return indexNames[index];
-  } else {
-    return 'Unknown Event';
-  }
-}
+// String getEventName(int index) {
+//   if (index >= 0 && index < indexNames.length) {
+//     return indexNames[index];
+//   } else {
+//     return 'Unknown Event';
+//   }
+// }
 
-int _currentIndex = 0;
-String _timeUntil = '';
+// int _currentIndex = 0;
+// String _timeUntil = '';
 
 class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     loadImages();
-    _startTimer();
+    // _startTimer();
     // Initialize the interstitial ad when the widget is created
     adManager.initInterstitialAd();
     checkFirebaseDatabase();
   }
 
-  void _startTimer() {
-    Timer.periodic(Duration(seconds: 1), (timer) {
-      setState(() {
-        Duration difference =
-            _targetDates[_currentIndex].difference(DateTime.now());
-        if (difference.inSeconds <= 0) {
-          _currentIndex = (_currentIndex + 1) % _targetDates.length;
-          if (_currentIndex == 0) {
-            timer.cancel(); // Stop the timer when all events finish
-            _timeUntil = 'All events finished';
-            return;
-          }
-        }
-        _timeUntil = _formatDuration(difference.abs());
-      });
-    });
-  }
+  // void _startTimer() {
+  //   Timer.periodic(Duration(seconds: 1), (timer) {
+  //     setState(() {
+  //       Duration difference =
+  //           _targetDates[_currentIndex].difference(DateTime.now());
+  //       if (difference.inSeconds <= 0) {
+  //         _currentIndex = (_currentIndex + 1) % _targetDates.length;
+  //         if (_currentIndex == 0) {
+  //           timer.cancel(); // Stop the timer when all events finish
+  //           _timeUntil = 'All events finished';
+  //           return;
+  //         }
+  //       }
+  //       _timeUntil = _formatDuration(difference.abs());
+  //     });
+  //   });
+  // }
 
-  String _formatDuration(Duration duration) {
-    String twoDigits(int n) => n.toString().padLeft(2, "0");
-    int days = duration.inDays;
-    int hours = duration.inHours.remainder(24);
-    int minutes = duration.inMinutes.remainder(60);
-    int seconds = duration.inSeconds.remainder(60);
+//   String _formatDuration(Duration duration) {
+//     String twoDigits(int n) => n.toString().padLeft(2, "0");
+//     int days = duration.inDays;
+//     int hours = duration.inHours.remainder(24);
+//     int minutes = duration.inMinutes.remainder(60);
+//     int seconds = duration.inSeconds.remainder(60);
 
-   if (days == 0) {
-    if (hours == 0) {
-        if (minutes == 0) {
-            return "තත්පර $seconds";
-        } else {
-            return "මිනිත්තු $minutes තත්පර $seconds";
-        }
-    } else {
-        return "පැය $hours මිනිත්තු $minutes තත්පර $seconds";
-    }
-} else {
-    return "දින $days පැය $hours මිනිත්තු $minutes තත්පර $seconds";
-}
-  }
+//    if (days == 0) {
+//     if (hours == 0) {
+//         if (minutes == 0) {
+//             return "තත්පර $seconds";
+//         } else {
+//             return "මිනිත්තු $minutes තත්පර $seconds";
+//         }
+//     } else {
+//         return "පැය $hours මිනිත්තු $minutes තත්පර $seconds";
+//     }
+// } else {
+//     return "දින $days පැය $hours මිනිත්තු $minutes තත්පර $seconds";
+// }
+//   }
 
 
   Future<bool> _onWillPop() async {
@@ -198,9 +198,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   label: 'උදව්',
                   labelStyle: GoogleFonts.notoSerifSinhala(),
                   onTap: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(builder: (context) => Help()),
-                    );
+                   review.requestReview(context);
                   }),
               SpeedDialChild(
                   backgroundColor: const Color.fromARGB(255, 255, 255, 255),
@@ -299,69 +297,69 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                     ),
                   ),
-                if (showTimeCount) // Show countdown when showTimeCount is true
-                  Container(
-                    width: double.infinity,
-                    height: 150,
-                    color: const Color.fromARGB(255, 255, 255, 255),
-                    child: Padding(
-                      padding:
-                          const EdgeInsets.only(top: 50, left: 25, right: 25),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            "අලුත් අවුරුදු ලඟම නැකත",
-                            style: GoogleFonts.notoSerifSinhala(
-                              fontSize: 16,
-                              color: Color.fromARGB(255, 255, 187, 0),
-                            ),
-                            textAlign: TextAlign.start,
-                          ),
-                          GestureDetector(
-                            onTap: () {
-                              Navigator.of(context).push(
-                                MaterialPageRoute(
-                                    builder: (context) => NakathSittuwa()),
-                              );
-                            },
-                            child: Center(
-                              child: Container(
-                                width: double.infinity,
-                                decoration: BoxDecoration(
-                                  border: Border.all(
-                                    color: Color.fromARGB(255, 207, 207, 207),
-                                    width: 2.0,
-                                  ),
-                                  borderRadius: BorderRadius.circular(10.0),
-                                ),
-                                child: Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Column(
-                                    children: [
-                                      Text(
-                                        getEventName(_currentIndex),
-                                        style: GoogleFonts.notoSerifSinhala(
-                                          fontSize: 10,
-                                        ),
-                                      ),
-                                      SizedBox(
-                                        height: 10,
-                                      ),
-                                      Text(
-                                        "$_timeUntil",
-                                        style: GoogleFonts.notoSerifSinhala(),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ),
-                          )
-                        ],
-                      ),
-                    ),
-                  ),
+                // if (showTimeCount) // Show countdown when showTimeCount is true
+                //   Container(
+                //     width: double.infinity,
+                //     height: 150,
+                //     color: const Color.fromARGB(255, 255, 255, 255),
+                //     child: Padding(
+                //       padding:
+                //           const EdgeInsets.only(top: 50, left: 25, right: 25),
+                //       child: Column(
+                //         crossAxisAlignment: CrossAxisAlignment.start,
+                //         children: [
+                //           Text(
+                //             "අලුත් අවුරුදු ලඟම නැකත",
+                //             style: GoogleFonts.notoSerifSinhala(
+                //               fontSize: 16,
+                //               color: Color.fromARGB(255, 255, 187, 0),
+                //             ),
+                //             textAlign: TextAlign.start,
+                //           ),
+                //           GestureDetector(
+                //             onTap: () {
+                //               Navigator.of(context).push(
+                //                 MaterialPageRoute(
+                //                     builder: (context) => NakathSittuwa()),
+                //               );
+                //             },
+                //             child: Center(
+                //               child: Container(
+                //                 width: double.infinity,
+                //                 decoration: BoxDecoration(
+                //                   border: Border.all(
+                //                     color: Color.fromARGB(255, 207, 207, 207),
+                //                     width: 2.0,
+                //                   ),
+                //                   borderRadius: BorderRadius.circular(10.0),
+                //                 ),
+                //                 child: Padding(
+                //                   padding: const EdgeInsets.all(8.0),
+                //                   child: Column(
+                //                     children: [
+                //                       Text(
+                //                         getEventName(_currentIndex),
+                //                         style: GoogleFonts.notoSerifSinhala(
+                //                           fontSize: 10,
+                //                         ),
+                //                       ),
+                //                       SizedBox(
+                //                         height: 10,
+                //                       ),
+                //                       Text(
+                //                         "$_timeUntil",
+                //                         style: GoogleFonts.notoSerifSinhala(),
+                //                       ),
+                //                     ],
+                //                   ),
+                //                 ),
+                //               ),
+                //             ),
+                //           )
+                //         ],
+                //       ),
+                //     ),
+                //   ),
               ],
             ),
 

@@ -85,6 +85,7 @@ dependencies:
   webview_flutter: ^4.7.0
   webview_flutter_plus: ^0.4.4
   carousel_slider: ^4.2.1
+  in_app_review: ^2.0.9
 
 dev_dependencies:
   flutter_test:
