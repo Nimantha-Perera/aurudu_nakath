@@ -122,7 +122,6 @@ class _HomeScreenState extends State<HomeScreen> {
 // }
 //   }
 
-
   Future<bool> _onWillPop() async {
     // Show ad when the back button is pressed
     if (await adManager.isInterstitialAdLoaded()) {
@@ -198,7 +197,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   label: 'උදව්',
                   labelStyle: GoogleFonts.notoSerifSinhala(),
                   onTap: () {
-                   review.requestReview(context);
+                    review.requestReview(context);
                   }),
               SpeedDialChild(
                   backgroundColor: const Color.fromARGB(255, 255, 255, 255),
@@ -741,13 +740,38 @@ class _HomeScreenState extends State<HomeScreen> {
                             onTap: () {
                               //Ads Load
                               // adManager.showInterstitialAd();
-                              Navigator.of(context).push(
-                                MaterialPageRoute(
-                                  builder: (context) {
-                                    return Menu();
+                              // Navigator.of(context).push(
+                              //   MaterialPageRoute(
+                              //     builder: (context) {
+                              //       return Menu();
+                              //     },
+                              //   ),
+                              // );
+                              void _showAlertDialog(BuildContext context) {
+                                showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return AlertDialog(
+                                      title: Text('Alert'),
+                                      content: Text('This is an alert dialog.'),
+                                      actions: <Widget>[
+                                        TextButton(
+                                          onPressed: () {
+                                            Navigator.of(context).pop();
+                                          },
+                                          child: Text('OK'),
+                                        ),
+                                        TextButton(
+                                          onPressed: () {
+                                            Navigator.of(context).pop();
+                                          },
+                                          child: Text('Cancel'),
+                                        ),
+                                      ],
+                                    );
                                   },
-                                ),
-                              );
+                                );
+                              }
                             },
                             child: Container(
                               height: 100,
