@@ -747,31 +747,24 @@ class _HomeScreenState extends State<HomeScreen> {
                               //     },
                               //   ),
                               // );
-                              void _showAlertDialog(BuildContext context) {
-                                showDialog(
-                                  context: context,
-                                  builder: (BuildContext context) {
-                                    return AlertDialog(
-                                      title: Text('Alert'),
-                                      content: Text('This is an alert dialog.'),
-                                      actions: <Widget>[
-                                        TextButton(
-                                          onPressed: () {
-                                            Navigator.of(context).pop();
-                                          },
-                                          child: Text('OK'),
-                                        ),
-                                        TextButton(
-                                          onPressed: () {
-                                            Navigator.of(context).pop();
-                                          },
-                                          child: Text('Cancel'),
-                                        ),
-                                      ],
-                                    );
-                                  },
-                                );
-                              }
+                              showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return AlertDialog(
+                                    title: Text('දෝශයයි'),
+                                    content: Text(
+                                        'මෙම සේවාව තාවකාලිකව විසන්දි කර ඇත.'),
+                                    actions: <Widget>[
+                                      TextButton(
+                                        child: Text('OK'),
+                                        onPressed: () {
+                                          Navigator.of(context).pop();
+                                        },
+                                      ),
+                                    ],
+                                  );
+                                },
+                              );
                             },
                             child: Container(
                               height: 100,
