@@ -5,6 +5,7 @@ plugins {
     // END: FlutterFire Configuration
     id "kotlin-android"
     id "dev.flutter.flutter-gradle-plugin"
+   
     
 }
 
@@ -94,13 +95,7 @@ flutter {
 }
 
 dependencies {
-    implementation(platform("com.google.firebase:firebase-bom:32.6.0"))
-    implementation("com.google.firebase:firebase-messaging")
-    implementation("com.google.firebase:firebase-analytics")
-    implementation 'com.android.billingclient:billing-ktx:6.1.0'
-    // In-App-Review dependecies. More info https://developer.android.com/guide/playcore/in-app-review/kotlin-java#java
-implementation 'com.google.android.play:review:2.0.1'
-implementation 'com.google.android.play:review-ktx:2.0.1'
+   
 }
 
 

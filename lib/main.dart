@@ -1,11 +1,11 @@
-import 'package:aurudu_nakath/Push_Notifications/push_notificatrions.dart';
+// import 'package:aurudu_nakath/Push_Notifications/push_notificatrions.dart';
 import 'package:aurudu_nakath/firebase_options.dart';
 import 'package:aurudu_nakath/loadin_screen/firebase_api.dart';
 import 'package:aurudu_nakath/loadin_screen/loading.dart';
 import 'package:aurudu_nakath/screens/splash_screen.dart';
-import 'package:awesome_notifications/awesome_notifications.dart';
+// import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
-import 'package:device_preview/device_preview.dart';
+
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:aurudu_nakath/screens/home.dart';
@@ -56,7 +56,7 @@ void main() async {
   //   ],
   // );
 
-  LocalNotificationService.initialize();
+  // LocalNotificationService.initialize();
   runApp(MyApp());
 }
 

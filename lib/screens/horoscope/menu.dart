@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:in_app_purchase/in_app_purchase.dart';
+// import 'package:in_app_purchase/in_app_purchase.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class Menu extends StatefulWidget {
@@ -16,7 +16,7 @@ class Menu extends StatefulWidget {
 }
 
 class _MenuState extends State<Menu> {
-  final InAppPurchase _inAppPurchase = InAppPurchase.instance;
+  // final InAppPurchase _inAppPurchase = InAppPurchase.instance;
   TextEditingController _textFieldController = TextEditingController();
   String _displayText = '';
   @override

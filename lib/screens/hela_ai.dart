@@ -11,7 +11,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:in_app_review/in_app_review.dart';
+// import 'package:in_app_review/in_app_review.dart';
 
 List<String> keyWords_maru_sitna_disawa = [
   'maru sitina disawa',
@@ -37,7 +37,7 @@ List<String> Rahu_kalaya = [
   'ada rahukalaya'
 ];
 
- Review review = Review();
+//  Review review = Review();
 class HelaChatAI extends StatefulWidget {
   @override
   _ChatScreenState createState() => _ChatScreenState();
@@ -249,12 +249,12 @@ class _ChatScreenState extends State<HelaChatAI> {
           });
 
           // Navigate to ResultsWelaawa
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => ResultsWelaawa(data: "#" + userEnteredCode),
-            ),
-          );
+          // Navigator.push(
+          //   context,
+          //   MaterialPageRoute(
+          //     builder: (context) => ResultsWelaawa(data: "#" + userEnteredCode),
+          //   ),
+          // );
         } else {
           // Check 'nakath_porondam_results' if the 5th character is '6'
           FirebaseFirestore.instance
@@ -273,13 +273,13 @@ class _ChatScreenState extends State<HelaChatAI> {
               print("Entered User Code: Now Navigate to ResultsPorondam");
 
               // Navigate to ResultsPorondam
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) =>
-                      ResultsPorondam(data: "#" + userEnteredCode),
-                ),
-              );
+              // Navigator.push(
+              //   context,
+              //   MaterialPageRoute(
+              //     builder: (context) =>
+              //         ResultsPorondam(data: "#" + userEnteredCode),
+              //   ),
+              // );
             } else {
               // Document with the matching ID does not exist in either collection
               String notFoundResponse =
@@ -302,7 +302,7 @@ class _ChatScreenState extends State<HelaChatAI> {
         ),
       );
       String notFoundResponse = "අවුරුදු නැකැත් විවෘත කලා  ✔";
-      review.requestReview(context);
+      // review.requestReview(context);
       
       Future.delayed(Duration(seconds: 1), () {
         _simulateTyping(notFoundResponse, false);
@@ -316,7 +316,7 @@ class _ChatScreenState extends State<HelaChatAI> {
         ),
       );
       String notFoundResponse = "ලිත විවෘත කලා  ✔";
-     review.requestReview(context);
+    //  review.requestReview(context);
       Future.delayed(Duration(seconds: 1), () {
         _simulateTyping(notFoundResponse, false);
       });
@@ -329,7 +329,7 @@ class _ChatScreenState extends State<HelaChatAI> {
         ),
       );
       String notFoundResponse = "උදව් විවෘත කලා  ✔";
-      review.requestReview(context);
+      // review.requestReview(context);
       Future.delayed(Duration(seconds: 1), () {
         _simulateTyping(notFoundResponse, false);
       });

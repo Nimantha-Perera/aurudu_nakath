@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:animated_text_kit/animated_text_kit.dart';
+// import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:aurudu_nakath/Ads/constombannerad.dart';
 import 'package:aurudu_nakath/Ads/init_ads.dart';
 import 'package:aurudu_nakath/Image_chache_Save/img_chanche.dart';
@@ -197,7 +197,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   label: 'උදව්',
                   labelStyle: GoogleFonts.notoSerifSinhala(),
                   onTap: () {
-                    review.requestReview(context);
+                    // review.requestReview(context);
                   }),
               SpeedDialChild(
                   backgroundColor: const Color.fromARGB(255, 255, 255, 255),
@@ -205,9 +205,9 @@ class _HomeScreenState extends State<HomeScreen> {
                   label: 'මාලිමාව',
                   labelStyle: GoogleFonts.notoSerifSinhala(),
                   onTap: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(builder: (context) => Compass()),
-                    );
+                    // Navigator.of(context).push(
+                    //   MaterialPageRoute(builder: (context) => Compass()),
+                    // );
                   })
             ]),
         body: Stack(
