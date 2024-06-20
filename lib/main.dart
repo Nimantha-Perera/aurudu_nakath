@@ -78,16 +78,16 @@ class _MyAppState extends State<MyApp> {
   super.initState();
   checkForUpdate();
   _appWidget = _checkConnectivityAndFirstTime();
-  // _getFCMToken();
+  _getFCMToken();
   // _initializeFirebaseMessaging();
 }
-//  Future<void> _getFCMToken() async {
-//     String? token = await FirebaseMessaging.instance.getToken();
-//     setState(() {
-//       _fcmToken = token;
-//     });
-//     print("FCM Token: $_fcmToken");
-//   }
+ Future<void> _getFCMToken() async {
+    String? token = await FirebaseMessaging.instance.getToken();
+    setState(() {
+      _fcmToken = token;
+    });
+    print("FCM Token: $_fcmToken");
+  }
 void _initializeFirebaseMessaging() {
   // Handling the initial message when the app is terminated
   FirebaseMessaging.instance.getInitialMessage().then((message) {
@@ -103,10 +103,7 @@ void _initializeFirebaseMessaging() {
   FirebaseMessaging.onMessage.listen((message) {
     print('Got a message whilst in the foreground!');
     print('Message data: ${message.data}');
-    if (message.notification != null) {
-      print('Message also contained a notification: ${message.notification}');
-    }
-    LocalNotificationService.createNotifications(message);
+    
   });
 }
 
