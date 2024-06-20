@@ -194,7 +194,7 @@ class _AuruduNakathScreenState extends State<AuruduNakathScreen> {
   }
 
   // load table database
-  final databaseReference = FirebaseDatabase.instance.reference();
+  final databaseReference = FirebaseDatabase.instance.ref();
 
 //සූනන් ඇඟවැටීමේ පලාපට ලබා ගැනීම
 
@@ -654,7 +654,7 @@ class _AuruduNakathScreenState extends State<AuruduNakathScreen> {
 // මරු සිටින දිසාව ලෝඩ්
 
   Widget _buildDataTable() {
-    DatabaseReference reference = FirebaseDatabase.instance.reference();
+    DatabaseReference reference = FirebaseDatabase.instance.ref();
 
     return Container(
       padding: EdgeInsets.all(16.0),

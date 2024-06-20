@@ -64,7 +64,7 @@ Widget _rashi_aya_waya() {
     padding: EdgeInsets.all(16.0),
     child: StreamBuilder<DatabaseEvent>(
       stream:
-          FirebaseDatabase.instance.reference().child('raahu_kalaya').onValue,
+          FirebaseDatabase.instance.ref().child('raahu_kalaya').onValue,
       builder: (context, snapshot) {
         if (snapshot.hasError) {
           return Center(

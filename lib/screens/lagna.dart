@@ -42,7 +42,7 @@ class _LagnaPalapalaState extends State<LagnaPalapala> {
           title: Text('ලග්න පලාඵල', style: GoogleFonts.notoSerifSinhala(fontSize: 14)),
         ),
         body: StreamBuilder<DatabaseEvent>(
-          stream: FirebaseDatabase.instance.reference().child('lagna_palapala').onValue,
+          stream: FirebaseDatabase.instance.ref().child('lagna_palapala').onValue,
           builder: (context, snapshot) {
             if (snapshot.hasError) {
               return Text('Error: ${snapshot.error}');

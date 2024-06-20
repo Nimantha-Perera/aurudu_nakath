@@ -1,4 +1,5 @@
 import 'package:aurudu_nakath/Push_Notifications/push_notificatrions.dart';
+import 'package:aurudu_nakath/firebase_options.dart';
 import 'package:aurudu_nakath/loadin_screen/firebase_api.dart';
 import 'package:aurudu_nakath/loadin_screen/loading.dart';
 import 'package:aurudu_nakath/screens/splash_screen.dart';
@@ -20,10 +21,11 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  
-  print('Handling a background message ${message.messageId}');
+  // If you're going to use other Firebase services in the background, such as Firestore,
+  // make sure you call `initializeApp` before using other Firebase services.
+  await Firebase.initializeApp();
+  print('Handling a background message: ${message.messageId}');
 }
-
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -35,16 +37,11 @@ void main() async {
 
   
     await Firebase.initializeApp(
-    options: const FirebaseOptions(
-        apiKey: "AIzaSyDPZPB6v5SqppWZbqYZ3JV0oWd3AUxkTYs",
-        authDomain: "nakath-af5a0.firebaseapp.com",
-        databaseURL: "https://nakath-af5a0-default-rtdb.firebaseio.com",
-        projectId: "nakath-af5a0",
-        storageBucket: "nakath-af5a0.appspot.com",
-        messagingSenderId: "91523853816",
-        appId: "1:91523853816:web:2e7db1e0dcff9cfc69fa0d",
-        measurementId: "G-VTC0XKG0QW"),
-  ); // Add Firebase initialization if required
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+    String? token = await FirebaseMessaging.instance.getToken();
+  print("FCM Token: $token");
+  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
   // FirebaseApi.configureFirebaseMessaging();
   // AwesomeNotifications().initialize(
   //   'resource://mipmap/ic_launcher', // Replace with the name of your icon resource
@@ -58,7 +55,7 @@ void main() async {
   //     ),
   //   ],
   // );
-  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+
   LocalNotificationService.initialize();
   runApp(MyApp());
 }
@@ -71,41 +68,18 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   Future<Widget>? _appWidget;
-  String? _fcmToken;
+ 
 
   @override
  void initState() {
   super.initState();
   checkForUpdate();
   _appWidget = _checkConnectivityAndFirstTime();
-  _getFCMToken();
+
   // _initializeFirebaseMessaging();
 }
- Future<void> _getFCMToken() async {
-    String? token = await FirebaseMessaging.instance.getToken();
-    setState(() {
-      _fcmToken = token;
-    });
-    print("FCM Token: $_fcmToken");
-  }
-void _initializeFirebaseMessaging() {
-  // Handling the initial message when the app is terminated
-  FirebaseMessaging.instance.getInitialMessage().then((message) {
-    if (message != null) {
-      print("app is terminated");
-      print('Handling a background message: ${message.messageId}');
-    }
-  }).catchError((error) {
-    print('Error handling initial message: $error');
-  });
 
-  // Listening for messages received while the app is in the foreground
-  FirebaseMessaging.onMessage.listen((message) {
-    print('Got a message whilst in the foreground!');
-    print('Message data: ${message.data}');
-    
-  });
-}
+
 
 
 

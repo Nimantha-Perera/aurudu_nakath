@@ -158,7 +158,7 @@ class _HomeScreenState extends State<HomeScreen> {
 // Method to check Firebase database value
   void checkFirebaseDatabase() {
     DatabaseReference databaseReference =
-        FirebaseDatabase.instance.reference().child('happy_new_year');
+        FirebaseDatabase.instance.ref().child('happy_new_year');
 
     // Use 'onValue' instead of 'once' to receive a continuous stream of events
     databaseReference

@@ -177,7 +177,7 @@ class _NakathSittuwaState extends State<NakathSittuwa> {
   Widget _NakathData() {
     return StreamBuilder<DatabaseEvent>(
       stream: FirebaseDatabase.instance
-          .reference()
+          .ref()
           .child('aurudu_nakath_sittuwa')
           .onValue,
       builder: (context, snapshot) {

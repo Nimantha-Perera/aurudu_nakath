@@ -76,7 +76,7 @@ class _ChatScreenState extends State<HelaChatAI> {
       print('Numeric Day of the Week: $currentDayInSinhala');
 
       DatabaseReference databaseReference =
-          FirebaseDatabase.instance.reference().child('රාහු_කාලය');
+          FirebaseDatabase.instance.ref().child('රාහු_කාලය');
 
       // Perform a database lookup for the user-entered text
       databaseReference
@@ -154,7 +154,7 @@ class _ChatScreenState extends State<HelaChatAI> {
       print('Numeric Day of the Week: $currentDayInSinhala');
 
       DatabaseReference databaseReference =
-          FirebaseDatabase.instance.reference().child('මරු_සිටින_දිශාව');
+          FirebaseDatabase.instance.ref().child('මරු_සිටින_දිශාව');
 
       // Perform a database lookup for the user-entered text
       databaseReference
@@ -336,7 +336,7 @@ class _ChatScreenState extends State<HelaChatAI> {
     } else {
       // Continue with the existing code for general cases
       DatabaseReference databaseReference =
-          FirebaseDatabase.instance.reference().child('ai_messages');
+          FirebaseDatabase.instance.ref().child('ai_messages');
 
       // Perform a database lookup for the user-entered text
       databaseReference.child(lowercaseText).once().then((DatabaseEvent event) {
