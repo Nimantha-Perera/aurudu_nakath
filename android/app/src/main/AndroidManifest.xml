@@ -8,7 +8,12 @@
 
     <application android:label="Nakath" android:name="${applicationName}" android:icon="@mipmap/ic_launcher">
 
-        
+        <meta-data
+        android:name="com.google.firebase.messaging.default_notification_icon"
+        android:resource="@drawable/ic_launcher" />
+        <meta-data 
+        android:name="com.google.firebase.messaging.default_notification_channel_id"
+        android:value="high_importance_channel"/>
 
 
    
@@ -34,7 +39,7 @@
         <meta-data android:name="flutterEmbedding" android:value="2"/>
          <!-- Sample AdMob app ID: ca-app-pub-3940256099942544~3347511713 -->
         <meta-data android:name="com.google.android.gms.ads.APPLICATION_ID" android:value="ca-app-pub-7834397003941676~9303624810"/>        
-        <meta-data android:name="com.google.firebase.messaging.default_notification_id" android:value="pushnotifications"/>
+        
 
     </application>
 </manifest>

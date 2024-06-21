@@ -4,6 +4,7 @@ import 'dart:async';
 import 'package:aurudu_nakath/Ads/constombannerad.dart';
 import 'package:aurudu_nakath/Ads/init_ads.dart';
 import 'package:aurudu_nakath/Image_chache_Save/img_chanche.dart';
+import 'package:aurudu_nakath/Notifications/notification_service.dart';
 import 'package:aurudu_nakath/screens/hela_ai.dart';
 import 'package:aurudu_nakath/screens/help.dart';
 import 'package:aurudu_nakath/screens/horoscope/compass.dart';
@@ -38,6 +39,7 @@ bool showTimeCount = true;
 int myCurrentIndex = 0;
 
 InterstitialAdManager adManager = InterstitialAdManager();
+NotificationService notificationService = NotificationService();
 
 List<DateTime> _targetDates = [
   DateTime(2024, 4, 11),
@@ -75,6 +77,12 @@ List<String> indexNames = [
 class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
+    notificationService.initialize();
+
+    notificationService.getFcmToken().then((value) {
+      print("Token: $value");
+    });
+    notificationService.onTokenRefresh();
     loadImages();
     // _startTimer();
     // Initialize the interstitial ad when the widget is created
