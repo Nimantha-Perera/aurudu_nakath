@@ -4,7 +4,7 @@ import 'package:aurudu_nakath/loadin_screen/firebase_api.dart';
 import 'package:aurudu_nakath/loadin_screen/loading.dart';
 import 'package:aurudu_nakath/screens/splash_screen.dart';
 // import 'package:awesome_notifications/awesome_notifications.dart';
-import 'package:connectivity_plus/connectivity_plus.dart';
+// import 'package:connectivity_plus/connectivity_plus.dart';
 
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
@@ -18,8 +18,6 @@ import 'package:intl/date_symbol_data_local.dart';
 import 'package:lottie/lottie.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-
-
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   // If you're going to use other Firebase services in the background, such as Firestore,
   // make sure you call `initializeApp` before using other Firebase services.
@@ -30,16 +28,15 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await initializeDateFormatting('si_LK');
-  
+
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp, // Or any other desired orientation
   ]);
 
-  
-    await Firebase.initializeApp(
+  await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-    String? token = await FirebaseMessaging.instance.getToken();
+  String? token = await FirebaseMessaging.instance.getToken();
   print("FCM Token: $token");
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
   // FirebaseApi.configureFirebaseMessaging();
@@ -62,48 +59,43 @@ void main() async {
 
 class MyApp extends StatefulWidget {
   @override
-  
   _MyAppState createState() => _MyAppState();
 }
 
 class _MyAppState extends State<MyApp> {
   Future<Widget>? _appWidget;
- 
 
   @override
- void initState() {
-  super.initState();
-  checkForUpdate();
-  _appWidget = _checkConnectivityAndFirstTime();
+  void initState() {
+    super.initState();
+    checkForUpdate();
+    _appWidget = _checkConnectivityAndFirstTime();
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      print('Got a message whilst in the foreground!');
+      print('Message data: ${message.data}');
+    });
 
-  // _initializeFirebaseMessaging();
-}
+    FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
-
-
-
-
-
-
-
+    // _initializeFirebaseMessaging();
+  }
 
   // Check Updates
-Future<void> checkForUpdate() async {
-  print('checking for Update');
-  try {
-    var info = await InAppUpdate.checkForUpdate();
-    setState(() {
-      if (info.updateAvailability == UpdateAvailability.updateAvailable) {
-        print('update available');
-        update();
-      }
-    });
-  } catch (e) {
-    print('Failed to bind to the service: $e');
-    // Handle the failure, show a message to the user, or retry
+  Future<void> checkForUpdate() async {
+    print('checking for Update');
+    try {
+      var info = await InAppUpdate.checkForUpdate();
+      setState(() {
+        if (info.updateAvailability == UpdateAvailability.updateAvailable) {
+          print('update available');
+          update();
+        }
+      });
+    } catch (e) {
+      print('Failed to bind to the service: $e');
+      // Handle the failure, show a message to the user, or retry
+    }
   }
-}
-
 
   void update() async {
     print('Updating');
@@ -113,10 +105,8 @@ Future<void> checkForUpdate() async {
     });
   }
 
-
   @override
   Widget build(BuildContext context) {
-    
     return FutureBuilder<Widget>(
       future: _appWidget,
       builder: (context, snapshot) {
@@ -130,7 +120,6 @@ Future<void> checkForUpdate() async {
           );
         } else {
           return MaterialApp(
-          
             debugShowCheckedModeBanner: false,
             home: LoadingScreen(),
           );
@@ -140,10 +129,10 @@ Future<void> checkForUpdate() async {
   }
 
   Future<Widget> _checkConnectivityAndFirstTime() async {
-    var connectivityResult = await (Connectivity().checkConnectivity());
-    if (connectivityResult == ConnectivityResult.none) {
-      return ErrorScreen(); // Return the error screen if no internet connection
-    }
+    // var connectivityResult = await (Connectivity().checkConnectivity());
+    // if (connectivityResult == ConnectivityResult.none) {
+    //   return ErrorScreen(); // Return the error screen if no internet connection
+    // }
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
     bool isFirstTime = prefs.getBool('isFirstTime') ?? true;
@@ -160,55 +149,55 @@ Future<void> checkForUpdate() async {
   }
 }
 
-class ErrorScreen extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Container(
-              margin: EdgeInsets.only(top: 50, bottom: 100),
-              child: Lottie.asset(
-                'assets/no_connection.json', // Replace with the correct path to your Lottie file
-                height: 400,
-                width: 400,
-              ),
-            ),
-            Text("No internet connection"),
-            SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () async {
-                var connectivityResult =
-                    await (Connectivity().checkConnectivity());
-                if (connectivityResult != ConnectivityResult.none) {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (context) {
-                        return HomeScreen();
-                      },
-                    ),
-                  );
-                } else {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text("Still no internet connection"),
-                    ),
-                  );
-                }
-              },
-              child: Text("Refresh"),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
+// class ErrorScreen extends StatelessWidget {
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       body: Center(
+//         child: Column(
+//           mainAxisAlignment: MainAxisAlignment.center,
+//           children: [
+//             Container(
+//               margin: EdgeInsets.only(top: 50, bottom: 100),
+//               child: Lottie.asset(
+//                 'assets/no_connection.json', // Replace with the correct path to your Lottie file
+//                 height: 400,
+//                 width: 400,
+//               ),
+//             ),
+//             Text("No internet connection"),
+//             SizedBox(height: 20),
+//             ElevatedButton(
+//               onPressed: () async {
+//                 var connectivityResult =
+//                     await (Connectivity().checkConnectivity());
+//                 if (connectivityResult != ConnectivityResult.none) {
+//                   Navigator.of(context).push(
+//                     MaterialPageRoute(
+//                       builder: (context) {
+//                         return HomeScreen();
+//                       },
+//                     ),
+//                   );
+//                 } else {
+//                   ScaffoldMessenger.of(context).showSnackBar(
+//                     SnackBar(
+//                       content: Text("Still no internet connection"),
+//                     ),
+//                   );
+//                 }
+//               },
+//               child: Text("Refresh"),
+//             ),
+//           ],
+//         ),
+//       ),
+//     );
+//   }
+// }
 
 // hadle back buttn
 void handleBackButton() {
   print("Back button clicked");
   // Additional logic you want to perform on back button click
-}  
+}
