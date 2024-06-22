@@ -1,7 +1,15 @@
 // import 'package:aurudu_nakath/Push_Notifications/push_notificatrions.dart';
+import 'package:aurudu_nakath/Compass/compass.dart';
+import 'package:aurudu_nakath/Tools/tools_menu.dart';
 import 'package:aurudu_nakath/firebase_options.dart';
 import 'package:aurudu_nakath/loadin_screen/firebase_api.dart';
 import 'package:aurudu_nakath/loadin_screen/loading.dart';
+import 'package:aurudu_nakath/screens/aurudu_nakath.dart';
+import 'package:aurudu_nakath/screens/hela_ai.dart';
+import 'package:aurudu_nakath/screens/help.dart';
+import 'package:aurudu_nakath/screens/lagna.dart';
+import 'package:aurudu_nakath/screens/nakath_sittuwa.dart';
+import 'package:aurudu_nakath/screens/raahu_kalaya.dart';
 import 'package:aurudu_nakath/screens/splash_screen.dart';
 // import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
@@ -113,6 +121,17 @@ class _MyAppState extends State<MyApp> {
         if (snapshot.connectionState == ConnectionState.done) {
           return MaterialApp(
             debugShowCheckedModeBanner: false,
+            routes: {
+              '/help': (context) => Help(),
+          
+              '/helaai': (context) => HelaChatAI(),
+              '/nakath_sittuwa': (context) => NakathSittuwa(),
+              '/litha': (context) => AuruduNakathScreen(),
+              '/lagna': (context) => LagnaPalapala(),
+              '/rahu_kalayana': (context) => RaahuKaalaya(),
+              '/tools': (context) => ToolsScreen(),
+              '/malimawa': (context) => Compass(),
+            },
             theme: ThemeData(
               fontFamily: 'Sinhala',
             ),

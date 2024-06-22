@@ -193,31 +193,31 @@ class _HomeScreenState extends State<HomeScreen> {
     return RefreshIndicator(
       onRefresh: () => _onWillPop(),
       child: Scaffold(
-        floatingActionButton: SpeedDial(
-            backgroundColor: Colors.red,
-            foregroundColor: Colors.white,
-            iconTheme: IconThemeData(color: Colors.white),
-            animatedIcon: AnimatedIcons.menu_close,
-            children: [
-              SpeedDialChild(
-                  backgroundColor: const Color.fromARGB(255, 255, 255, 255),
-                  child: Icon(Icons.help),
-                  label: 'උදව්',
-                  labelStyle: GoogleFonts.notoSerifSinhala(),
-                  onTap: () {
-                    // review.requestReview(context);
-                  }),
-              SpeedDialChild(
-                  backgroundColor: const Color.fromARGB(255, 255, 255, 255),
-                  child: Icon(Icons.compass_calibration),
-                  label: 'මාලිමාව',
-                  labelStyle: GoogleFonts.notoSerifSinhala(),
-                  onTap: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(builder: (context) => Compass()),
-                    );
-                  })
-            ]),
+        // floatingActionButton: SpeedDial(
+        //     backgroundColor: Colors.red,
+        //     foregroundColor: Colors.white,
+        //     iconTheme: IconThemeData(color: Colors.white),
+        //     animatedIcon: AnimatedIcons.menu_close,
+        //     children: [
+        //       SpeedDialChild(
+        //           backgroundColor: const Color.fromARGB(255, 255, 255, 255),
+        //           child: Icon(Icons.help),
+        //           label: 'උදව්',
+        //           labelStyle: GoogleFonts.notoSerifSinhala(),
+        //           onTap: () {
+        //             // review.requestReview(context);
+        //           }),
+        //       SpeedDialChild(
+        //           backgroundColor: const Color.fromARGB(255, 255, 255, 255),
+        //           child: Icon(Icons.compass_calibration),
+        //           label: 'මාලිමාව',
+        //           labelStyle: GoogleFonts.notoSerifSinhala(),
+        //           onTap: () {
+        //             Navigator.of(context).push(
+        //               MaterialPageRoute(builder: (context) => Compass()),
+        //             );
+        //           })
+        //     ]),
         body: Stack(
           children: <Widget>[
             Positioned.fill(
@@ -387,13 +387,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 //Ads Load
                                 // adManager.showInterstitialAd();
 
-                                Navigator.of(context).push(
-                                  MaterialPageRoute(
-                                    builder: (context) {
-                                      return NakathSittuwa();
-                                    },
-                                  ),
-                                );
+                                Navigator.of(context).pushNamed('/nakath_sittuwa');
                               },
                               child: Container(
                                 height: 100,
@@ -459,13 +453,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               onTap: () {
                                 //Ads Load
                                 // adManager.showInterstitialAd();
-                                Navigator.of(context).push(
-                                  MaterialPageRoute(
-                                    builder: (context) {
-                                      return AuruduNakathScreen();
-                                    },
-                                  ),
-                                );
+                                Navigator.of(context).pushNamed('/litha');
                               },
                               child: Container(
                                 height: 100,
@@ -534,13 +522,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             onTap: () {
                               //Ads Load
                               // adManager.showInterstitialAd();
-                              Navigator.of(context).push(
-                                MaterialPageRoute(
-                                  builder: (context) {
-                                    return LagnaPalapala();
-                                  },
-                                ),
-                              );
+                              Navigator.of(context).pushNamed('/lagna');
                             },
                             child: Container(
                               height: 100,
@@ -604,13 +586,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               // Handle tap for "රාහු කාලය"
                               //Ads Load
                               // adManager.showInterstitialAd();
-                              Navigator.of(context).push(
-                                MaterialPageRoute(
-                                  builder: (context) {
-                                    return RaahuKaalaya();
-                                  },
-                                ),
-                              );
+                              Navigator.of(context).pushNamed('/rahu_kalayana');
                             },
                             child: Container(
                               height: 100,
@@ -678,13 +654,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             onTap: () {
                               //Ads Load
                               // adManager.showInterstitialAd();
-                              Navigator.of(context).push(
-                                MaterialPageRoute(
-                                  builder: (context) {
-                                    return HelaChatAI();
-                                  },
-                                ),
-                              );
+                              Navigator.of(context).pushNamed('/helaai');
                             },
                             child: Container(
                               height: 100,
@@ -755,24 +725,8 @@ class _HomeScreenState extends State<HomeScreen> {
                               //     },
                               //   ),
                               // );
-                              showDialog(
-                                context: context,
-                                builder: (BuildContext context) {
-                                  return AlertDialog(
-                                    title: Text('දෝශයයි'),
-                                    content: Text(
-                                        'මෙම සේවාව තාවකාලිකව විසන්දි කර ඇත.'),
-                                    actions: <Widget>[
-                                      TextButton(
-                                        child: Text('OK'),
-                                        onPressed: () {
-                                          Navigator.of(context).pop();
-                                        },
-                                      ),
-                                    ],
-                                  );
-                                },
-                              );
+
+                              Navigator.of(context).pushNamed('/tools');
                             },
                             child: Container(
                               height: 100,
@@ -797,7 +751,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                     children: [
                                       Center(
                                         child: Text(
-                                          'ජ්‍යෝතීෂ්‍ය සේවාව',
+                                          'වෙනත් මෙවලම්',
                                           style: GoogleFonts.notoSerifSinhala(
                                             fontSize: 14,
                                             color: const Color.fromARGB(

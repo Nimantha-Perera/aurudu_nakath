@@ -1,6 +1,7 @@
 import 'package:aurudu_nakath/Compass/neu_corc;e.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_compass/flutter_compass.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'dart:math' as math;
 
@@ -55,7 +56,7 @@ class _CompassState extends State<Compass> {
           child: Transform.rotate(
             angle: (heading! * (math.pi / 180) * -1),
             child: Image.asset(
-              'assets/malimawa/pngwing.com.png',
+              'assets/malimawa/sincom.png',
               color: Color.fromARGB(255, 71, 71, 71),
               fit: BoxFit.fill,
             ),
@@ -70,7 +71,7 @@ class _CompassState extends State<Compass> {
     // Replace with your actual permission request widget
     return Center(
         child: ElevatedButton(
-            child: const Text('Request Location Permission'),
+            child: const Text('දුරකතන සංවේදක සඳහා අවසර ලබාදෙන්න'),
             onPressed: () async {
               Permission.locationWhenInUse.request().then((value) {
                 _fetchPermissionStatus();
@@ -81,15 +82,19 @@ class _CompassState extends State<Compass> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: Text('මාලිමාව',style: GoogleFonts.notoSerifSinhala(fontSize: 15),),
+        centerTitle: true,
+        backgroundColor: Color(0xFF6D003B),
+        foregroundColor: Color.fromARGB(255, 255, 255, 255),
+      ),
       backgroundColor: Color(0xFF6D003B),
       body: Stack(
         
         children: [
-          Container(child: Padding(
-            padding: const EdgeInsets.all(30.0),
-            child: Text("මාලිමාව",style: TextStyle(color: Colors.white,fontSize: 30,fon),),
-          )),
-          _hasPermission ? _buildCompass() : _buildPermissionSheet(),
+          Positioned(child: Image.asset('assets/background.jpg')),
+          _buildCompass(),
+          if (!_hasPermission) _buildPermissionSheet(),
         ],
       ),
     );
