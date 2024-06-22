@@ -7,7 +7,7 @@ import 'package:aurudu_nakath/Image_chache_Save/img_chanche.dart';
 import 'package:aurudu_nakath/Notifications/notification_service.dart';
 import 'package:aurudu_nakath/screens/hela_ai.dart';
 import 'package:aurudu_nakath/screens/help.dart';
-import 'package:aurudu_nakath/screens/horoscope/compass.dart';
+import 'package:aurudu_nakath/Compass/compass.dart';
 import 'package:aurudu_nakath/screens/horoscope/menu.dart';
 import 'package:aurudu_nakath/screens/raahu_kalaya.dart';
 import 'package:carousel_slider/carousel_slider.dart';
@@ -213,9 +213,9 @@ class _HomeScreenState extends State<HomeScreen> {
                   label: 'මාලිමාව',
                   labelStyle: GoogleFonts.notoSerifSinhala(),
                   onTap: () {
-                    // Navigator.of(context).push(
-                    //   MaterialPageRoute(builder: (context) => Compass()),
-                    // );
+                    Navigator.of(context).push(
+                      MaterialPageRoute(builder: (context) => Compass()),
+                    );
                   })
             ]),
         body: Stack(

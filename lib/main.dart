@@ -4,7 +4,7 @@ import 'package:aurudu_nakath/loadin_screen/firebase_api.dart';
 import 'package:aurudu_nakath/loadin_screen/loading.dart';
 import 'package:aurudu_nakath/screens/splash_screen.dart';
 // import 'package:awesome_notifications/awesome_notifications.dart';
-// import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
@@ -129,10 +129,10 @@ class _MyAppState extends State<MyApp> {
   }
 
   Future<Widget> _checkConnectivityAndFirstTime() async {
-    // var connectivityResult = await (Connectivity().checkConnectivity());
-    // if (connectivityResult == ConnectivityResult.none) {
-    //   return ErrorScreen(); // Return the error screen if no internet connection
-    // }
+    var connectivityResult = await (Connectivity().checkConnectivity());
+    if (connectivityResult == ConnectivityResult.none) {
+      return ErrorScreen(); // Return the error screen if no internet connection
+    }
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
     bool isFirstTime = prefs.getBool('isFirstTime') ?? true;
@@ -149,52 +149,52 @@ class _MyAppState extends State<MyApp> {
   }
 }
 
-// class ErrorScreen extends StatelessWidget {
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       body: Center(
-//         child: Column(
-//           mainAxisAlignment: MainAxisAlignment.center,
-//           children: [
-//             Container(
-//               margin: EdgeInsets.only(top: 50, bottom: 100),
-//               child: Lottie.asset(
-//                 'assets/no_connection.json', // Replace with the correct path to your Lottie file
-//                 height: 400,
-//                 width: 400,
-//               ),
-//             ),
-//             Text("No internet connection"),
-//             SizedBox(height: 20),
-//             ElevatedButton(
-//               onPressed: () async {
-//                 var connectivityResult =
-//                     await (Connectivity().checkConnectivity());
-//                 if (connectivityResult != ConnectivityResult.none) {
-//                   Navigator.of(context).push(
-//                     MaterialPageRoute(
-//                       builder: (context) {
-//                         return HomeScreen();
-//                       },
-//                     ),
-//                   );
-//                 } else {
-//                   ScaffoldMessenger.of(context).showSnackBar(
-//                     SnackBar(
-//                       content: Text("Still no internet connection"),
-//                     ),
-//                   );
-//                 }
-//               },
-//               child: Text("Refresh"),
-//             ),
-//           ],
-//         ),
-//       ),
-//     );
-//   }
-// }
+class ErrorScreen extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              margin: EdgeInsets.only(top: 50, bottom: 100),
+              child: Lottie.asset(
+                'assets/no_connection.json', // Replace with the correct path to your Lottie file
+                height: 400,
+                width: 400,
+              ),
+            ),
+            Text("No internet connection"),
+            SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: () async {
+                var connectivityResult =
+                    await (Connectivity().checkConnectivity());
+                if (connectivityResult != ConnectivityResult.none) {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) {
+                        return HomeScreen();
+                      },
+                    ),
+                  );
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text("Still no internet connection"),
+                    ),
+                  );
+                }
+              },
+              child: Text("Refresh"),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
 
 // hadle back buttn
 void handleBackButton() {
