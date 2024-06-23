@@ -98,9 +98,12 @@ class _NakathSittuwaState extends State<NakathSittuwa> {
       child: Scaffold(
         appBar: AppBar(
           centerTitle: true,
+          foregroundColor: Colors.white,
+           iconTheme: IconThemeData(color: Colors.white),
           backgroundColor: Color(0xFF6D003B),
           title: Text("අලුත් අවුරුදු නැකැත්",style: GoogleFonts.notoSerifSinhala(
                 fontSize: 14.0,
+                color: Colors.white,
               ),),
         ),
         body: Container(
@@ -174,7 +177,7 @@ class _NakathSittuwaState extends State<NakathSittuwa> {
   Widget _NakathData() {
     return StreamBuilder<DatabaseEvent>(
       stream: FirebaseDatabase.instance
-          .reference()
+          .ref()
           .child('aurudu_nakath_sittuwa')
           .onValue,
       builder: (context, snapshot) {

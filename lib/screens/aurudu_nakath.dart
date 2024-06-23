@@ -194,7 +194,7 @@ class _AuruduNakathScreenState extends State<AuruduNakathScreen> {
   }
 
   // load table database
-  final databaseReference = FirebaseDatabase.instance.reference();
+  final databaseReference = FirebaseDatabase.instance.ref();
 
 //සූනන් ඇඟවැටීමේ පලාපට ලබා ගැනීම
 
@@ -301,7 +301,9 @@ class _AuruduNakathScreenState extends State<AuruduNakathScreen> {
         onPressed: _loadMoreData,
         child: Text('තව බලන්න'),
         style: ElevatedButton.styleFrom(
-          foregroundColor: Color.fromARGB(255, 255, 238, 0),
+
+          backgroundColor: Color.fromARGB(255, 255, 238, 0),
+
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(20),
           ),
@@ -354,6 +356,7 @@ class _AuruduNakathScreenState extends State<AuruduNakathScreen> {
       appBar: AppBar(
         backgroundColor: Color(0xFF6D003B),
         centerTitle: true,
+        foregroundColor: Colors.white,
         title: Text(
           '2024 ලිත',
           style: GoogleFonts.notoSerifSinhala(
@@ -653,7 +656,7 @@ class _AuruduNakathScreenState extends State<AuruduNakathScreen> {
 // මරු සිටින දිසාව ලෝඩ්
 
   Widget _buildDataTable() {
-    DatabaseReference reference = FirebaseDatabase.instance.reference();
+    DatabaseReference reference = FirebaseDatabase.instance.ref();
 
     return Container(
       padding: EdgeInsets.all(16.0),

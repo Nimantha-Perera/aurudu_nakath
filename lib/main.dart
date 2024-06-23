@@ -1,9 +1,20 @@
+// import 'package:aurudu_nakath/Push_Notifications/push_notificatrions.dart';
+import 'package:aurudu_nakath/Compass/compass.dart';
+import 'package:aurudu_nakath/Tools/tools_menu.dart';
+import 'package:aurudu_nakath/firebase_options.dart';
 import 'package:aurudu_nakath/loadin_screen/firebase_api.dart';
 import 'package:aurudu_nakath/loadin_screen/loading.dart';
+import 'package:aurudu_nakath/screens/aurudu_nakath.dart';
+import 'package:aurudu_nakath/screens/hela_ai.dart';
+import 'package:aurudu_nakath/screens/help.dart';
+import 'package:aurudu_nakath/screens/lagna.dart';
+import 'package:aurudu_nakath/screens/nakath_sittuwa.dart';
+import 'package:aurudu_nakath/screens/raahu_kalaya.dart';
 import 'package:aurudu_nakath/screens/splash_screen.dart';
-import 'package:awesome_notifications/awesome_notifications.dart';
+// import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
-import 'package:device_preview/device_preview.dart';
+
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:aurudu_nakath/screens/home.dart';
 import 'package:aurudu_nakath/screens/onboarding_screen.dart';
@@ -15,26 +26,27 @@ import 'package:intl/date_symbol_data_local.dart';
 import 'package:lottie/lottie.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+// Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+//   // If you're going to use other Firebase services in the background, such as Firestore,
+//   // make sure you call `initializeApp` before using other Firebase services.
+//   await Firebase.initializeApp();
+//   print('Handling a background message: ${message.messageId}');
+// }
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await initializeDateFormatting('si_LK');
+
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp, // Or any other desired orientation
   ]);
 
-  
-    await Firebase.initializeApp(
-    options: const FirebaseOptions(
-        apiKey: "AIzaSyDPZPB6v5SqppWZbqYZ3JV0oWd3AUxkTYs",
-        authDomain: "nakath-af5a0.firebaseapp.com",
-        databaseURL: "https://nakath-af5a0-default-rtdb.firebaseio.com",
-        projectId: "nakath-af5a0",
-        storageBucket: "nakath-af5a0.appspot.com",
-        messagingSenderId: "91523853816",
-        appId: "1:91523853816:web:2e7db1e0dcff9cfc69fa0d",
-        measurementId: "G-VTC0XKG0QW"),
-  ); // Add Firebase initialization if required
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+  // String? token = await FirebaseMessaging.instance.getToken();
+  // print("FCM Token: $token");
+  // FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
   // FirebaseApi.configureFirebaseMessaging();
   // AwesomeNotifications().initialize(
   //   'resource://mipmap/ic_launcher', // Replace with the name of your icon resource
@@ -49,46 +61,49 @@ void main() async {
   //   ],
   // );
 
+  // LocalNotificationService.initialize();
   runApp(MyApp());
 }
 
 class MyApp extends StatefulWidget {
   @override
-  
   _MyAppState createState() => _MyAppState();
 }
 
 class _MyAppState extends State<MyApp> {
   Future<Widget>? _appWidget;
-  
 
   @override
   void initState() {
     super.initState();
-    _appWidget = _checkConnectivityAndFirstTime();
     checkForUpdate();
+    _appWidget = _checkConnectivityAndFirstTime();
+    // FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+    //   print('Got a message whilst in the foreground!');
+    //   print('Message data: ${message.data}');
+    // });
+
+    // FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+
+    // _initializeFirebaseMessaging();
   }
-
-
-
 
   // Check Updates
-Future<void> checkForUpdate() async {
-  print('checking for Update');
-  try {
-    var info = await InAppUpdate.checkForUpdate();
-    setState(() {
-      if (info.updateAvailability == UpdateAvailability.updateAvailable) {
-        print('update available');
-        update();
-      }
-    });
-  } catch (e) {
-    print('Failed to bind to the service: $e');
-    // Handle the failure, show a message to the user, or retry
+  Future<void> checkForUpdate() async {
+    print('checking for Update');
+    try {
+      var info = await InAppUpdate.checkForUpdate();
+      setState(() {
+        if (info.updateAvailability == UpdateAvailability.updateAvailable) {
+          print('update available');
+          update();
+        }
+      });
+    } catch (e) {
+      print('Failed to bind to the service: $e');
+      // Handle the failure, show a message to the user, or retry
+    }
   }
-}
-
 
   void update() async {
     print('Updating');
@@ -98,16 +113,25 @@ Future<void> checkForUpdate() async {
     });
   }
 
-
   @override
   Widget build(BuildContext context) {
-    
     return FutureBuilder<Widget>(
       future: _appWidget,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.done) {
           return MaterialApp(
             debugShowCheckedModeBanner: false,
+            routes: {
+              '/help': (context) => Help(),
+          
+              '/helaai': (context) => HelaChatAI(),
+              '/nakath_sittuwa': (context) => NakathSittuwa(),
+              '/litha': (context) => AuruduNakathScreen(),
+              '/lagna': (context) => LagnaPalapala(),
+              '/rahu_kalayana': (context) => RaahuKaalaya(),
+              '/tools': (context) => ToolsScreen(),
+              '/malimawa': (context) => Compass(),
+            },
             theme: ThemeData(
               fontFamily: 'Sinhala',
             ),
@@ -115,7 +139,6 @@ Future<void> checkForUpdate() async {
           );
         } else {
           return MaterialApp(
-          
             debugShowCheckedModeBanner: false,
             home: LoadingScreen(),
           );
@@ -196,4 +219,4 @@ class ErrorScreen extends StatelessWidget {
 void handleBackButton() {
   print("Back button clicked");
   // Additional logic you want to perform on back button click
-}  
+}

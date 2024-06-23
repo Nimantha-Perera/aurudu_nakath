@@ -5,7 +5,12 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
+// import 'package:in_app_review/in_app_review.dart';
 import 'package:url_launcher/url_launcher.dart';
+
+
+
+// final InAppReview inAppReview = InAppReview.instance;
 
 class Help extends StatefulWidget {
   const Help({Key? key}) : super(key: key);
@@ -20,21 +25,28 @@ class _HelpState extends State<Help> {
   @override
   void initState() {
     super.initState();
+    
 
     interstitialAdManager.initInterstitialAd();
   }
+
+  
 
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
-        BackButtonUtil.handleBackButton(interstitialAdManager);
+    //     BackButtonUtil.handleBackButton(interstitialAdManager);
+    //     if (await inAppReview.isAvailable()) {
+    //   inAppReview.requestReview();
+    // }
 
         return true; // Return true to allow the back navigation
       },
       child: Scaffold(
         appBar: AppBar(
           backgroundColor: Color(0xFF6D003B),
+          foregroundColor: Colors.white,
           centerTitle: true,
           title:
               Text('උදව්', style: GoogleFonts.notoSerifSinhala(fontSize: 14)),
@@ -406,7 +418,9 @@ class _HelpState extends State<Help> {
                       children: [
                         ElevatedButton(
                           style: ElevatedButton.styleFrom(
-                            foregroundColor: Colors
+
+                            backgroundColor: Colors
+
                                 .blue, // Change the background color as needed
                             shape: CircleBorder(), // Make it a circle
                             padding: EdgeInsets.all(
@@ -437,7 +451,9 @@ class _HelpState extends State<Help> {
 
                         ElevatedButton(
                           style: ElevatedButton.styleFrom(
-                            foregroundColor: Color.fromARGB(255, 0, 177,
+
+                            backgroundColor: Color.fromARGB(255, 0, 177,
+
                                 74), // Change the background color as needed
                             shape: CircleBorder(), // Make it a circle
                             padding: EdgeInsets.all(
@@ -466,7 +482,9 @@ class _HelpState extends State<Help> {
 
                         ElevatedButton(
                           style: ElevatedButton.styleFrom(
-                            foregroundColor: Colors
+
+                            backgroundColor: Colors
+
                                 .purple, // Change the background color as needed
                             shape: CircleBorder(), // Make it a circle
                             padding: EdgeInsets.all(
