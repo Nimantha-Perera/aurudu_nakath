@@ -612,6 +612,7 @@ class _ChatScreenState extends State<HelaChatAI> {
     );
   }
 
+
   Widget buildSuggestionButton(String suggestion) {
     return Container(
       margin: EdgeInsets.symmetric(horizontal: 4.0),
@@ -632,6 +633,7 @@ class _ChatScreenState extends State<HelaChatAI> {
           suggestion,
           style: GoogleFonts.notoSerifSinhala(
               fontSize: 12, color: const Color.fromARGB(255, 77, 77, 77)),
+
         ),
       ),
     );
