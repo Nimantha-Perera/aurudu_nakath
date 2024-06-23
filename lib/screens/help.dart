@@ -418,7 +418,9 @@ class _HelpState extends State<Help> {
                       children: [
                         ElevatedButton(
                           style: ElevatedButton.styleFrom(
+
                             backgroundColor: Colors
+
                                 .blue, // Change the background color as needed
                             shape: CircleBorder(), // Make it a circle
                             padding: EdgeInsets.all(
@@ -449,7 +451,9 @@ class _HelpState extends State<Help> {
 
                         ElevatedButton(
                           style: ElevatedButton.styleFrom(
+
                             backgroundColor: Color.fromARGB(255, 0, 177,
+
                                 74), // Change the background color as needed
                             shape: CircleBorder(), // Make it a circle
                             padding: EdgeInsets.all(
@@ -478,7 +482,9 @@ class _HelpState extends State<Help> {
 
                         ElevatedButton(
                           style: ElevatedButton.styleFrom(
+
                             backgroundColor: Colors
+
                                 .purple, // Change the background color as needed
                             shape: CircleBorder(), // Make it a circle
                             padding: EdgeInsets.all(
