@@ -33,42 +33,36 @@ class NotificationService {
     _firebaseInit();
   }
 
-Future<void> _requestPermission() async {
-  FirebaseMessaging messaging = FirebaseMessaging.instance;
+  Future<void> _requestPermission() async {
+    FirebaseMessaging messaging = FirebaseMessaging.instance;
+    SharedPreferences prefs = await SharedPreferences.getInstance();
 
-  
-  // Check stored permission status
- 
+    // Check stored permission status
+    bool storedPermission = prefs.getBool('notificationPermission') ?? false;
 
-  NotificationSettings settings = await messaging.requestPermission(
-    alert: true,
-    badge: true,
-    sound: true,
-  );
-
-  bool granted = settings.authorizationStatus == AuthorizationStatus.authorized;
-
-  
-}
-
-void _createNotificationChannel() {
-    const AndroidNotificationChannel channel = AndroidNotificationChannel(
-      'high_importance_channel', // id
-      'Nakath Main Notification', // name
-      description: 'This channel is used for important notifications.',
-      importance: Importance.high,
+    NotificationSettings settings = await messaging.requestPermission(
+      alert: true,
+      badge: true,
+      sound: true,
+            
     );
 
-    _flutterLocalNotificationsPlugin
-        .resolvePlatformSpecificImplementation<
-            AndroidFlutterLocalNotificationsPlugin>()
-        ?.createNotificationChannel(channel);
+    bool granted = settings.authorizationStatus == AuthorizationStatus.authorized;
+
+    if (storedPermission != granted) {
+      // If stored permission does not match device's current permission, update it
+      await _savePermissionStatus(granted);
+    }
   }
 
+  Future<void> _savePermissionStatus(bool granted) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('notificationPermission', granted);
+  }
 
   void _initializeLocalNotifications() {
     const AndroidInitializationSettings initializationSettingsAndroid =
-        AndroidInitializationSettings('@drawable/notification');
+        AndroidInitializationSettings('@mipmap/ic_launcher');
     const InitializationSettings initializationSettings =
         InitializationSettings(android: initializationSettingsAndroid);
 
@@ -76,10 +70,24 @@ void _createNotificationChannel() {
       initializationSettings,
       onDidReceiveBackgroundNotificationResponse:
           onDidReceiveBackgroundNotificationResponse,
-
-          
     );
+
     _createNotificationChannel();
+  }
+
+  void _createNotificationChannel() {
+    const AndroidNotificationChannel channel = AndroidNotificationChannel(
+      'important_messages', // id
+      'Nakath Notifications', // name
+      description: 'This channel is used for important notifications.',
+      importance: Importance.high,
+      playSound: true,
+    );
+
+    _flutterLocalNotificationsPlugin
+        .resolvePlatformSpecificImplementation<
+            AndroidFlutterLocalNotificationsPlugin>()
+        ?.createNotificationChannel(channel);
   }
 
   void _firebaseInit() {
@@ -94,10 +102,9 @@ void _createNotificationChannel() {
           notification.body,
           NotificationDetails(
             android: AndroidNotificationDetails(
-              'high_importance_channel',
-              'High Importance Notifications',
-              channelDescription:
-                  'This channel is used for important notifications.',
+              'important_messages', // Use the specific channel
+              'Nakath Notifications',
+              channelDescription: 'This channel is used for important notifications.',
               importance: Importance.high,
               priority: Priority.high,
             ),
