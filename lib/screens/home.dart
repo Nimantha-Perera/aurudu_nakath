@@ -22,6 +22,7 @@ import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:intl/intl.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -87,6 +88,7 @@ class _HomeScreenState extends State<HomeScreen> {
     // _startTimer();
     // Initialize the interstitial ad when the widget is created
     adManager.initInterstitialAd();
+    checkMaintenance(context);
     checkFirebaseDatabase();
   }
 
@@ -129,6 +131,81 @@ class _HomeScreenState extends State<HomeScreen> {
 //     return "දින $days පැය $hours මිනිත්තු $minutes තත්පර $seconds";
 // }
 //   }
+
+  //Check Maintainance
+
+  Future<Widget> checkMaintenance(BuildContext context) async {
+
+
+    String today = DateFormat('yyyy-MM-dd').format(DateTime.now());
+    DatabaseReference databaseReference =
+        FirebaseDatabase.instance.ref().child('maintenance');
+
+    // Use 'onValue' instead of 'once' to receive a continuous stream of events
+    databaseReference
+        .child('maintenancebrake')
+        .onValue
+        .listen((DatabaseEvent event) {
+      if (event.snapshot.value != null) {
+        Map<String, dynamic> data =
+            Map<String, dynamic>.from(event.snapshot.value as Map);
+        bool firebaseBoolValue = data['status'] as bool;
+        String startDate = data['startDate'] as String;
+        String endDate = data['endDate'] as String;
+
+        // Show alert message based on the boolean value
+        if (firebaseBoolValue) {
+          showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                title: Text('නියමිත නඩත්තු දැනුම්දීම'),
+                content: SingleChildScrollView(
+                  child: ListBody(
+                    children: <Widget>[
+                      Text('ප්‍රිය සමාජිකයන්,'),
+                      SizedBox(height: 10),
+                      Text(
+                          'ඔබේ නැකැත් යෙදුමේ කාර්ය සාධන වර්ධනය කිරීම සහ නව අංග සම්බන්ධ කිරීම සඳහා අපි නියමිත නඩත්තු කටයුතු සිදු කරමින් සිටිමු. නඩත්තු කටයුතු පහත දැක්වෙන පරිදි සිදු කෙරේ:'),
+                      SizedBox(height: 10),
+                      Text('දිනය: $today'),
+                      Text('වේලාව: $startDate සිට $endDate දක්වා'),
+                      SizedBox(height: 10),
+                      Text(
+                          'මෙම කාලය තුළ, යෙදුම තාවකාලිකව භාවිතා කළ නොහැකි වනු ඇත. මෙය ඔබට සිදු කරන හැකියාවට අපි කණගාටු වන අතර, ඔබගේ පරිශීලක අත්දැකීම වර්ධනය කිරීම සඳහා අපි කරන මෙය ඔබගේ අවබෝධයට ස්තූතිවන්ත වෙමු.'),
+                      SizedBox(height: 10),
+                      Text('ඔබගේ අඛණ්ඩ සහය සහ බලාපොරොත්තුවට ස්තූතිවන්ත වේවා.'),
+                      SizedBox(height: 10),
+                      Text('ඔබගේ,'),
+                      Text('නැකැත් App යෙදුම් කණ්ඩායම'),
+                    ],
+                  ),
+                ),
+                actions: <Widget>[
+                  TextButton(
+                    child: Text(
+                      'OK',
+                      style: TextStyle(color: Color.fromARGB(255, 255, 145, 0)),
+                    ),
+                    onPressed: () {
+                      SystemNavigator.pop();
+                    },
+                  ),
+                ],
+              );
+            },
+          );
+        }
+      } else {
+        // Handle the case where the snapshot is null or doesn't contain data
+        print(
+            'Firebase database value for maintenancebrake is null or does not contain data');
+      }
+    });
+
+    // Return a placeholder widget while the value is being fetched
+    return Container();
+  }
 
   Future<bool> _onWillPop() async {
     // Show ad when the back button is pressed
@@ -387,7 +464,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                 //Ads Load
                                 // adManager.showInterstitialAd();
 
-                                Navigator.of(context).pushNamed('/nakath_sittuwa');
+                                Navigator.of(context)
+                                    .pushNamed('/nakath_sittuwa');
                               },
                               child: Container(
                                 height: 100,

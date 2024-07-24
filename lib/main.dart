@@ -13,6 +13,7 @@ import 'package:aurudu_nakath/screens/raahu_kalaya.dart';
 import 'package:aurudu_nakath/screens/splash_screen.dart';
 // import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:firebase_database/firebase_database.dart';
 
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
@@ -76,7 +77,9 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
+
     checkForUpdate();
+   
     _appWidget = _checkConnectivityAndFirstTime();
     // FirebaseMessaging.onMessage.listen((RemoteMessage message) {
     //   print('Got a message whilst in the foreground!');
@@ -87,6 +90,7 @@ class _MyAppState extends State<MyApp> {
 
     // _initializeFirebaseMessaging();
   }
+
 
   // Check Updates
   Future<void> checkForUpdate() async {
@@ -123,7 +127,6 @@ class _MyAppState extends State<MyApp> {
             debugShowCheckedModeBanner: false,
             routes: {
               '/help': (context) => Help(),
-          
               '/helaai': (context) => HelaChatAI(),
               '/nakath_sittuwa': (context) => NakathSittuwa(),
               '/litha': (context) => AuruduNakathScreen(),
