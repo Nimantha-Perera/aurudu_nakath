@@ -6,7 +6,6 @@ import 'package:aurudu_nakath/Ads/init_ads.dart';
 import 'package:aurudu_nakath/Image_chache_Save/img_chanche.dart';
 import 'package:aurudu_nakath/Notifications/notification_service.dart';
 import 'package:aurudu_nakath/screens/hela_ai.dart';
-import 'package:aurudu_nakath/screens/help.dart';
 import 'package:aurudu_nakath/Compass/compass.dart';
 import 'package:aurudu_nakath/screens/horoscope/menu.dart';
 import 'package:aurudu_nakath/screens/raahu_kalaya.dart';

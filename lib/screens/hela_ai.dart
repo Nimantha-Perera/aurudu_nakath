@@ -1,11 +1,11 @@
 import 'package:aurudu_nakath/Ads/init_ads.dart';
 import 'package:aurudu_nakath/Image_chache_Save/img_chanche.dart';
 import 'package:aurudu_nakath/User_backClicked/back_clicked.dart';
+import 'package:aurudu_nakath/features/help/presentation/pages/help_screen.dart';
 import 'package:aurudu_nakath/review/rewiew.dart';
 import 'package:aurudu_nakath/screens/Results_Screens/result_screen_porondam.dart';
 import 'package:aurudu_nakath/screens/Results_Screens/result_screen_welawa.dart';
 import 'package:aurudu_nakath/screens/aurudu_nakath.dart';
-import 'package:aurudu_nakath/screens/help.dart';
 import 'package:aurudu_nakath/screens/nakath_sittuwa.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -324,7 +324,7 @@ class _ChatScreenState extends State<HelaChatAI> {
       Navigator.of(context).push(
         MaterialPageRoute(
           builder: (context) {
-            return Help();
+            return HelpScreen();
           },
         ),
       );

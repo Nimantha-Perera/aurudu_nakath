@@ -43,6 +43,7 @@ dependencies:
   flutter_compass: ^0.8.0
   flutter_html: ^3.0.0-beta.2
   flutter_local_notifications: ^17.1.2
+  flutter_markdown: ^0.7.3+1
   flutter_speed_dial: ^7.0.0
   fluttertoast: ^8.2.6
   font_awesome_flutter: ^10.7.0
