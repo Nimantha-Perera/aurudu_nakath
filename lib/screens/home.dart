@@ -41,38 +41,9 @@ int myCurrentIndex = 0;
 InterstitialAdManager adManager = InterstitialAdManager();
 NotificationService notificationService = NotificationService();
 
-List<DateTime> _targetDates = [
-  DateTime(2024, 4, 11),
-  DateTime(2024, 4, 13, 14, 41),
-  DateTime(2024, 4, 13, 21, 5),
-  DateTime(2024, 4, 13, 23, 6),
-  DateTime(2024, 4, 14, 00, 6),
-  DateTime(2024, 4, 15, 10, 17),
-  DateTime(2024, 4, 17, 6, 52),
-  DateTime(2024, 4, 18, 10, 16),
-];
 
-List<String> indexNames = [
-  'නව සඳ බැලීම සහ පරන අවුරුද්ද සඳහා ස්නානයට තව',
-  'පුණ්‍ය කාලය සඳහා තව',
-  'සිංහල දෙමළ අලුත් අවුරුද්ද උදාව සඳහා තව',
-  'කිරි ඉතිරවීම සඳහා තව',
-  'වැඩ ඇල්ලීම ,හනුදෙනු කිරීම සහ ආහාර අනුභවය',
-  'හිස තෙල් ගෑම සඳහා තව',
-  'රැකී රක්ශා සඳහා පිටත්ව යෑම සඳහා තව',
-  'පැල සිටුවීම සඳහා තව',
-];
 
-// String getEventName(int index) {
-//   if (index >= 0 && index < indexNames.length) {
-//     return indexNames[index];
-//   } else {
-//     return 'Unknown Event';
-//   }
-// }
 
-// int _currentIndex = 0;
-// String _timeUntil = '';
 
 class _HomeScreenState extends State<HomeScreen> {
   void initState() {
@@ -91,45 +62,7 @@ class _HomeScreenState extends State<HomeScreen> {
     checkFirebaseDatabase();
   }
 
-  // void _startTimer() {
-  //   Timer.periodic(Duration(seconds: 1), (timer) {
-  //     setState(() {
-  //       Duration difference =
-  //           _targetDates[_currentIndex].difference(DateTime.now());
-  //       if (difference.inSeconds <= 0) {
-  //         _currentIndex = (_currentIndex + 1) % _targetDates.length;
-  //         if (_currentIndex == 0) {
-  //           timer.cancel(); // Stop the timer when all events finish
-  //           _timeUntil = 'All events finished';
-  //           return;
-  //         }
-  //       }
-  //       _timeUntil = _formatDuration(difference.abs());
-  //     });
-  //   });
-  // }
-
-//   String _formatDuration(Duration duration) {
-//     String twoDigits(int n) => n.toString().padLeft(2, "0");
-//     int days = duration.inDays;
-//     int hours = duration.inHours.remainder(24);
-//     int minutes = duration.inMinutes.remainder(60);
-//     int seconds = duration.inSeconds.remainder(60);
-
-//    if (days == 0) {
-//     if (hours == 0) {
-//         if (minutes == 0) {
-//             return "තත්පර $seconds";
-//         } else {
-//             return "මිනිත්තු $minutes තත්පර $seconds";
-//         }
-//     } else {
-//         return "පැය $hours මිනිත්තු $minutes තත්පර $seconds";
-//     }
-// } else {
-//     return "දින $days පැය $hours මිනිත්තු $minutes තත්පර $seconds";
-// }
-//   }
+ 
 
   //Check Maintainance
 
@@ -269,31 +202,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return RefreshIndicator(
       onRefresh: () => _onWillPop(),
       child: Scaffold(
-        // floatingActionButton: SpeedDial(
-        //     backgroundColor: Colors.red,
-        //     foregroundColor: Colors.white,
-        //     iconTheme: IconThemeData(color: Colors.white),
-        //     animatedIcon: AnimatedIcons.menu_close,
-        //     children: [
-        //       SpeedDialChild(
-        //           backgroundColor: const Color.fromARGB(255, 255, 255, 255),
-        //           child: Icon(Icons.help),
-        //           label: 'උදව්',
-        //           labelStyle: GoogleFonts.notoSerifSinhala(),
-        //           onTap: () {
-        //             // review.requestReview(context);
-        //           }),
-        //       SpeedDialChild(
-        //           backgroundColor: const Color.fromARGB(255, 255, 255, 255),
-        //           child: Icon(Icons.compass_calibration),
-        //           label: 'මාලිමාව',
-        //           labelStyle: GoogleFonts.notoSerifSinhala(),
-        //           onTap: () {
-        //             Navigator.of(context).push(
-        //               MaterialPageRoute(builder: (context) => Compass()),
-        //             );
-        //           })
-        //     ]),
+       
         body: Stack(
           children: <Widget>[
             Positioned.fill(
@@ -302,30 +211,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 fit: BoxFit.cover,
               ),
             ),
-            // Positioned(
-            //   top: 0,
-            //   left: 0,
-            //   right: 0,
-            //   child: GestureDetector(
-            //     onTap: () async {
-            //       const url =
-            //           'https://play.google.com/store/apps/details?id=com.hela_ai.hela_ai'; // Replace this with your link
-            //       if (await canLaunch(url)) {
-            //         await launch(url);
-            //       } else {
-            //         throw 'Could not launch $url';
-            //       }
-            //     },
-            //     child: Padding(
-            //       padding: const EdgeInsets.all(8.0),
-            //       child: Container(
-            //         margin: EdgeInsets.only(top: 10),
-            //         child: Image.asset('assets/helagpt_bannerad.png'),
-            //       ),
-            //     ),
-            //   ),
-            // ),
-
+           
             // ඉමේජ් සලිඩය්
             Column(
               children: [
@@ -380,69 +266,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                     ),
                   ),
-                // if (showTimeCount) // Show countdown when showTimeCount is true
-                //   Container(
-                //     width: double.infinity,
-                //     height: 150,
-                //     color: const Color.fromARGB(255, 255, 255, 255),
-                //     child: Padding(
-                //       padding:
-                //           const EdgeInsets.only(top: 50, left: 25, right: 25),
-                //       child: Column(
-                //         crossAxisAlignment: CrossAxisAlignment.start,
-                //         children: [
-                //           Text(
-                //             "අලුත් අවුරුදු ලඟම නැකත",
-                //             style: GoogleFonts.notoSerifSinhala(
-                //               fontSize: 16,
-                //               color: Color.fromARGB(255, 255, 187, 0),
-                //             ),
-                //             textAlign: TextAlign.start,
-                //           ),
-                //           GestureDetector(
-                //             onTap: () {
-                //               Navigator.of(context).push(
-                //                 MaterialPageRoute(
-                //                     builder: (context) => NakathSittuwa()),
-                //               );
-                //             },
-                //             child: Center(
-                //               child: Container(
-                //                 width: double.infinity,
-                //                 decoration: BoxDecoration(
-                //                   border: Border.all(
-                //                     color: Color.fromARGB(255, 207, 207, 207),
-                //                     width: 2.0,
-                //                   ),
-                //                   borderRadius: BorderRadius.circular(10.0),
-                //                 ),
-                //                 child: Padding(
-                //                   padding: const EdgeInsets.all(8.0),
-                //                   child: Column(
-                //                     children: [
-                //                       Text(
-                //                         getEventName(_currentIndex),
-                //                         style: GoogleFonts.notoSerifSinhala(
-                //                           fontSize: 10,
-                //                         ),
-                //                       ),
-                //                       SizedBox(
-                //                         height: 10,
-                //                       ),
-                //                       Text(
-                //                         "$_timeUntil",
-                //                         style: GoogleFonts.notoSerifSinhala(),
-                //                       ),
-                //                     ],
-                //                   ),
-                //                 ),
-                //               ),
-                //             ),
-                //           )
-                //         ],
-                //       ),
-                //     ),
-                //   ),
+             
               ],
             ),
 
