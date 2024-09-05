@@ -1,5 +1,5 @@
-import 'package:aurudu_nakath/features/help/data/modals/help_topic.dart';
-import 'package:aurudu_nakath/features/help/data/repositories/help_repository.dart';
+import 'package:aurudu_nakath/features/ui/help/data/modals/help_topic.dart';
+import 'package:aurudu_nakath/features/ui/help/data/repositories/help_repository.dart';
 
 class HelpRepositoryImpl implements HelpRepository {
   @override

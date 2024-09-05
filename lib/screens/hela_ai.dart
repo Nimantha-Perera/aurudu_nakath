@@ -1,7 +1,7 @@
 import 'package:aurudu_nakath/Ads/init_ads.dart';
 import 'package:aurudu_nakath/Image_chache_Save/img_chanche.dart';
 import 'package:aurudu_nakath/User_backClicked/back_clicked.dart';
-import 'package:aurudu_nakath/features/help/presentation/pages/help_screen.dart';
+import 'package:aurudu_nakath/features/ui/help/presentation/pages/help_screen.dart';
 import 'package:aurudu_nakath/review/rewiew.dart';
 import 'package:aurudu_nakath/screens/Results_Screens/result_screen_porondam.dart';
 import 'package:aurudu_nakath/screens/Results_Screens/result_screen_welawa.dart';

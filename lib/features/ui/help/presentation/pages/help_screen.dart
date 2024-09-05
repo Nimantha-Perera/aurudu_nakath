@@ -1,6 +1,6 @@
-import 'package:aurudu_nakath/features/help/data/modals/help_topic.dart';
-import 'package:aurudu_nakath/features/help/data/repositories/help_repository_impl.dart';
-import 'package:aurudu_nakath/features/help/presentation/bloc/help_presenter.dart';
+import 'package:aurudu_nakath/features/ui/help/data/modals/help_topic.dart';
+import 'package:aurudu_nakath/features/ui/help/data/repositories/help_repository_impl.dart';
+import 'package:aurudu_nakath/features/ui/help/presentation/bloc/help_presenter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:google_fonts/google_fonts.dart';

@@ -1,7 +1,8 @@
 // import 'package:aurudu_nakath/Push_Notifications/push_notificatrions.dart';
 import 'package:aurudu_nakath/Compass/compass.dart';
 import 'package:aurudu_nakath/Tools/tools_menu.dart';
-import 'package:aurudu_nakath/features/help/presentation/pages/help_screen.dart';
+import 'package:aurudu_nakath/features/ui/help/presentation/pages/help_screen.dart';
+import 'package:aurudu_nakath/features/ui/home/presentation/pages/dash_board.dart';
 import 'package:aurudu_nakath/firebase_options.dart';
 import 'package:aurudu_nakath/loadin_screen/firebase_api.dart';
 import 'package:aurudu_nakath/loadin_screen/loading.dart';
@@ -18,7 +19,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:aurudu_nakath/screens/home.dart';
-import 'package:aurudu_nakath/screens/onboarding_screen.dart';
+import 'package:aurudu_nakath/features/ui/intro_screens/onboarding_screen/onboarding_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -166,7 +167,7 @@ class _MyAppState extends State<MyApp> {
     } else {
       print("Returning HomeScreen");
 
-      return HomeScreen();
+      return DashBoard();
     }
   }
 }
@@ -197,7 +198,7 @@ class ErrorScreen extends StatelessWidget {
                   Navigator.of(context).push(
                     MaterialPageRoute(
                       builder: (context) {
-                        return HomeScreen();
+                        return DashBoard();
                       },
                     ),
                   );
