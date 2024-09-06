@@ -3,6 +3,7 @@ import 'package:aurudu_nakath/Compass/compass.dart';
 import 'package:aurudu_nakath/Tools/tools_menu.dart';
 import 'package:aurudu_nakath/features/ui/help/presentation/pages/help_screen.dart';
 import 'package:aurudu_nakath/features/ui/home/presentation/pages/dash_board.dart';
+import 'package:aurudu_nakath/features/ui/routes/routes.dart';
 import 'package:aurudu_nakath/firebase_options.dart';
 import 'package:aurudu_nakath/loadin_screen/firebase_api.dart';
 import 'package:aurudu_nakath/loadin_screen/loading.dart';
@@ -40,30 +41,13 @@ void main() async {
   await initializeDateFormatting('si_LK');
 
   SystemChrome.setPreferredOrientations([
-    DeviceOrientation.portraitUp, // Or any other desired orientation
+    DeviceOrientation.portraitUp,
   ]);
 
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  // String? token = await FirebaseMessaging.instance.getToken();
-  // print("FCM Token: $token");
-  // FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
-  // FirebaseApi.configureFirebaseMessaging();
-  // AwesomeNotifications().initialize(
-  //   'resource://mipmap/ic_launcher', // Replace with the name of your icon resource
-  //   [
-  //     NotificationChannel(
-  //       channelKey: 'basic_channel',
-  //       channelName: 'Basic notifications',
-  //       channelDescription: 'Notification channel for basic notifications',
-  //       defaultColor: Color(0xFF9D50DD),
-  //       ledColor: Colors.white,
-  //     ),
-  //   ],
-  // );
 
-  // LocalNotificationService.initialize();
   runApp(MyApp());
 }
 
@@ -78,44 +62,7 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
-
-    checkForUpdate();
-   
     _appWidget = _checkConnectivityAndFirstTime();
-    // FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-    //   print('Got a message whilst in the foreground!');
-    //   print('Message data: ${message.data}');
-    // });
-
-    // FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
-
-    // _initializeFirebaseMessaging();
-  }
-
-
-  // Check Updates
-  Future<void> checkForUpdate() async {
-    print('checking for Update');
-    try {
-      var info = await InAppUpdate.checkForUpdate();
-      setState(() {
-        if (info.updateAvailability == UpdateAvailability.updateAvailable) {
-          print('update available');
-          update();
-        }
-      });
-    } catch (e) {
-      print('Failed to bind to the service: $e');
-      // Handle the failure, show a message to the user, or retry
-    }
-  }
-
-  void update() async {
-    print('Updating');
-    await InAppUpdate.startFlexibleUpdate();
-    InAppUpdate.completeFlexibleUpdate().then((_) {}).catchError((e) {
-      print(e.toString());
-    });
   }
 
   @override
@@ -126,18 +73,10 @@ class _MyAppState extends State<MyApp> {
         if (snapshot.connectionState == ConnectionState.done) {
           return MaterialApp(
             debugShowCheckedModeBanner: false,
-            routes: {
-              '/help': (context) => HelpScreen(),
-              '/helaai': (context) => HelaChatAI(),
-              '/nakath_sittuwa': (context) => NakathSittuwa(),
-              '/litha': (context) => AuruduNakathScreen(),
-              '/lagna': (context) => LagnaPalapala(),
-              '/rahu_kalayana': (context) => RaahuKaalaya(),
-              '/tools': (context) => ToolsScreen(),
-              '/malimawa': (context) => Compass(),
-            },
+            initialRoute: AppRoutes.home,
+            onGenerateRoute: AppRoutes.generateRoute,
             theme: ThemeData(
-              fontFamily: 'Sinhala',
+              fontFamily: GoogleFonts.notoSerifSinhala().fontFamily,
             ),
             home: snapshot.data,
           );
@@ -161,12 +100,9 @@ class _MyAppState extends State<MyApp> {
     bool isFirstTime = prefs.getBool('isFirstTime') ?? true;
 
     if (isFirstTime) {
-      print("First time user");
       await prefs.setBool('isFirstTime', false);
       return Onboarding();
     } else {
-      print("Returning HomeScreen");
-
       return DashBoard();
     }
   }
@@ -183,7 +119,7 @@ class ErrorScreen extends StatelessWidget {
             Container(
               margin: EdgeInsets.only(top: 50, bottom: 100),
               child: Lottie.asset(
-                'assets/no_connection.json', // Replace with the correct path to your Lottie file
+                'assets/no_connection.json',
                 height: 400,
                 width: 400,
               ),
@@ -195,13 +131,7 @@ class ErrorScreen extends StatelessWidget {
                 var connectivityResult =
                     await (Connectivity().checkConnectivity());
                 if (connectivityResult != ConnectivityResult.none) {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (context) {
-                        return DashBoard();
-                      },
-                    ),
-                  );
+                  Navigator.of(context).pushReplacementNamed(AppRoutes.dashboard);
                 } else {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
@@ -217,10 +147,4 @@ class ErrorScreen extends StatelessWidget {
       ),
     );
   }
-}
-
-// hadle back buttn
-void handleBackButton() {
-  print("Back button clicked");
-  // Additional logic you want to perform on back button click
 }

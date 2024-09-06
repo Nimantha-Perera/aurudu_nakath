@@ -9,18 +9,20 @@ class Tools extends StatelessWidget {
     return Container(
       height: 150, // Set height for the horizontal list
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start, // Aligns children to start of column
+        crossAxisAlignment:
+            CrossAxisAlignment.start, // Aligns children to start of column
         children: [
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal:0), // Adds padding for better spacing
+            padding: const EdgeInsets.symmetric(
+                horizontal: 0), // Adds padding for better spacing
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
                   "වෙනත් මෙවලම්",
                   // Use theme style for consistency
+                     style: TextStyle(fontSize: 12),
                 ),
-                
               ],
             ),
           ),
@@ -31,18 +33,33 @@ class Tools extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                 ButtonsCard(
-                      text: "Item 1",
-                      onTap: () {},
-                    ),
+                  ButtonsCard(
+                    text: "හෙළ GPT",
+                    onTap: () {},
+                    color: Color(0xFFA02334),
+                    textColor: Colors.white,
+                    icon:
+                        Icon(Icons.arrow_outward_rounded, color: Colors.white),
+                  ),
 
-                    SizedBox(width: 10),
-                  
-                   ButtonsCard(
-                      text: "Item 2",
-                      onTap: () {},
-                    ),
-                  
+                  SizedBox(width: 10),
+
+                  ButtonsCard(
+                    text: "මාලිමාව",
+                    onTap: () {},
+                    color: Color(0xFFA02334),
+                    textColor: Colors.white,
+                    icon: Icon(Icons.compass_calibration, color: Colors.white),
+                  ),
+                  SizedBox(width: 10),
+                  ButtonsCard(
+                    text: "සැකසුම්",
+                    onTap: () {},
+                    color: Color(0xFFA02334),
+                    textColor: Colors.white,
+                    icon: Icon(Icons.settings, color: Colors.white),
+                  ),
+
                   // Add more items as needed with similar padding
                 ],
               ),

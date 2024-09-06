@@ -19,7 +19,7 @@ class _DashBoardState extends State<DashBoard> {
           // Main content
           SafeArea(
             child: Padding(
-              padding: const EdgeInsets.only(left: 30, right: 30, top: 30),
+              padding: const EdgeInsets.only(left: 30, right: 30, top: 0),
               child: SingleChildScrollView(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -28,6 +28,7 @@ class _DashBoardState extends State<DashBoard> {
                     Text(
                       "විශේෂ දැනුම්දීම්",
                       // Optional: Use a theme style
+                         style: TextStyle(fontSize: 12),
                     ),
                     SizedBox(height: 20),
                     // Notice Card 1
@@ -53,21 +54,7 @@ class _DashBoardState extends State<DashBoard> {
               ),
             ),
           ),
-          // Settings icon
-          Positioned(
-            top: 30,
-            right: 30,
-            child: CircleAvatar(
-              radius: 25,
-              backgroundColor: Colors.grey[200],
-              child: IconButton(
-                icon: Icon(Icons.settings),
-                onPressed: () {
-                  // Handle settings icon tap
-                },
-              ),
-            ),
-          ),
+        
         ],
       ),
     );

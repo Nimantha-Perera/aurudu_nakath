@@ -1,4 +1,5 @@
 import 'package:aurudu_nakath/features/ui/home/presentation/pages/buttons_card.dart';
+import 'package:aurudu_nakath/features/ui/routes/routes.dart';
 import 'package:flutter/material.dart';
 
 class Jyothishya extends StatelessWidget {
@@ -10,11 +11,15 @@ class Jyothishya extends StatelessWidget {
       height: 200, // Set height for the horizontal list
       child: Column(
         children: [
+
+        
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
                 "ජ්‍යෝතීශ්‍ය",
+                // Use theme style for consistency
+                style: TextStyle(fontSize: 12),
               ),
               TextButton(
                   onPressed: () {},
@@ -30,13 +35,25 @@ class Jyothishya extends StatelessWidget {
             children: [
               
               ButtonsCard(
-                  text: "Item 1",
-                  onTap: () => {},
+                  text: "අවුරුදු නැකැත්",
+                  onTap: () => {
+                     Navigator.pushNamed(context, AppRoutes.nakathSittuwa)
+                  },
+                  color: Color(0xFFFABC3F),
+                  textColor: const Color.fromARGB(255, 83, 83, 83),
+                  
+                   icon: Icon(Icons.timelapse_rounded, color: Colors.white), // Example icon // Example icon
                 ),
               
              ButtonsCard(
-                  text: "Item 2",
-                  onTap: () => {},
+                  text: "‍රාහු කාලය",
+                  onTap: () => {
+                     Navigator.pushNamed(context, AppRoutes.rahu_kalaya)
+                  },
+                  color: Color(0xFFFABC3F),
+                  textColor: const Color.fromARGB(255, 83, 83, 83),
+                  icon: Icon(Icons.watch_later_rounded, color: Colors.white),
+                  
                 ),
               
               // Add more items as needed with similar padding
