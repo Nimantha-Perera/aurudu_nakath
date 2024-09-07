@@ -1,6 +1,8 @@
 // lib/presentation/routes.dart
 
+import 'package:aurudu_nakath/features/ui/hela_gpt/presentation/pages/chat_view.dart';
 import 'package:aurudu_nakath/main.dart';
+import 'package:aurudu_nakath/screens/hela_ai.dart';
 import 'package:aurudu_nakath/screens/raahu_kalaya.dart';
 import 'package:flutter/material.dart';
 import 'package:aurudu_nakath/screens/home.dart';
@@ -19,6 +21,7 @@ class AppRoutes {
   static const String dashboard = '/dashboard';
 
   static const String rahu_kalaya= '/rahu_kalaya';
+  static const String hela_gpt = '/hela_gpt';
 
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
@@ -26,6 +29,10 @@ class AppRoutes {
         return MaterialPageRoute(builder: (_) => HomeScreen());
       case help:
         return MaterialPageRoute(builder: (_) => HelpScreen());
+
+      case hela_gpt:
+        return MaterialPageRoute(builder: (_) => ChatView());
+      
       case onboarding:
         return MaterialPageRoute(builder: (_) => Onboarding());
       case nakathSittuwa:

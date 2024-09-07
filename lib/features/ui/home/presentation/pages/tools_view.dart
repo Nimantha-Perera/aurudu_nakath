@@ -1,3 +1,4 @@
+import 'package:aurudu_nakath/features/ui/routes/routes.dart';
 import 'package:flutter/material.dart';
 import 'package:aurudu_nakath/features/ui/home/presentation/pages/buttons_card.dart';
 
@@ -35,7 +36,9 @@ class Tools extends StatelessWidget {
                 children: [
                   ButtonsCard(
                     text: "හෙළ GPT",
-                    onTap: () {},
+                    onTap: () {
+                      Navigator.pushNamed(context, AppRoutes.hela_gpt);
+                    },
                     color: Color(0xFFA02334),
                     textColor: Colors.white,
                     icon:
