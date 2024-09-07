@@ -141,7 +141,7 @@ class ChatView extends StatelessWidget {
             child: TextField(
               controller: controller,
               decoration: InputDecoration(
-                hintText: 'Type a message...',
+                hintText: 'අවශ්‍ය දේ මෙහි ලියන්න...',
                 filled: true,
                 fillColor: Colors.white,
                 border: OutlineInputBorder(

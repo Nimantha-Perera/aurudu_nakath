@@ -11,52 +11,49 @@ class Jyothishya extends StatelessWidget {
       height: 200, // Set height for the horizontal list
       child: Column(
         children: [
-
-        
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
                 "ජ්‍යෝතීශ්‍ය",
-                // Use theme style for consistency
                 style: TextStyle(fontSize: 12),
               ),
               TextButton(
-                  onPressed: () {},
-                  child: Text(
-                    "තවත් >",
-                    style: TextStyle(color: Colors.blue, fontSize: 10),
-                  ))
+                onPressed: () {},
+                child: Text(
+                  "තවත් >",
+                  style: TextStyle(color: Colors.blue, fontSize: 10),
+                ),
+              )
             ],
           ),
           SizedBox(height: 20),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              
-              ButtonsCard(
+              Expanded(
+                child: ButtonsCard(
                   text: "අවුරුදු නැකැත්",
                   onTap: () => {
-                     Navigator.pushNamed(context, AppRoutes.nakathSittuwa)
+                    Navigator.pushNamed(context, AppRoutes.nakathSittuwa)
                   },
                   color: Color(0xFFFABC3F),
                   textColor: const Color.fromARGB(255, 83, 83, 83),
-                  
-                   icon: Icon(Icons.timelapse_rounded, color: Colors.white), // Example icon // Example icon
+                  icon: Icon(Icons.timelapse_rounded, color: Colors.white),
                 ),
-              
-             ButtonsCard(
+              ),
+              SizedBox(width: 10), // Add some spacing between cards
+              Expanded(
+                child: ButtonsCard(
                   text: "‍රාහු කාලය",
                   onTap: () => {
-                     Navigator.pushNamed(context, AppRoutes.rahu_kalaya)
+                    Navigator.pushNamed(context, AppRoutes.rahu_kalaya)
                   },
                   color: Color(0xFFFABC3F),
                   textColor: const Color.fromARGB(255, 83, 83, 83),
                   icon: Icon(Icons.watch_later_rounded, color: Colors.white),
-                  
                 ),
-              
-              // Add more items as needed with similar padding
+              ),
             ],
           ),
         ],

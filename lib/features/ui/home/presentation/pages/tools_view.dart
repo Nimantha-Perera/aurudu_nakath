@@ -8,31 +8,25 @@ class Tools extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 150, // Set height for the horizontal list
+      height: 120,
+      margin: EdgeInsets.only(top: 50), // Set height for the horizontal list
       child: Column(
-        crossAxisAlignment:
-            CrossAxisAlignment.start, // Aligns children to start of column
         children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(
-                horizontal: 0), // Adds padding for better spacing
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  "වෙනත් මෙවලම්",
-                  // Use theme style for consistency
-                     style: TextStyle(fontSize: 12),
-                ),
-              ],
-            ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                "අමතර මෙවලම්",
+                style: TextStyle(fontSize: 12),
+              ),
+            ],
           ),
-          SizedBox(height: 40), // Reduced height for better spacing
+          SizedBox(height: 20),
+          // Horizontal scrollable list of buttons
           Expanded(
             child: SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   ButtonsCard(
                     text: "හෙළ GPT",
@@ -41,12 +35,9 @@ class Tools extends StatelessWidget {
                     },
                     color: Color(0xFFA02334),
                     textColor: Colors.white,
-                    icon:
-                        Icon(Icons.arrow_outward_rounded, color: Colors.white),
+                    icon: Icon(Icons.arrow_outward_rounded, color: Colors.white),
                   ),
-
                   SizedBox(width: 10),
-
                   ButtonsCard(
                     text: "මාලිමාව",
                     onTap: () {},
@@ -62,8 +53,9 @@ class Tools extends StatelessWidget {
                     textColor: Colors.white,
                     icon: Icon(Icons.settings, color: Colors.white),
                   ),
-
-                  // Add more items as needed with similar padding
+                  SizedBox(width: 10),
+                  // Add more buttons if needed
+                  
                 ],
               ),
             ),
