@@ -22,7 +22,7 @@ class IntroPage2 extends StatelessWidget {
                 Container(
                   margin: EdgeInsets.only(top: 0),
                   child: Image.asset(
-                    'assets/new_images/intro2.png', // Replace with the correct path to your SVG file
+                    'assets/new_images/intro_images/intro2.png', // Replace with the correct path to your SVG file
                     height: 300,
                     width: 300,
                   ),

@@ -2,10 +2,9 @@ import 'package:aurudu_nakath/features/ui/hela_gpt/domain/usecases/get_messages.
 import 'package:aurudu_nakath/features/ui/hela_gpt/domain/usecases/send_message.dart';
 import 'package:aurudu_nakath/features/ui/hela_gpt/presentation/bloc/chat_view_model.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import 'package:intl/intl.dart'; // Import for date formatting
-
-import 'chat_bubble.dart'; // Assuming this is your custom widget for chat bubbles
+import 'chat_bubble.dart'; // Assuming this is your updated widget
 
 class ChatView extends StatelessWidget {
   final ScrollController _scrollController = ScrollController();
@@ -31,7 +30,7 @@ class ChatView extends StatelessWidget {
               }
             });
 
-            String lastMessageDate = ''; // To track the last message date
+            String lastMessageDate = '';
 
             return Column(
               children: [
@@ -52,7 +51,6 @@ class ChatView extends StatelessWidget {
                           child: Column(
                             crossAxisAlignment: message.isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
                             children: [
-                              // Show date if it's a new day
                               if (shouldShowDate)
                                 Center(
                                   child: Padding(
@@ -60,7 +58,6 @@ class ChatView extends StatelessWidget {
                                     child: Padding(
                                       padding: const EdgeInsets.all(8.0),
                                       child: Container(
-                                        
                                         decoration: BoxDecoration(
                                           borderRadius: BorderRadius.circular(8.0),
                                           color: Color.fromARGB(255, 0, 169, 221),
@@ -132,39 +129,53 @@ class ChatView extends StatelessWidget {
   }
 
   Widget _buildMessageInput(BuildContext context) {
-    var controller = TextEditingController();
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Row(
-        children: [
-          Expanded(
-            child: TextField(
-              controller: controller,
-              decoration: InputDecoration(
-                hintText: 'අවශ්‍ය දේ මෙහි ලියන්න...',
-                filled: true,
-                fillColor: Colors.white,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(30.0),
-                  borderSide: BorderSide.none,
-                ),
+  final TextEditingController controller = TextEditingController();
+  final ValueNotifier<String> textNotifier = ValueNotifier<String>('');
+
+  return Padding(
+    padding: const EdgeInsets.all(8.0),
+    child: Row(
+      children: [
+        Expanded(
+          child: TextField(
+            controller: controller,
+            onChanged: (text) {
+              textNotifier.value = text;
+            },
+            decoration: InputDecoration(
+              hintText: 'අවශ්‍ය දේ මෙහි ලියන්න...',
+              filled: true,
+              fillColor: Colors.white,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(30.0),
+                borderSide: BorderSide.none,
               ),
             ),
           ),
-          SizedBox(width: 10),
-          CircleAvatar(
-            backgroundColor: Color(0xFFFABC3F),
-            child: IconButton(
-              icon: Icon(Icons.send, color: Colors.white),
-              onPressed: () {
-                Provider.of<ChatViewModel>(context, listen: false)
-                    .sendMessage(controller.text);
-                controller.clear();
-              },
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+        ),
+        SizedBox(width: 10),
+        ValueListenableBuilder<String>(
+          valueListenable: textNotifier,
+          builder: (context, text, child) {
+            return CircleAvatar(
+              backgroundColor: Color(0xFFFABC3F),
+              child: IconButton(
+                icon: Icon(Icons.send, color: Colors.white),
+                onPressed: text.isNotEmpty
+                    ? () {
+                        Provider.of<ChatViewModel>(context, listen: false)
+                            .sendMessage(text);
+                        controller.clear();
+                        textNotifier.value = ''; // Clear the notifier as well
+                      }
+                    : null, // Disable the button if text is empty
+              ),
+            );
+          },
+        ),
+      ],
+    ),
+  );
+}
+
 }

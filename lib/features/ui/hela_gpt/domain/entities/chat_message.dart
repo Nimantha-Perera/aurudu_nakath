@@ -1,11 +1,14 @@
 class ChatMessage {
   final String message;
   final bool isMe;
-  final DateTime timestamp; // Add this field
+  final DateTime timestamp;
+  final bool isMarkdown; // New field
 
   ChatMessage({
     required this.message,
     required this.isMe,
-    required this.timestamp, // Initialize timestamp
+    required this.timestamp,
+    this.isMarkdown = false, // Default to false
   });
 }
+
