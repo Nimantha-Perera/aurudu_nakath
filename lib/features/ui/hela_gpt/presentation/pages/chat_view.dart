@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'chat_bubble.dart'; // Assuming this is your updated widget
+import 'message_input.dart'; // Import the new message input widget
 
 class ChatView extends StatelessWidget {
   final ScrollController _scrollController = ScrollController();
@@ -107,7 +108,7 @@ class ChatView extends StatelessWidget {
                           child: Align(
                             alignment: Alignment.centerLeft,
                             child: Text(
-                              "Bot is typing...",
+                              "සිතමින්...",
                               style: TextStyle(
                                 fontStyle: FontStyle.italic,
                                 color: Colors.grey,
@@ -119,7 +120,7 @@ class ChatView extends StatelessWidget {
                     },
                   ),
                 ),
-                _buildMessageInput(context),
+                MessageInput(), // Call the MessageInput widget here
               ],
             );
           },
@@ -127,55 +128,4 @@ class ChatView extends StatelessWidget {
       ),
     );
   }
-
-  Widget _buildMessageInput(BuildContext context) {
-  final TextEditingController controller = TextEditingController();
-  final ValueNotifier<String> textNotifier = ValueNotifier<String>('');
-
-  return Padding(
-    padding: const EdgeInsets.all(8.0),
-    child: Row(
-      children: [
-        Expanded(
-          child: TextField(
-            controller: controller,
-            onChanged: (text) {
-              textNotifier.value = text;
-            },
-            decoration: InputDecoration(
-              hintText: 'අවශ්‍ය දේ මෙහි ලියන්න...',
-              filled: true,
-              fillColor: Colors.white,
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(30.0),
-                borderSide: BorderSide.none,
-              ),
-            ),
-          ),
-        ),
-        SizedBox(width: 10),
-        ValueListenableBuilder<String>(
-          valueListenable: textNotifier,
-          builder: (context, text, child) {
-            return CircleAvatar(
-              backgroundColor: Color(0xFFFABC3F),
-              child: IconButton(
-                icon: Icon(Icons.send, color: Colors.white),
-                onPressed: text.isNotEmpty
-                    ? () {
-                        Provider.of<ChatViewModel>(context, listen: false)
-                            .sendMessage(text);
-                        controller.clear();
-                        textNotifier.value = ''; // Clear the notifier as well
-                      }
-                    : null, // Disable the button if text is empty
-              ),
-            );
-          },
-        ),
-      ],
-    ),
-  );
-}
-
 }

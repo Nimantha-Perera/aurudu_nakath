@@ -1,7 +1,7 @@
 // data/repositories/chat_repository.dart
 
 
-import 'package:aurudu_nakath/features/ui/hela_gpt/domain/entities/chat_message.dart';
+import 'package:aurudu_nakath/features/ui/hela_gpt/data/modals/chat_message.dart';
 
 abstract class ChatRepository {
   Future<void> sendMessage(ChatMessage message);
