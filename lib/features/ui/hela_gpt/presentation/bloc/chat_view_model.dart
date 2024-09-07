@@ -162,7 +162,7 @@ class ChatViewModel with ChangeNotifier {
     notifyListeners();
 
     final apiKey = dotenv.env['API_KEY'] ?? "";
-    final model = GenerativeModel(model: 'gemini-pro-vision', apiKey: apiKey);
+    final model = GenerativeModel(model: 'gemini-1.5-flash', apiKey: apiKey);
 
      final prompt = TextPart(text);
        final imageBytes = await image.readAsBytes();
@@ -174,7 +174,9 @@ class ChatViewModel with ChangeNotifier {
       ]);
 
     if (response != null) {
-      final textResponse = response.first.text ?? 'No response text available';
+      final textResponse = response.text ?? 'No response text available';
+
+      print(textResponse);
       _messages.add(ChatMessage(
           message: textResponse, isMe: false, timestamp: DateTime.now()));
     } else {
