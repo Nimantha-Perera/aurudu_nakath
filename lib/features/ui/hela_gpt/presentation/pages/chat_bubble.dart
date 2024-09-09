@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class ChatBubble extends StatelessWidget {
   final String message;
@@ -15,6 +16,14 @@ class ChatBubble extends StatelessWidget {
     required this.textColor,
     required this.borderRadius,
   });
+
+  Future<void> _launchURL(String url) async {
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -46,6 +55,11 @@ class ChatBubble extends StatelessWidget {
               ),
               // Add more styles for other Markdown elements if needed
             ),
+            onTapLink: (text, url, title) {
+              if (url != null) {
+                _launchURL(url);
+              }
+            },
           ),
         ),
       ),
