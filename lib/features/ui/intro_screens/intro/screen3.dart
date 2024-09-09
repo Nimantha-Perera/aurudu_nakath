@@ -19,12 +19,14 @@ class IntroPage3 extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 // Lottie Animation in place of the image
-                Container(
+               Container(
                   margin: EdgeInsets.only(top: 0),
-                  child: Image.asset(
-                    'assets/new_images/intro_images/intro3.png', // Replace with the correct path to your SVG file
+                  child: Lottie.asset(
+                    "assets/animations/hellow.json", // Replace with the correct path to your SVG file
                     height: 300,
+                    repeat: false,
                     width: 300,
+                    
                   ),
                 ),
 

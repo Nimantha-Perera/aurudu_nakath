@@ -82,10 +82,10 @@ class _MessageInputState extends State<MessageInput> {
               ),
               SizedBox(width: 10),
               // Button to pick an image
-              IconButton(
-                icon: Icon(Icons.image, color: Colors.blue),
-                onPressed: _pickImage,
-              ),
+              // IconButton(
+              //   icon: Icon(Icons.image, color: Colors.blue),
+              //   onPressed: _pickImage,
+              // ),
               SizedBox(width: 10),
               Expanded(
                 child: TextField(
