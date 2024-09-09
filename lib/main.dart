@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:aurudu_nakath/Compass/compass.dart';
+import 'package:aurudu_nakath/features/ui/Compass/compass.dart';
 import 'package:aurudu_nakath/Tools/tools_menu.dart';
 import 'package:aurudu_nakath/features/ui/hela_gpt/domain/usecases/clear_chat.dart';
 import 'package:aurudu_nakath/features/ui/hela_gpt/domain/usecases/fetch_and%20_manegemessage.dart';
@@ -34,6 +34,8 @@ import 'package:intl/date_symbol_data_local.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:timezone/data/latest.dart' as tz;
+import 'package:timezone/timezone.dart' as tz;
 
 // Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 //   await Firebase.initializeApp();
@@ -41,6 +43,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 // }
 
 void main() async {
+  tz.initializeTimeZones();
   WidgetsFlutterBinding.ensureInitialized();
   await initializeDateFormatting('si_LK');
   await dotenv.load(fileName: "assets/.env");
@@ -60,6 +63,7 @@ void main() async {
   final apiUrl = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=$apiKey";
 
  runApp(
+  
   MultiProvider(
     providers: [
       // Provide SharedPreferences

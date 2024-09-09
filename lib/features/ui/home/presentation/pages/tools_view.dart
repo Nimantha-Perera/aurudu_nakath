@@ -40,7 +40,9 @@ class Tools extends StatelessWidget {
                   SizedBox(width: 10),
                   ButtonsCard(
                     text: "මාලිමාව",
-                    onTap: () {},
+                    onTap: () {
+                      Navigator.pushNamed(context, AppRoutes.malimawa);
+                    },
                     color: Color(0xFFA02334),
                     textColor: Colors.white,
                     icon: Icon(Icons.compass_calibration, color: Colors.white),

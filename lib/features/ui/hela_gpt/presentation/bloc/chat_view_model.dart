@@ -37,20 +37,40 @@ class ChatViewModel with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> sendMessage(String message) async {
-    _isTyping = true;
-    notifyListeners();
+Future<void> sendMessage(String message) async {
+  _isTyping = true;
+  notifyListeners();
 
-    _messages.add(ChatMessage(message: message, isMe: true, timestamp: DateTime.now()));
-    
-    final response = await _sendTextMessageUseCase.sendMessage(message);
-    
-    _messages.add(ChatMessage(message: response, isMe: false, timestamp: DateTime.now()));
-    
-    _isTyping = false;
-    await _fetchManageMessagesUseCase.saveMessages(_messages);
-    notifyListeners();
+  _messages.add(ChatMessage(message: message, isMe: true, timestamp: DateTime.now()));
+
+  // Simulate a delay for auto-replies and real responses
+  await Future.delayed(Duration(seconds: 1));
+
+  String response;
+  if (_isAutoReply(message)) {
+    response = 'හෙලෝ මම හෙළ GPT ඉතා විශාල භාශා අකෘතියක්. ඔබට ඇති ඕනෑම ගැටලුවක් මගෙන් අහන්න පුලුවන් මම ඔබට උපකාර කරන්නම්';
+  } else {
+    response = await _sendTextMessageUseCase.sendMessage(message);
   }
+
+  _messages.add(ChatMessage(message: response, isMe: false, timestamp: DateTime.now()));
+
+  _isTyping = false;
+  await _fetchManageMessagesUseCase.saveMessages(_messages);
+  notifyListeners();
+}
+
+bool _isAutoReply(String message) {
+  final autoReplyKeywords = [
+    'who are you',
+    'ඔයා කවුද',
+    'ඔයා',
+    'oya kwd',
+    'oya',
+  ];
+  return autoReplyKeywords.any((keyword) => message.toLowerCase().contains(keyword));
+}
+
 
   Future<void> sendImage(XFile image, String text) async {
     _isTyping = true;

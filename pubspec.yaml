@@ -64,6 +64,7 @@ dependencies:
   shimmer: ^3.0.0
   smooth_page_indicator: ^1.1.0
   table_calendar: ^3.1.2
+  timezone: ^0.9.4
   url_launcher: ^6.3.0
 
   # The following adds the Cupertino Icons font to your application.

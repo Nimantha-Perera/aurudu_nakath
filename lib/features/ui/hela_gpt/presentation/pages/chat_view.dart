@@ -29,7 +29,27 @@ class _ChatViewState extends State<ChatView> {
   }
 
   Future<void> _shareChatHistory(BuildContext context) async {
-    // Your existing code for sharing chat history
+    // Fetch the chat messages from the ChatViewModel
+    final viewModel = context.read<ChatViewModel>();
+    final messages = viewModel.messages;
+
+    // Format chat messages into a string
+    final buffer = StringBuffer();
+    for (var message in messages) {
+      buffer
+          .writeln('${message.isMe ? 'You: ' : 'HelaGPT: '}${message.message}');
+    }
+
+    // Get the directory to save the file
+    final directory = await getTemporaryDirectory();
+    final path = '${directory.path}/hela_gpt_chat.txt';
+
+    // Write chat history to the file
+    final file = File(path);
+    await file.writeAsString(buffer.toString());
+
+    // Share the file
+    Share.shareXFiles([XFile(path)], text: 'Here is the chat history');
   }
 
   void _showHelpDialog(BuildContext context) {
@@ -106,7 +126,8 @@ class _ChatViewState extends State<ChatView> {
       )..fetchMessages(),
       child: Scaffold(
         appBar: AppBar(
-          title: Text('හෙළ GPT', style: TextStyle(color: Colors.white, fontSize: 18)),
+          title: Text('හෙළ GPT',
+              style: TextStyle(color: Colors.white, fontSize: 18)),
           centerTitle: true,
           actions: [
             IconButton(
@@ -130,17 +151,21 @@ class _ChatViewState extends State<ChatView> {
                     Expanded(
                       child: ListView.builder(
                         controller: _scrollController,
-                        itemCount: viewModel.messages.length + (viewModel.isTyping ? 1 : 0),
+                        itemCount: viewModel.messages.length +
+                            (viewModel.isTyping ? 1 : 0),
                         itemBuilder: (context, index) {
                           if (index < viewModel.messages.length) {
                             var message = viewModel.messages[index];
-                            String currentMessageDate = DateFormat('y MMM d').format(message.timestamp);
+                            String currentMessageDate =
+                                DateFormat('y MMM d').format(message.timestamp);
 
-                            bool shouldShowDate = currentMessageDate != lastMessageDate;
+                            bool shouldShowDate =
+                                currentMessageDate != lastMessageDate;
                             lastMessageDate = currentMessageDate;
 
                             return Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 8.0),
+                              padding:
+                                  const EdgeInsets.symmetric(vertical: 8.0),
                               child: Column(
                                 crossAxisAlignment: message.isMe
                                     ? CrossAxisAlignment.end
@@ -149,22 +174,27 @@ class _ChatViewState extends State<ChatView> {
                                   if (shouldShowDate)
                                     Center(
                                       child: Padding(
-                                        padding: const EdgeInsets.symmetric(vertical: 5.0),
+                                        padding: const EdgeInsets.symmetric(
+                                            vertical: 5.0),
                                         child: Padding(
                                           padding: const EdgeInsets.all(8.0),
                                           child: Container(
                                             decoration: BoxDecoration(
-                                              borderRadius: BorderRadius.circular(8.0),
-                                              color: Color.fromARGB(255, 0, 169, 221),
+                                              borderRadius:
+                                                  BorderRadius.circular(8.0),
+                                              color: Color.fromARGB(
+                                                  255, 175, 175, 175),
                                             ),
                                             child: Padding(
-                                              padding: const EdgeInsets.all(4.0),
+                                              padding:
+                                                  const EdgeInsets.all(4.0),
                                               child: Text(
                                                 currentMessageDate,
                                                 style: TextStyle(
                                                   fontSize: 12,
                                                   fontWeight: FontWeight.bold,
-                                                  color: const Color.fromARGB(255, 255, 255, 255),
+                                                  color: const Color.fromARGB(
+                                                      255, 255, 255, 255),
                                                 ),
                                               ),
                                             ),
@@ -176,8 +206,10 @@ class _ChatViewState extends State<ChatView> {
                                     message: message.message,
                                     isMe: message.isMe,
                                     backgroundColor: message.isMe
-                                        ? Color(0xFFE0FFC2) // Light green for user
-                                        : Color(0xFFFFF3E0), // Light orange for bot
+                                        ? Color(
+                                            0xFFE0FFC2) // Light green for user
+                                        : Color(
+                                            0xFFFFF3E0), // Light orange for bot
                                     textColor: message.isMe
                                         ? Colors.black
                                         : Colors.black87,
@@ -200,7 +232,8 @@ class _ChatViewState extends State<ChatView> {
                             );
                           } else {
                             return Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 10.0),
                               child: Align(
                                 alignment: Alignment.centerLeft,
                                 child: Lottie.asset(
@@ -223,7 +256,10 @@ class _ChatViewState extends State<ChatView> {
                     right: 16.0,
                     child: FloatingActionButton(
                       onPressed: () => _shareChatHistory(context),
-                      child: Icon(Icons.share, size: 20,),
+                      child: Icon(
+                        Icons.share,
+                        size: 20,
+                      ),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(30.0),
                       ),

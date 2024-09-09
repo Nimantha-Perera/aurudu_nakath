@@ -36,7 +36,7 @@ class Jyothishya extends StatelessWidget {
                 child: ButtonsCard(
                   text: "අවුරුදු නැකැත්",
                   onTap: () => {
-                    Navigator.pushNamed(context, AppRoutes.nakathSittuwa)
+                    Navigator.pushNamed(context, AppRoutes.aurudu_nakath)
                   },
                   color: Color(0xFFFABC3F),
                   textColor: const Color.fromARGB(255, 83, 83, 83),

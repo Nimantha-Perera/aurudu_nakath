@@ -77,16 +77,16 @@ class _MessageInputState extends State<MessageInput> {
             children: [
               // Button to start a new chat
               IconButton(
-                icon: Icon(Icons.add, color: Colors.blue),
+                icon: Icon(Icons.add, color: const Color.fromARGB(255, 94, 94, 94)),
                 onPressed: _startNewChat,
               ),
-              SizedBox(width: 10),
+             
               // Button to pick an image
               // IconButton(
               //   icon: Icon(Icons.image, color: Colors.blue),
               //   onPressed: _pickImage,
               // ),
-              SizedBox(width: 10),
+             
               Expanded(
                 child: TextField(
                   controller: _controller,
