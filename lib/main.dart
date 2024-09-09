@@ -1,6 +1,11 @@
-// import 'package:aurudu_nakath/Push_Notifications/push_notificatrions.dart';
+import 'dart:convert';
+
 import 'package:aurudu_nakath/Compass/compass.dart';
 import 'package:aurudu_nakath/Tools/tools_menu.dart';
+import 'package:aurudu_nakath/features/ui/hela_gpt/domain/usecases/clear_chat.dart';
+import 'package:aurudu_nakath/features/ui/hela_gpt/domain/usecases/fetch_and%20_manegemessage.dart';
+import 'package:aurudu_nakath/features/ui/hela_gpt/domain/usecases/send_img.dart';
+import 'package:aurudu_nakath/features/ui/hela_gpt/domain/usecases/send_text_message.dart';
 import 'package:aurudu_nakath/features/ui/help/presentation/pages/help_screen.dart';
 import 'package:aurudu_nakath/features/ui/home/presentation/pages/dash_board.dart';
 import 'package:aurudu_nakath/features/ui/routes/routes.dart';
@@ -13,11 +18,9 @@ import 'package:aurudu_nakath/screens/lagna.dart';
 import 'package:aurudu_nakath/screens/nakath_sittuwa.dart';
 import 'package:aurudu_nakath/screens/raahu_kalaya.dart';
 import 'package:aurudu_nakath/screens/splash_screen.dart';
-// import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:device_preview/device_preview.dart';
 import 'package:firebase_database/firebase_database.dart';
-
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:aurudu_nakath/screens/home.dart';
@@ -29,11 +32,10 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:in_app_update/in_app_update.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:lottie/lottie.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 // Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-//   // If you're going to use other Firebase services in the background, such as Firestore,
-//   // make sure you call `initializeApp` before using other Firebase services.
 //   await Firebase.initializeApp();
 //   print('Handling a background message: ${message.messageId}');
 // }
@@ -47,18 +49,42 @@ void main() async {
     DeviceOrientation.portraitUp,
   ]);
 
+  // Initialize Firebase
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  runApp(
-    DevicePreview(
-      enabled: true, // Enable device preview (set to `false` for release builds)
-      builder: (context) => MyApp(), // Wrap your app with DevicePreview
-    ),
-  );
-}
+  // Initialize SharedPreferences
+  final sharedPreferences = await SharedPreferences.getInstance();
+  final apiKey = dotenv.env['API_KEY'] ?? "";
+  final apiUrl = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=$apiKey";
 
+ runApp(
+  MultiProvider(
+    providers: [
+      // Provide SharedPreferences
+      Provider<SharedPreferences>.value(value: sharedPreferences),
+      
+      // Provide use cases with SharedPreferences
+      Provider<FetchManageMessagesUseCase>(
+        create: (context) => FetchManageMessagesUseCase(sharedPreferences),
+      ),
+      Provider<SendTextMessageUseCase>(
+        create: (_) => SendTextMessageUseCase(apiKey, apiUrl),
+      ),
+      Provider<SendImageMessageUseCase>(
+        create: (_) => SendImageMessageUseCase(apiKey),
+      ),
+      Provider<ClearChatHistoryUseCase>(
+        create: (_) => ClearChatHistoryUseCase(sharedPreferences),
+      ),
+      // Add other providers here if needed
+    ],
+    child: MyApp(),
+  ),
+);
+
+}
 
 class MyApp extends StatefulWidget {
   @override

@@ -13,7 +13,7 @@ class _MessageInputState extends State<MessageInput> {
   final TextEditingController _controller = TextEditingController();
   final ValueNotifier<String> _textNotifier = ValueNotifier<String>('');
   final ImagePicker _picker = ImagePicker();
-  
+
   XFile? _selectedImage; // Store the selected image
 
   @override
@@ -49,17 +49,30 @@ class _MessageInputState extends State<MessageInput> {
         children: [
           // Display the selected image if available
           if (_selectedImage != null)
-            Container(
-              margin: const EdgeInsets.only(bottom: 8.0),
-              constraints: BoxConstraints(
-                maxHeight: 150, // Adjust max height as needed
-                maxWidth: double.infinity,
-              ),
-              child: Image.file(
-                File(_selectedImage!.path),
-                fit: BoxFit.cover, // Adjust fit as needed
+            Center(
+              child: Container(
+                decoration: BoxDecoration(
+                  borderRadius:
+                      BorderRadius.circular(10.0), // Radius for the image corners
+                  border: Border.all(
+                    color: Colors.grey, // Border color
+                    width: 2.0, // Border width
+                  ),
+                ),
+                margin: const EdgeInsets.only(bottom: 8.0),
+                constraints: BoxConstraints(
+                  maxHeight: 100, // Adjust max height as needed
+                  maxWidth: double.infinity,
+                ),
+                clipBehavior:
+                    Clip.hardEdge, // Ensures the image respects the border radius
+                child: Image.file(
+                  File(_selectedImage!.path),
+                  fit: BoxFit.cover, // Adjust fit as needed
+                ),
               ),
             ),
+
           Row(
             children: [
               // Button to start a new chat
@@ -103,18 +116,22 @@ class _MessageInputState extends State<MessageInput> {
                           ? () {
                               if (_selectedImage != null) {
                                 // Send both image and text
-                                Provider.of<ChatViewModel>(context, listen: false)
+                                Provider.of<ChatViewModel>(context,
+                                        listen: false)
                                     .sendImage(_selectedImage!, text);
                                 setState(() {
-                                  _selectedImage = null; // Clear the selected image after sending
+                                  _selectedImage =
+                                      null; // Clear the selected image after sending
                                 });
                               } else {
                                 // Send only text
-                                Provider.of<ChatViewModel>(context, listen: false)
+                                Provider.of<ChatViewModel>(context,
+                                        listen: false)
                                     .sendMessage(text);
                               }
                               _controller.clear();
-                              _textNotifier.value = ''; // Clear the notifier as well
+                              _textNotifier.value =
+                                  ''; // Clear the notifier as well
                             }
                           : null, // Disable the button if text is empty and no image is selected
                     ),

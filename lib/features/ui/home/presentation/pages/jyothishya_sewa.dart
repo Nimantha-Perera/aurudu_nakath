@@ -8,7 +8,8 @@ class Jyothishya extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 200, // Set height for the horizontal list
+      height: 200,
+      width: double.infinity, // Set height for the horizontal list
       child: Column(
         children: [
           Row(

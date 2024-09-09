@@ -1,194 +1,143 @@
-import 'dart:convert';
-import 'dart:io';
+// 1. First, set up your dependencies
 import 'package:aurudu_nakath/features/ui/hela_gpt/data/modals/chat_message.dart';
-import 'package:aurudu_nakath/features/ui/hela_gpt/domain/usecases/get_messages.dart';
-import 'package:aurudu_nakath/features/ui/hela_gpt/domain/usecases/send_message.dart';
+import 'package:aurudu_nakath/features/ui/hela_gpt/domain/usecases/clear_chat.dart';
+import 'package:aurudu_nakath/features/ui/hela_gpt/domain/usecases/fetch_and%20_manegemessage.dart';
+import 'package:aurudu_nakath/features/ui/hela_gpt/domain/usecases/send_img.dart';
+import 'package:aurudu_nakath/features/ui/hela_gpt/domain/usecases/send_text_message.dart';
+import 'package:aurudu_nakath/features/ui/hela_gpt/presentation/pages/message_input.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:http/http.dart' as http;
+import 'package:nested/nested.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:google_generative_ai/google_generative_ai.dart';
 
+// 2. Create your ChatViewModel
 class ChatViewModel with ChangeNotifier {
-  final GetMessagesUseCase _getMessagesUseCase;
-  final SendMessageUseCase _sendMessageUseCase;
+  final FetchManageMessagesUseCase _fetchManageMessagesUseCase;
+  final SendTextMessageUseCase _sendTextMessageUseCase;
+  final SendImageMessageUseCase _sendImageMessageUseCase;
+  final ClearChatHistoryUseCase _clearChatHistoryUseCase;
 
   List<ChatMessage> _messages = [];
   bool _isTyping = false;
 
-  ChatViewModel(this._getMessagesUseCase, this._sendMessageUseCase);
+  ChatViewModel(
+    this._fetchManageMessagesUseCase,
+    this._sendTextMessageUseCase,
+    this._sendImageMessageUseCase,
+    this._clearChatHistoryUseCase,
+  );
 
   List<ChatMessage> get messages => _messages;
   bool get isTyping => _isTyping;
 
   Future<void> fetchMessages() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? savedMessages = prefs.getString('chat_messages');
-
-    if (savedMessages != null) {
-      List<dynamic> messageList;
-      try {
-        messageList = jsonDecode(savedMessages);
-      } catch (e) {
-        print('Error decoding saved messages: $e');
-        messageList = [];
-      }
-
-      _messages = messageList
-          .map((messageJson) {
-            if (messageJson is String) {
-              try {
-                final Map<String, dynamic> messageMap = jsonDecode(messageJson);
-                return ChatMessage.fromJson(messageMap);
-              } catch (e) {
-                print('Error parsing message: $e');
-                return null;
-              }
-            } else if (messageJson is Map<String, dynamic>) {
-              return ChatMessage.fromJson(messageJson);
-            } else {
-              print('Unexpected message format: $messageJson');
-              return null;
-            }
-          })
-          .whereType<ChatMessage>()
-          .toList();
-    } else {
-      _messages = await _getMessagesUseCase.getMessages();
-    }
-
-    notifyListeners();
-  }
-
-  Future<void> saveMessages() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    List<String> messageJsonList =
-        _messages.map((message) => jsonEncode(message.toJson())).toList();
-    prefs.setString('chat_messages', jsonEncode(messageJsonList));
-  }
-
-  Future<void> clearChat() async {
-    _messages.clear();
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.remove('chat_messages');
+    _messages = await _fetchManageMessagesUseCase.fetchMessages();
     notifyListeners();
   }
 
   Future<void> sendMessage(String message) async {
-    _messages.add(
-        ChatMessage(message: message, isMe: true, timestamp: DateTime.now()));
-    notifyListeners();
-
     _isTyping = true;
     notifyListeners();
 
-    final apiKey = dotenv.env['API_KEY'] ?? "";
-    final ourUrl =
-        "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=$apiKey";
-    final header = {'Content-Type': 'application/json'};
-
-    final lastMessage = _messages.isNotEmpty ? _messages.last.message : '';
-
-    final data = {
-      "contents": [
-        {
-          "parts": [
-            {"text": lastMessage}
-          ]
-        }
-      ],
-      "generationConfig": {
-        // Specify Sinhala as the target language
-      }
-    };
-
-    try {
-      final response = await http.post(
-        Uri.parse(ourUrl),
-        headers: header,
-        body: jsonEncode(data),
-      );
-
-      if (response.statusCode == 200) {
-        final responseBody = jsonDecode(response.body);
-        if (responseBody != null &&
-            responseBody['candidates'] != null &&
-            responseBody['candidates'].isNotEmpty) {
-          final candidate = responseBody['candidates'][0];
-          final content = candidate['content'];
-          final parts = content['parts'];
-
-          if (parts != null && parts.isNotEmpty) {
-            final text = parts[0]['text'] ?? 'No response text available';
-            _messages.add(ChatMessage(
-                message: text, isMe: false, timestamp: DateTime.now()));
-          } else {
-            _messages.add(ChatMessage(
-                message: "No text found in response",
-                isMe: false,
-                timestamp: DateTime.now()));
-          }
-        } else {
-          _messages.add(ChatMessage(
-              message: "No valid response from API",
-              isMe: false,
-              timestamp: DateTime.now()));
-        }
-      } else {
-        _messages.add(ChatMessage(
-            message: "Error in response: ${response.statusCode}",
-            isMe: false,
-            timestamp: DateTime.now()));
-      }
-    } catch (e) {
-      _messages.add(ChatMessage(
-          message: "Failed to connect: $e",
-          isMe: false,
-          timestamp: DateTime.now()));
-    }
-
+    _messages.add(ChatMessage(message: message, isMe: true, timestamp: DateTime.now()));
+    
+    final response = await _sendTextMessageUseCase.sendMessage(message);
+    
+    _messages.add(ChatMessage(message: response, isMe: false, timestamp: DateTime.now()));
+    
     _isTyping = false;
-    saveMessages();
+    await _fetchManageMessagesUseCase.saveMessages(_messages);
     notifyListeners();
   }
 
   Future<void> sendImage(XFile image, String text) async {
-    _messages.add(
-        ChatMessage(message: 'Image selected', isMe: true, timestamp: DateTime.now()));
-    notifyListeners();
-
     _isTyping = true;
     notifyListeners();
 
-    final apiKey = dotenv.env['API_KEY'] ?? "";
-    final model = GenerativeModel(model: 'gemini-1.5-flash', apiKey: apiKey);
-
-     final prompt = TextPart(text);
-       final imageBytes = await image.readAsBytes();
-       final imagePart = DataPart('image/jpeg', imageBytes);
-      
-
-      final response = await model.generateContent([
-        Content.multi([prompt, imagePart]),
-      ]);
-
-    if (response != null) {
-      final textResponse = response.text ?? 'No response text available';
-
-      print(textResponse);
-      _messages.add(ChatMessage(
-          message: textResponse, isMe: false, timestamp: DateTime.now()));
-    } else {
-      _messages.add(ChatMessage(
-          message: "No valid response from API",
-          isMe: false,
-          timestamp: DateTime.now()));
-    }
-
+    _messages.add(ChatMessage(message:text, isMe: true, timestamp: DateTime.now()));
+    
+    final response = await _sendImageMessageUseCase.sendImageWithText(image, text);
+    
+    _messages.add(ChatMessage(message: response, isMe: false, timestamp: DateTime.now()));
+    
     _isTyping = false;
-    saveMessages();
+    await _fetchManageMessagesUseCase.saveMessages(_messages);
+    notifyListeners();
+  }
+
+  Future<void> clearChat() async {
+    await _clearChatHistoryUseCase.clearChat();
+    _messages.clear();
     notifyListeners();
   }
 }
 
+// 3. Set up dependency injection in your main.dart or a separate file
+Future<List<SingleChildStatelessWidget>> setupDependencies() async {
+  final sharedPreferences = await SharedPreferences.getInstance();
+  final apiKey = dotenv.env['API_KEY'] ?? "";
+  final apiUrl = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=$apiKey";
+
+  return [
+    Provider<FetchManageMessagesUseCase>(
+      create: (_) => FetchManageMessagesUseCase(sharedPreferences),
+    ),
+    Provider<SendTextMessageUseCase>(
+      create: (_) => SendTextMessageUseCase(apiKey, apiUrl),
+    ),
+    Provider<SendImageMessageUseCase>(
+      create: (_) => SendImageMessageUseCase(apiKey),
+    ),
+    Provider<ClearChatHistoryUseCase>(
+      create: (_) => ClearChatHistoryUseCase(sharedPreferences),
+    ),
+    ChangeNotifierProxyProvider4<FetchManageMessagesUseCase, SendTextMessageUseCase, 
+    SendImageMessageUseCase, ClearChatHistoryUseCase, ChatViewModel>(
+  create: (context) => ChatViewModel(
+    context.read<FetchManageMessagesUseCase>(),
+    context.read<SendTextMessageUseCase>(),
+    context.read<SendImageMessageUseCase>(),
+    context.read<ClearChatHistoryUseCase>(),
+  ),
+  update: (context, fetchManage, sendText, sendImage, clearChat, previous) =>
+    previous ?? ChatViewModel(fetchManage, sendText, sendImage, clearChat),
+),
+
+  ];
+}
+
+// 4. Use the ChatViewModel in your UI
+class ChatScreen extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Consumer<ChatViewModel>(
+      builder: (context, viewModel, child) {
+        return Scaffold(
+          appBar: AppBar(title: Text('Chat')),
+          body: Column(
+            children: [
+              Expanded(
+                child: ListView.builder(
+                  itemCount: viewModel.messages.length,
+                  itemBuilder: (context, index) {
+                    final message = viewModel.messages[index];
+                    return ListTile(
+                      title: Text(message.message),
+                      subtitle: Text(message.isMe ? 'You' : 'Bot'),
+                    );
+                  },
+                ),
+              ),
+              if (viewModel.isTyping) CircularProgressIndicator(),
+              MessageInput(), // Add MessageInput widget
+            ],
+          ),
+        );
+      },
+    );
+  }
+}
+
+// 5. Initialize in your main.dart

@@ -20,29 +20,32 @@ class ChatBubble extends StatelessWidget {
   Widget build(BuildContext context) {
     return Align(
       alignment: isMe ? Alignment.centerRight : Alignment.centerLeft,
-      child: Container(
-        padding: EdgeInsets.all(10.0),
-        margin: EdgeInsets.symmetric(vertical: 5.0, horizontal: 10.0),
-        decoration: BoxDecoration(
-          color: backgroundColor,
-          borderRadius: borderRadius,
-        ),
-        child: MarkdownBody(
-          data: message,
-          styleSheet: MarkdownStyleSheet(
-            p: TextStyle(
-              color: textColor,
-              fontSize: 16.0,  // Specify a default font size
+      child: ConstrainedBox(
+        constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.75),
+        child: Container(
+          padding: EdgeInsets.all(10.0),
+          margin: EdgeInsets.symmetric(vertical: 5.0, horizontal: 10.0),
+          decoration: BoxDecoration(
+            color: backgroundColor,
+            borderRadius: borderRadius,
+          ),
+          child: MarkdownBody(
+            data: message,
+            styleSheet: MarkdownStyleSheet(
+              p: TextStyle(
+                color: textColor,
+                fontSize: 16.0,
+              ),
+              h1: TextStyle(
+                color: textColor,
+                fontSize: 24.0,
+              ),
+              h2: TextStyle(
+                color: textColor,
+                fontSize: 22.0,
+              ),
+              // Add more styles for other Markdown elements if needed
             ),
-            h1: TextStyle(
-              color: textColor,
-              fontSize: 24.0,  // Example font size for headers
-            ),
-            h2: TextStyle(
-              color: textColor,
-              fontSize: 22.0,  // Example font size for headers
-            ),
-            // You can add more styles for other Markdown elements if needed
           ),
         ),
       ),

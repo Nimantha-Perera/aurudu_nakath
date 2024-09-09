@@ -25,14 +25,14 @@ class ButtonsCard extends StatelessWidget {
           decoration: BoxDecoration(
             color: color,
             borderRadius: BorderRadius.circular(20),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.2), // Shadow color
-                spreadRadius: 2, // Spread radius
-                blurRadius: 6, // Blur radius
-                offset: Offset(0, 4), // Offset from the widget
-              ),
-            ],
+            // boxShadow: [
+            //   BoxShadow(
+            //     color: Colors.black.withOpacity(0.2), // Shadow color
+            //     spreadRadius: 2, // Spread radius
+            //     blurRadius: 6, // Blur radius
+            //     offset: Offset(0, 4), // Offset from the widget
+            //   ),
+            // ],
           ),
           child: TextButton(
             onPressed: onTap,
