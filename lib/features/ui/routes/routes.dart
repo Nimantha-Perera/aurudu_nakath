@@ -2,6 +2,7 @@
 
 import 'package:aurudu_nakath/features/ui/Compass/compass.dart';
 import 'package:aurudu_nakath/features/ui/aurudu_nakath/presentation/pages/main_screen.dart';
+import 'package:aurudu_nakath/features/ui/errors/error_screen.dart';
 import 'package:aurudu_nakath/features/ui/hela_gpt/presentation/pages/chat_view.dart';
 import 'package:aurudu_nakath/features/ui/rahu_kalaya/presentation/pages/raahu_kaalaya_page.dart';
 import 'package:aurudu_nakath/features/ui/settings/presentation/pages/settings_page.dart';

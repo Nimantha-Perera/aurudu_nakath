@@ -136,7 +136,7 @@ class _ChatViewState extends State<ChatView> {
               onPressed: () => _showHelpDialog(context),
             ),
           ],
-          backgroundColor: Color(0xFFFABC3F),
+          backgroundColor: AppBarTheme.of(context).backgroundColor,
         ),
         body: Consumer<ChatViewModel>(
           builder: (context, viewModel, child) {
@@ -207,13 +207,11 @@ class _ChatViewState extends State<ChatView> {
                                     message: message.message,
                                     isMe: message.isMe,
                                     backgroundColor: message.isMe
-                                        ? Color(
-                                            0xFFE0FFC2) // Light green for user
-                                        : Color(
-                                            0xFFFFF3E0), // Light orange for bot
+                                        ? Theme.of(context).colorScheme.tertiary// Light green for user
+                                        : Theme.of(context).primaryColorLight, // Light orange for bot
                                     textColor: message.isMe
-                                        ? Colors.black
-                                        : Colors.black87,
+                                        ? Theme.of(context).canvasColor
+                                        :Theme.of(context).canvasColor,
                                     borderRadius: message.isMe
                                         ? BorderRadius.only(
                                             topLeft: Radius.circular(18.0),
@@ -253,13 +251,17 @@ class _ChatViewState extends State<ChatView> {
                 ),
                 if (!isChatEmpty)
                   Positioned(
-                    bottom: 66.0,
+                    
+                    bottom: 76.0,
                     right: 16.0,
+                    
                     child: FloatingActionButton(
+                      
                       onPressed: () => _shareChatHistory(context),
                       child: Icon(
                         Icons.share,
                         size: 20,
+                        color: const Color.fromARGB(255, 63, 63, 63),
                       ),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(30.0),

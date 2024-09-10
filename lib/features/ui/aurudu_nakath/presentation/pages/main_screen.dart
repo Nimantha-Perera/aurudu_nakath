@@ -41,17 +41,19 @@ class _AuruduNakathState extends State<AuruduNakath> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.background,
       appBar: AppBar(
         
         title: Text(
           "අලුත් අවුරුදු නැකැත්",
           style: GoogleFonts.notoSerifSinhala(fontSize: 14.0, color: Colors.white),
         ),
-        backgroundColor: Color(0xFFFABC3F),
+        backgroundColor: AppBarTheme.of(context).backgroundColor,
+        elevation: 0,
         centerTitle: true,
       ),
       body: Container(
-        color: Colors.white,
+        // color: Theme.of(context).colorScheme.secondary,
         child: Column(
           children: [
             _buildCountdownCard('අලුත් අවුරුදු උදාව සඳහා තව', countdownText2), // Countdown using the updated timer logic
@@ -66,6 +68,7 @@ class _AuruduNakathState extends State<AuruduNakath> {
     return Padding(
       padding: const EdgeInsets.all(10.0),
       child: Card(
+        color: Theme.of(context).cardColor,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         child: ListTile(
           title: Column(

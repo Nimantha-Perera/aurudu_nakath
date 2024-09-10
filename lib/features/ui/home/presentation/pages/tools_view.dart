@@ -10,7 +10,7 @@ class Tools extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       height: 120,
-      margin: EdgeInsets.only(top: 50), // Set height for the horizontal list
+      margin: EdgeInsets.only(top: 30), // Set height for the horizontal list
       child: Column(
         children: [
           Row(

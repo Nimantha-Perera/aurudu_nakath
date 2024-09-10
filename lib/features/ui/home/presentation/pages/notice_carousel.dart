@@ -43,8 +43,9 @@ class NoticeCarousel extends StatelessWidget {
                           child: Center(
                             child: Text(
                               notice,
-                              style: TextStyle(fontSize: 12),
+                              style: TextStyle(fontSize: 12,color: Theme.of(context).focusColor),
                               textAlign: TextAlign.center,
+                              
                             ),
                           ),
                         );

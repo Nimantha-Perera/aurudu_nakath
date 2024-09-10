@@ -2,17 +2,23 @@ import 'dart:convert';
 
 import 'package:aurudu_nakath/features/ui/Compass/compass.dart';
 import 'package:aurudu_nakath/Tools/tools_menu.dart';
+import 'package:aurudu_nakath/features/ui/errors/error_screen.dart';
 import 'package:aurudu_nakath/features/ui/hela_gpt/domain/usecases/clear_chat.dart';
 import 'package:aurudu_nakath/features/ui/hela_gpt/domain/usecases/fetch_and%20_manegemessage.dart';
+
 import 'package:aurudu_nakath/features/ui/hela_gpt/domain/usecases/send_img.dart';
 import 'package:aurudu_nakath/features/ui/hela_gpt/domain/usecases/send_text_message.dart';
 import 'package:aurudu_nakath/features/ui/help/presentation/pages/help_screen.dart';
 import 'package:aurudu_nakath/features/ui/home/presentation/pages/dash_board.dart';
 import 'package:aurudu_nakath/features/ui/routes/routes.dart';
+
 import 'package:aurudu_nakath/features/ui/settings/data/repostories/settings_repository.dart';
 import 'package:aurudu_nakath/features/ui/settings/data/repostories/settings_repository_impl.dart';
 import 'package:aurudu_nakath/features/ui/settings/presentation/bloc/settings_bloc.dart';
 import 'package:aurudu_nakath/features/ui/settings/settings_module.dart';
+import 'package:aurudu_nakath/features/ui/theme/change_theme_notifier.dart';
+import 'package:aurudu_nakath/features/ui/theme/dark_theme.dart';
+import 'package:aurudu_nakath/features/ui/theme/light_theme.dart';
 import 'package:aurudu_nakath/firebase_options.dart';
 import 'package:aurudu_nakath/loadin_screen/firebase_api.dart';
 import 'package:aurudu_nakath/loadin_screen/loading.dart';
@@ -42,26 +48,29 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:timezone/data/latest.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 
-// Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-//   await Firebase.initializeApp();
-//   print('Handling a background message: ${message.messageId}');
-// }
-
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+
   await dotenv.load(fileName: "assets/.env");
 
   // Initialize SharedPreferences
   final sharedPreferences = await SharedPreferences.getInstance();
   final apiKey = dotenv.env['API_KEY'] ?? "";
-  final apiUrl = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=$apiKey";
+  final apiUrl =
+      "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=$apiKey";
 
   runApp(
     MultiProvider(
       providers: [
         // Provide SharedPreferences
         Provider<SharedPreferences>.value(value: sharedPreferences),
+
+        ChangeNotifierProvider(
+          create: (context) => ThemeNotifier(lightTheme), // Set initial theme
+        ),
 
         // Provide SettingsRepository and Bloc
         Provider<SettingsRepository>(
@@ -90,7 +99,6 @@ void main() async {
   );
 }
 
-
 class MyApp extends StatefulWidget {
   @override
   _MyAppState createState() => _MyAppState();
@@ -107,26 +115,29 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    print("App Widget: $_appWidget");
-    return FutureBuilder<Widget>(
-      future: _appWidget,
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.done) {
-          return MaterialApp(
-            debugShowCheckedModeBanner: false,
-            initialRoute: AppRoutes.home,
-            onGenerateRoute: AppRoutes.generateRoute,
-            theme: ThemeData(
-              fontFamily: GoogleFonts.notoSerifSinhala().fontFamily,
-            ),
-            home: snapshot.data,
-          );
-        } else {
-          return MaterialApp(
-            debugShowCheckedModeBanner: false,
-            home: LoadingScreen(),
-          );
-        }
+    return Consumer<ThemeNotifier>(
+      builder: (context, themeNotifier, child) {
+        return FutureBuilder<Widget>(
+          future: _appWidget,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.done) {
+              return MaterialApp(
+                debugShowCheckedModeBanner: false,
+                theme: themeNotifier.getTheme(),
+                darkTheme: darkTheme,
+                themeMode: themeNotifier.getTheme() == darkTheme ? ThemeMode.dark : ThemeMode.light,
+                initialRoute: AppRoutes.home,
+                onGenerateRoute: AppRoutes.generateRoute,
+                home: snapshot.data,
+              );
+            } else {
+              return MaterialApp(
+                debugShowCheckedModeBanner: false,
+                home: LoadingScreen(),
+              );
+            }
+          },
+        );
       },
     );
   }
@@ -146,47 +157,5 @@ class _MyAppState extends State<MyApp> {
     } else {
       return DashBoard();
     }
-  }
-}
-
-class ErrorScreen extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Container(
-              margin: EdgeInsets.only(top: 50, bottom: 100),
-              child: Lottie.asset(
-                'assets/no_connection.json',
-                height: 400,
-                width: 400,
-              ),
-            ),
-            Text("No internet connection"),
-            SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () async {
-                var connectivityResult =
-                    await (Connectivity().checkConnectivity());
-                if (connectivityResult != ConnectivityResult.none) {
-                  Navigator.of(context)
-                      .pushReplacementNamed(AppRoutes.dashboard);
-                } else {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text("Still no internet connection"),
-                    ),
-                  );
-                }
-              },
-              child: Text("Refresh"),
-            ),
-          ],
-        ),
-      ),
-    );
   }
 }

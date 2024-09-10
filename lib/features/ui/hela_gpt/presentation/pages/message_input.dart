@@ -96,7 +96,7 @@ class _MessageInputState extends State<MessageInput> {
                   decoration: InputDecoration(
                     hintText: 'අවශ්‍ය දේ මෙහි ලියන්න...',
                     filled: true,
-                    fillColor: Colors.white,
+                    fillColor: Theme.of(context).colorScheme.surface,
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(30.0),
                       borderSide: BorderSide.none,
@@ -109,9 +109,9 @@ class _MessageInputState extends State<MessageInput> {
                 valueListenable: _textNotifier,
                 builder: (context, text, child) {
                   return CircleAvatar(
-                    backgroundColor: Color(0xFFFABC3F),
+                    backgroundColor: Theme.of(context).primaryColor,
                     child: IconButton(
-                      icon: Icon(Icons.send, color: Colors.white),
+                      icon: Icon(Icons.send, color: Theme.of(context).secondaryHeaderColor),
                       onPressed: (text.isNotEmpty || _selectedImage != null)
                           ? () {
                               if (_selectedImage != null) {

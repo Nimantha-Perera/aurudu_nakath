@@ -12,13 +12,15 @@ class RaahuKaalaya extends StatelessWidget {
         return true;
       },
       child: Scaffold(
+        backgroundColor: Theme.of(context).colorScheme.background,
         appBar: AppBar(
           foregroundColor: Colors.white,
-          backgroundColor: Color(0xFFFABC3F),
+          backgroundColor: AppBarTheme.of(context).backgroundColor,
+          elevation: 0,
           centerTitle: true,
           title: Text(
             'රාහු කාලය',
-            style: GoogleFonts.notoSerifSinhala(fontSize: 18),
+            style: GoogleFonts.notoSerifSinhala(fontSize: 14.0, color: Colors.white)
           ),
         ),
         body: Padding(

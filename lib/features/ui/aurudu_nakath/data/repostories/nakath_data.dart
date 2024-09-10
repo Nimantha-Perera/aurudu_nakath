@@ -46,7 +46,7 @@ class NakathData extends StatelessWidget {
                   leading: Icon(Icons.schedule, color: Colors.amber),
                   title: Text(
                     title,
-                    style: GoogleFonts.notoSerifSinhala(fontSize: 14),
+                    style: GoogleFonts.notoSerifSinhala(fontSize: 14, fontWeight: FontWeight.bold),
                   ),
                   subtitle: Text(
                     subtitle,
