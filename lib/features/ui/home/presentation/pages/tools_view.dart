@@ -51,7 +51,9 @@ class Tools extends StatelessWidget {
                   SizedBox(width: 10),
                   ButtonsCard(
                     text: "සැකසුම්",
-                    onTap: () {},
+                    onTap: () {
+                      Navigator.pushNamed(context, AppRoutes.setting);
+                    },
                     color: Color(0xFFA02334),
                     textColor: Colors.white,
                     icon: Icon(Icons.settings, color: Colors.white),

@@ -36,10 +36,35 @@ class _DashBoardState extends State<DashBoard> {
   }
 
   Future<void> _requestPermissionAndChangeIcon() async {
-    await permissionHandler.requestPermissions();
-    _checkNotificationPermission();
+     // If permission is already granted, show dialog
+    if (_isNotificationGranted) {
+      _showPermissionGrantedDialog();
+    } else {
+      await permissionHandler.requestPermissions();
+      _checkNotificationPermission();
+    }
   }
 
+
+void _showPermissionGrantedDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Permission Granted"),
+          content: Text("Notifications are already enabled."),
+          actions: [
+            TextButton(
+              child: Text("OK"),
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(

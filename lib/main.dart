@@ -9,6 +9,10 @@ import 'package:aurudu_nakath/features/ui/hela_gpt/domain/usecases/send_text_mes
 import 'package:aurudu_nakath/features/ui/help/presentation/pages/help_screen.dart';
 import 'package:aurudu_nakath/features/ui/home/presentation/pages/dash_board.dart';
 import 'package:aurudu_nakath/features/ui/routes/routes.dart';
+import 'package:aurudu_nakath/features/ui/settings/data/repostories/settings_repository.dart';
+import 'package:aurudu_nakath/features/ui/settings/data/repostories/settings_repository_impl.dart';
+import 'package:aurudu_nakath/features/ui/settings/presentation/bloc/settings_bloc.dart';
+import 'package:aurudu_nakath/features/ui/settings/settings_module.dart';
 import 'package:aurudu_nakath/firebase_options.dart';
 import 'package:aurudu_nakath/loadin_screen/firebase_api.dart';
 import 'package:aurudu_nakath/loadin_screen/loading.dart';
@@ -27,6 +31,7 @@ import 'package:aurudu_nakath/screens/home.dart';
 import 'package:aurudu_nakath/features/ui/intro_screens/onboarding_screen/onboarding_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:in_app_update/in_app_update.dart';
@@ -43,52 +48,48 @@ import 'package:timezone/timezone.dart' as tz;
 // }
 
 void main() async {
-  tz.initializeTimeZones();
   WidgetsFlutterBinding.ensureInitialized();
-  await initializeDateFormatting('si_LK');
+  await Firebase.initializeApp();
   await dotenv.load(fileName: "assets/.env");
-
-  SystemChrome.setPreferredOrientations([
-    DeviceOrientation.portraitUp,
-  ]);
-
-  // Initialize Firebase
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
 
   // Initialize SharedPreferences
   final sharedPreferences = await SharedPreferences.getInstance();
   final apiKey = dotenv.env['API_KEY'] ?? "";
   final apiUrl = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=$apiKey";
 
- runApp(
-  
-  MultiProvider(
-    providers: [
-      // Provide SharedPreferences
-      Provider<SharedPreferences>.value(value: sharedPreferences),
-      
-      // Provide use cases with SharedPreferences
-      Provider<FetchManageMessagesUseCase>(
-        create: (context) => FetchManageMessagesUseCase(sharedPreferences),
-      ),
-      Provider<SendTextMessageUseCase>(
-        create: (_) => SendTextMessageUseCase(apiKey, apiUrl),
-      ),
-      Provider<SendImageMessageUseCase>(
-        create: (_) => SendImageMessageUseCase(apiKey),
-      ),
-      Provider<ClearChatHistoryUseCase>(
-        create: (_) => ClearChatHistoryUseCase(sharedPreferences),
-      ),
-      // Add other providers here if needed
-    ],
-    child: MyApp(),
-  ),
-);
+  runApp(
+    MultiProvider(
+      providers: [
+        // Provide SharedPreferences
+        Provider<SharedPreferences>.value(value: sharedPreferences),
 
+        // Provide SettingsRepository and Bloc
+        Provider<SettingsRepository>(
+          create: (_) => SettingsRepositoryImpl(),
+        ),
+        Provider<SettingsBloc>(
+          create: (context) => SettingsBloc(context.read<SettingsRepository>()),
+        ),
+
+        // Provide use cases
+        Provider<FetchManageMessagesUseCase>(
+          create: (context) => FetchManageMessagesUseCase(sharedPreferences),
+        ),
+        Provider<SendTextMessageUseCase>(
+          create: (_) => SendTextMessageUseCase(apiKey, apiUrl),
+        ),
+        Provider<SendImageMessageUseCase>(
+          create: (_) => SendImageMessageUseCase(apiKey),
+        ),
+        Provider<ClearChatHistoryUseCase>(
+          create: (_) => ClearChatHistoryUseCase(sharedPreferences),
+        ),
+      ],
+      child: MyApp(),
+    ),
+  );
 }
+
 
 class MyApp extends StatefulWidget {
   @override
@@ -106,6 +107,7 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
+    print("App Widget: $_appWidget");
     return FutureBuilder<Widget>(
       future: _appWidget,
       builder: (context, snapshot) {
@@ -170,7 +172,8 @@ class ErrorScreen extends StatelessWidget {
                 var connectivityResult =
                     await (Connectivity().checkConnectivity());
                 if (connectivityResult != ConnectivityResult.none) {
-                  Navigator.of(context).pushReplacementNamed(AppRoutes.dashboard);
+                  Navigator.of(context)
+                      .pushReplacementNamed(AppRoutes.dashboard);
                 } else {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(

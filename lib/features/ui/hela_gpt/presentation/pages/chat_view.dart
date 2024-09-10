@@ -117,6 +117,7 @@ class _ChatViewState extends State<ChatView> {
 
   @override
   Widget build(BuildContext context) {
+    print("App Widget: $context");
     return ChangeNotifierProvider(
       create: (context) => ChatViewModel(
         context.read<FetchManageMessagesUseCase>(),
