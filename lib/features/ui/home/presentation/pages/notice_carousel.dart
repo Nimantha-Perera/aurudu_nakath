@@ -38,7 +38,7 @@ class NoticeCarousel extends StatelessWidget {
                           margin: EdgeInsets.symmetric(horizontal: 5.0),
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(20),
-                            color: Color.fromARGB(255, 255, 255, 255),
+                            color: Theme.of(context).cardColor,
                           ),
                           child: Center(
                             child: Text(

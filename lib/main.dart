@@ -53,7 +53,8 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-
+final themeNotifier = ThemeNotifier();
+  await themeNotifier.loadTheme();
   await dotenv.load(fileName: "assets/.env");
 
   // Initialize SharedPreferences
@@ -69,7 +70,7 @@ void main() async {
         Provider<SharedPreferences>.value(value: sharedPreferences),
 
         ChangeNotifierProvider(
-          create: (context) => ThemeNotifier(lightTheme), // Set initial theme
+          create: (context) => themeNotifier, // Set initial theme
         ),
 
         // Provide SettingsRepository and Bloc
@@ -113,7 +114,7 @@ class _MyAppState extends State<MyApp> {
     _appWidget = _checkConnectivityAndFirstTime();
   }
 
-  @override
+ @override
   Widget build(BuildContext context) {
     return Consumer<ThemeNotifier>(
       builder: (context, themeNotifier, child) {
@@ -123,7 +124,7 @@ class _MyAppState extends State<MyApp> {
             if (snapshot.connectionState == ConnectionState.done) {
               return MaterialApp(
                 debugShowCheckedModeBanner: false,
-                theme: themeNotifier.getTheme(),
+                theme: themeNotifier.getTheme(), // Apply loaded theme
                 darkTheme: darkTheme,
                 themeMode: themeNotifier.getTheme() == darkTheme ? ThemeMode.dark : ThemeMode.light,
                 initialRoute: AppRoutes.home,

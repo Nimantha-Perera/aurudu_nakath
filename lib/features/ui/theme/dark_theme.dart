@@ -9,7 +9,7 @@ ThemeData darkTheme = ThemeData(
     elevation: 0,
   ),
   
-  focusColor: Color.fromARGB(255, 51, 51, 51),
+  focusColor: Color.fromARGB(255, 197, 197, 197),
   primaryColorLight: Color.fromARGB(255, 143, 143, 143),
   cardColor: Color.fromARGB(255, 54, 54, 54),
   canvasColor: Colors.white,
