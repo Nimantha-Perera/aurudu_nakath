@@ -1,6 +1,6 @@
-// notice_carousel.dart
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
+import 'package:shimmer/shimmer.dart';
 
 class NoticeCarousel extends StatelessWidget {
   final Stream<List<String>> noticesStream;
@@ -13,7 +13,27 @@ class NoticeCarousel extends StatelessWidget {
       stream: noticesStream,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return Center(child: CircularProgressIndicator());
+          // Shimmer effect while loading
+          return Shimmer.fromColors(
+            baseColor: Colors.grey[300]!,
+            highlightColor: Colors.grey[100]!,
+            child: Container(
+              height: 120,
+              width: double.infinity,
+              margin: EdgeInsets.symmetric(horizontal: 5.0),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(20),
+                color: Colors.white,
+              ),
+              child: Center(
+                child: Text(
+                  'Loading...',
+                  style: TextStyle(fontSize: 16),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+            ),
+          );
         } else if (snapshot.hasError) {
           return Center(child: Text('Error: ${snapshot.error}'));
         } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
@@ -43,9 +63,8 @@ class NoticeCarousel extends StatelessWidget {
                           child: Center(
                             child: Text(
                               notice,
-                              style: TextStyle(fontSize: 12,color: Theme.of(context).focusColor),
+                              style: TextStyle(fontSize: 12, color: Theme.of(context).focusColor),
                               textAlign: TextAlign.center,
-                              
                             ),
                           ),
                         );

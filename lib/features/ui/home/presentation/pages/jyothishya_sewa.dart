@@ -20,7 +20,9 @@ class Jyothishya extends StatelessWidget {
                 style: TextStyle(fontSize: 12),
               ),
               TextButton(
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.pushNamed(context, AppRoutes.other_tools);
+                },
                 child: Text(
                   "තවත් >",
                   style: TextStyle(color: Colors.blue, fontSize: 10),

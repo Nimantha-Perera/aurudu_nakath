@@ -1,6 +1,8 @@
+import 'package:aurudu_nakath/features/ui/routes/routes.dart';
 import 'package:aurudu_nakath/features/ui/theme/dark_theme.dart';
 import 'package:aurudu_nakath/features/ui/theme/light_theme.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:aurudu_nakath/features/ui/theme/change_theme_notifier.dart';
 
@@ -11,7 +13,8 @@ class SettingsPage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Settings'),
+        title: Text('සැකසුම්',style: GoogleFonts.notoSerifSinhala(fontSize: 14.0, color: Colors.white)),
+        centerTitle: true,
         backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
       ),
       body: Padding(
@@ -98,6 +101,7 @@ class SettingsPage extends StatelessWidget {
           subtitle: Text('යෙදුම භාවිතයෙන් සහාය ලබා ගන්න.', style: TextStyle(fontSize: 11)),
           onTap: () {
             // Navigate to the Help & Support Page
+           Navigator.pushNamed(context, AppRoutes.help);
           },
         ),
         ListTile(

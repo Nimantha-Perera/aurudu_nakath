@@ -14,20 +14,15 @@ class HelpScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: const Color(0xFF6D003B),
+       backgroundColor: AppBarTheme.of(context).backgroundColor,
         foregroundColor: Colors.white,
         centerTitle: true,
-        title: const Text('Help'),
+        title: const Text('උදව්',style: TextStyle(fontSize: 14.0)),
       ),
       body: Stack(
         fit: StackFit.expand,
         children: [
-          Positioned.fill(
-            child: Image.asset(
-              'assets/background.jpg', // Replace with your image path
-              fit: BoxFit.cover,
-            ),
-          ),
+          
           SingleChildScrollView(
             child: Container(
               padding: const EdgeInsets.all(20.0),

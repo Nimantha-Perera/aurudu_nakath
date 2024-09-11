@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:aurudu_nakath/features/ui/Compass/compass.dart';
 import 'package:aurudu_nakath/Tools/tools_menu.dart';
 import 'package:aurudu_nakath/features/ui/errors/error_screen.dart';
@@ -11,11 +10,9 @@ import 'package:aurudu_nakath/features/ui/hela_gpt/domain/usecases/send_text_mes
 import 'package:aurudu_nakath/features/ui/help/presentation/pages/help_screen.dart';
 import 'package:aurudu_nakath/features/ui/home/presentation/pages/dash_board.dart';
 import 'package:aurudu_nakath/features/ui/routes/routes.dart';
-
 import 'package:aurudu_nakath/features/ui/settings/data/repostories/settings_repository.dart';
 import 'package:aurudu_nakath/features/ui/settings/data/repostories/settings_repository_impl.dart';
 import 'package:aurudu_nakath/features/ui/settings/presentation/bloc/settings_bloc.dart';
-import 'package:aurudu_nakath/features/ui/settings/settings_module.dart';
 import 'package:aurudu_nakath/features/ui/theme/change_theme_notifier.dart';
 import 'package:aurudu_nakath/features/ui/theme/dark_theme.dart';
 import 'package:aurudu_nakath/features/ui/theme/light_theme.dart';
@@ -31,18 +28,14 @@ import 'package:aurudu_nakath/screens/splash_screen.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:device_preview/device_preview.dart';
 import 'package:firebase_database/firebase_database.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:aurudu_nakath/screens/home.dart';
 import 'package:aurudu_nakath/features/ui/intro_screens/onboarding_screen/onboarding_screen.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:in_app_update/in_app_update.dart';
-import 'package:intl/date_symbol_data_local.dart';
-import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:timezone/data/latest.dart' as tz;
@@ -50,14 +43,19 @@ import 'package:timezone/timezone.dart' as tz;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
-final themeNotifier = ThemeNotifier();
+
+  try {
+    await Firebase.initializeApp(
+        options: DefaultFirebaseOptions.currentPlatform);
+  } catch (e) {
+    runApp(MaterialApp(home: ErrorScreen())); // Error handling
+    return;
+  }
+
+  final themeNotifier = ThemeNotifier();
   await themeNotifier.loadTheme();
   await dotenv.load(fileName: "assets/.env");
 
-  // Initialize SharedPreferences
   final sharedPreferences = await SharedPreferences.getInstance();
   final apiKey = dotenv.env['API_KEY'] ?? "";
   final apiUrl =
@@ -66,34 +64,20 @@ final themeNotifier = ThemeNotifier();
   runApp(
     MultiProvider(
       providers: [
-        // Provide SharedPreferences
         Provider<SharedPreferences>.value(value: sharedPreferences),
-
-        ChangeNotifierProvider(
-          create: (context) => themeNotifier, // Set initial theme
-        ),
-
-        // Provide SettingsRepository and Bloc
-        Provider<SettingsRepository>(
-          create: (_) => SettingsRepositoryImpl(),
-        ),
+        ChangeNotifierProvider(create: (_) => themeNotifier),
+        Provider<SettingsRepository>(create: (_) => SettingsRepositoryImpl()),
         Provider<SettingsBloc>(
-          create: (context) => SettingsBloc(context.read<SettingsRepository>()),
-        ),
-
-        // Provide use cases
+            create: (context) =>
+                SettingsBloc(context.read<SettingsRepository>())),
         Provider<FetchManageMessagesUseCase>(
-          create: (context) => FetchManageMessagesUseCase(sharedPreferences),
-        ),
+            create: (_) => FetchManageMessagesUseCase(sharedPreferences)),
         Provider<SendTextMessageUseCase>(
-          create: (_) => SendTextMessageUseCase(apiKey, apiUrl),
-        ),
+            create: (_) => SendTextMessageUseCase(apiKey, apiUrl)),
         Provider<SendImageMessageUseCase>(
-          create: (_) => SendImageMessageUseCase(apiKey),
-        ),
+            create: (_) => SendImageMessageUseCase(apiKey)),
         Provider<ClearChatHistoryUseCase>(
-          create: (_) => ClearChatHistoryUseCase(sharedPreferences),
-        ),
+            create: (_) => ClearChatHistoryUseCase(sharedPreferences)),
       ],
       child: MyApp(),
     ),
@@ -112,9 +96,14 @@ class _MyAppState extends State<MyApp> {
   void initState() {
     super.initState();
     _appWidget = _checkConnectivityAndFirstTime();
+    Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
+      setState(() {
+        _appWidget = _checkConnectivityAndFirstTime();
+      });
+    });
   }
 
- @override
+  @override
   Widget build(BuildContext context) {
     return Consumer<ThemeNotifier>(
       builder: (context, themeNotifier, child) {
@@ -124,12 +113,15 @@ class _MyAppState extends State<MyApp> {
             if (snapshot.connectionState == ConnectionState.done) {
               return MaterialApp(
                 debugShowCheckedModeBanner: false,
-                theme: themeNotifier.getTheme(), // Apply loaded theme
+                theme: themeNotifier.getTheme(),
                 darkTheme: darkTheme,
-                themeMode: themeNotifier.getTheme() == darkTheme ? ThemeMode.dark : ThemeMode.light,
+                themeMode: themeNotifier.getTheme() == darkTheme
+                    ? ThemeMode.dark
+                    : ThemeMode.light, // Optimized theme mode
                 initialRoute: AppRoutes.home,
                 onGenerateRoute: AppRoutes.generateRoute,
-                home: snapshot.data,
+                home: snapshot.data ??
+                    DashBoard(), // Default to Dashboard if no data
               );
             } else {
               return MaterialApp(
@@ -144,9 +136,13 @@ class _MyAppState extends State<MyApp> {
   }
 
   Future<Widget> _checkConnectivityAndFirstTime() async {
-    var connectivityResult = await (Connectivity().checkConnectivity());
-    if (connectivityResult == ConnectivityResult.none) {
-      return ErrorScreen(); // Return the error screen if no internet connection
+    try {
+      var connectivityResult = await Connectivity().checkConnectivity();
+      if (connectivityResult == ConnectivityResult.none) {
+        return ErrorScreen(); // No internet connection
+      }
+    } catch (e) {
+      return ErrorScreen(); // Connectivity check error
     }
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -155,8 +151,7 @@ class _MyAppState extends State<MyApp> {
     if (isFirstTime) {
       await prefs.setBool('isFirstTime', false);
       return Onboarding();
-    } else {
-      return DashBoard();
     }
+    return DashBoard();
   }
 }
