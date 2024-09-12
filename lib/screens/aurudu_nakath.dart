@@ -37,10 +37,130 @@ class _AuruduNakathScreenState extends State<AuruduNakathScreen> {
 
    InterstitialAdManager interstitialAdManager = InterstitialAdManager();
   Map<DateTime, List<Event>> events = {
-    DateTime(2024, 1, 15): [
+      DateTime(2024, 1, 25): [
       Event(
-          title: 'දෙමල තෛයිපෝංගල් දිනය',
+          title: 'දුරුතු පුර පසලොස්වක පෝය දිනය',
           color: Color.fromARGB(255, 255, 238, 0)),
+    ],
+    DateTime(2024, 2, 4): [
+      Event(title: 'නිදහස් දිනය', color: Color.fromARGB(255, 255, 238, 0)),
+    ],
+    DateTime(2024, 2, 14): [
+      Event(
+          title: "ආදරවන්තයින්ගේ දිනය", color: Color.fromARGB(255, 255, 145, 0)),
+    ],
+    DateTime(2024, 2, 23): [
+      Event(
+          title: 'නවම් පුර පසලොස්වක පෝය දිනය',
+          color: Color.fromARGB(255, 255, 238, 0)),
+    ],
+    DateTime(2024, 3, 8): [
+      Event(
+          title: 'මහා ශිවරාත්‍රී දිනය',
+          color: Color.fromARGB(255, 255, 238, 0)),
+    ],
+    DateTime(2024, 3, 11): [
+      Event(title: 'රාමසාන් ආරම්භය', color: Color.fromARGB(255, 255, 238, 0)),
+    ],
+    DateTime(2024, 3, 24): [
+      Event(
+          title: 'මැදින් පුර පසලොස්වක පෝය දිනය',
+          color: Color.fromARGB(255, 255, 238, 0)),
+    ],
+    DateTime(2024, 3, 29): [
+      Event(title: 'මහ සිකුරාදා', color: Color.fromARGB(255, 255, 238, 0)),
+    ],
+    DateTime(2024, 3, 31): [
+      Event(title: 'පාස්කු ඉරිදා', color: Color.fromARGB(255, 255, 238, 0)),
+    ],
+    DateTime(2024, 4, 11): [
+      Event(title: 'රාමසාන් දිනය', color: Color.fromARGB(255, 255, 238, 0)),
+    ],
+    DateTime(2024, 4, 12): [
+      Event(
+          title: "සිංහල දෙමළ පරණ අවුරුදු දිනය",
+          color: Color.fromARGB(255, 255, 238, 0)),
+    ],
+    DateTime(2024, 4, 13): [
+      Event(
+          title: "සිංහල දෙමළ අලුත් අවුරුදු දිනය",
+          color: Color.fromARGB(255, 255, 238, 0)),
+    ],
+    DateTime(2024, 4, 23): [
+      Event(
+          title: 'බක් පුර පසලොස්වක පෝය දිනය',
+          color: Color.fromARGB(255, 255, 238, 0)),
+    ],
+    DateTime(2024, 5, 1): [
+      Event(title: 'ලෝක කම්කරු දිනය', color: Color.fromARGB(255, 255, 238, 0)),
+    ],
+    DateTime(2024, 5, 12): [
+      Event(
+          title: "අම්මාවරුන්ගේ දිනය", color: Color.fromARGB(255, 255, 145, 0)),
+    ],
+    DateTime(2024, 5, 23): [
+      Event(
+          title: 'වෙසක් පුර පසලොස්වක පොහෝ දිනය',
+          color: Color.fromARGB(255, 255, 238, 0)),
+    ],
+    DateTime(2024, 5, 24): [
+      Event(
+          title: 'වෙසල් දිනට පසු දිනය',
+          color: Color.fromARGB(255, 255, 238, 0)),
+    ],
+    DateTime(2024, 6, 16): [
+      Event(title: "පිය වරුන්ගේ දිනය", color: Color.fromARGB(255, 255, 145, 0)),
+    ],
+    DateTime(2024, 6, 17): [
+      Event(title: 'හජ්ජි උත්සව දිනය', color: Color.fromARGB(255, 255, 238, 0)),
+    ],
+    DateTime(2024, 6, 21): [
+      Event(
+          title: 'පොසොන් පුර පසලොස්වක පෝය දිනය',
+          color: Color.fromARGB(255, 255, 238, 0)),
+    ],
+    DateTime(2024, 7, 20): [
+      Event(
+          title: 'ඇසළ පුර පසලොස්වක පොහෝ දිනය',
+          color: Color.fromARGB(255, 255, 238, 0)),
+    ],
+    DateTime(2024, 8, 19): [
+      Event(
+          title: 'නිකිනි පුර පසලොස්වක පෝය දිනය',
+          color: Color.fromARGB(255, 255, 238, 0)),
+    ],
+    DateTime(2024, 9, 16): [
+      Event(
+          title: "නබි නායකතුමාගේ උපන් දිනය)",
+          color: Color.fromARGB(255, 255, 238, 0)),
+    ],
+    DateTime(2024, 9, 17): [
+      Event(
+          title: 'බිනර පුර පසලොස්වක පෝය දිනය',
+          color: Color.fromARGB(255, 255, 238, 0)),
+    ],
+    DateTime(2024, 10, 17): [
+      Event(
+          title: 'වප් පුර පසලොස්වක පෝය දිනය',
+          color: Color.fromARGB(255, 255, 238, 0)),
+    ],
+    DateTime(2024, 10, 31): [
+      Event(
+          title: 'දීපවාලී උත්සව දිනය', color: Color.fromARGB(255, 255, 238, 0)),
+    ],
+    DateTime(2024, 11, 15): [
+      Event(
+          title: 'ඉල් පුර පසලොස්වක පෝය දිනය',
+          color: Color.fromARGB(255, 255, 238, 0)),
+    ],
+    DateTime(2024, 12, 14): [
+      Event(
+          title: 'උදුවප් පුර පසලොස්වක පෝය දිනය',
+          color: Color.fromARGB(255, 255, 238, 0)),
+    ],
+    DateTime(2024, 12, 25): [
+      Event(
+          title: 'නත්තල් උත්සව දිනය', color: Color.fromARGB(255, 255, 238, 0)),
     ],
   
   };

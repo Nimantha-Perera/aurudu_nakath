@@ -14,12 +14,12 @@ class ErrorScreen extends StatelessWidget {
             Container(
               margin: EdgeInsets.only(top: 50, bottom: 100),
               child: Lottie.asset(
-                'assets/no_connection.json',
+                'assets/animations/net_error.json',
                 height: 400,
                 width: 400,
               ),
             ),
-            Text("No internet connection"),
+            Text("අන්තර්ජාල සම්බන්ධතාවයක් නොමැත"),
             SizedBox(height: 20),
             ElevatedButton(
               onPressed: () async {
@@ -31,12 +31,12 @@ class ErrorScreen extends StatelessWidget {
                 } else {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
-                      content: Text("Still no internet connection"),
+                      content: Text("තවමත් අන්තර්ජාල සම්බන්ධතාවයක් නොමැත"),
                     ),
                   );
                 }
               },
-              child: Text("Refresh"),
+              child: Text("නැවුම් කරන්න"),
             ),
           ],
         ),

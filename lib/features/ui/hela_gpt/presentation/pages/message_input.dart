@@ -1,8 +1,11 @@
+import 'package:aurudu_nakath/features/ui/tutorial/tutorial_coach_mark.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:aurudu_nakath/features/ui/hela_gpt/presentation/bloc/chat_view_model.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:io';
+import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 
 class MessageInput extends StatefulWidget {
   @override
@@ -13,8 +16,13 @@ class _MessageInputState extends State<MessageInput> {
   final TextEditingController _controller = TextEditingController();
   final ValueNotifier<String> _textNotifier = ValueNotifier<String>('');
   final ImagePicker _picker = ImagePicker();
+  final GlobalKey _sendButtonKey = GlobalKey();
+  final GlobalKey _textFieldKey = GlobalKey();
+  final GlobalKey _startNewChatKey = GlobalKey();
 
-  XFile? _selectedImage; // Store the selected image
+  List<TargetFocus> targets = [];
+  XFile? _selectedImage;
+  bool _tutorialShown = false;
 
   @override
   void dispose() {
@@ -25,19 +33,79 @@ class _MessageInputState extends State<MessageInput> {
 
   void _startNewChat() {
     final chatViewModel = Provider.of<ChatViewModel>(context, listen: false);
-    chatViewModel.clearChat(); // Clear old messages
+    chatViewModel.clearChat();
     _controller.clear();
-    _textNotifier.value = ''; // Clear the text field
-    _selectedImage = null; // Clear the selected image
+    _textNotifier.value = '';
+    _selectedImage = null;
+  }
+
+  Future<void> _loadTutorialState() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _tutorialShown = prefs.getBool('tutorial_chat_input_shown') ?? false;
+    });
+
+    // Show tutorial if not already shown
+    if (!_tutorialShown) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _showTutorial(); // Show tutorial after the widget is built
+      });
+    }
+  }
+
+  Future<void> _setTutorialShown() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('tutorial_chat_input_shown', true);
   }
 
   Future<void> _pickImage() async {
     final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
     if (image != null) {
       setState(() {
-        _selectedImage = image; // Store the selected image
+        _selectedImage = image;
       });
     }
+  }
+
+  void _showTutorial() {
+    setState(() {
+      targets = [
+        TutorialHelper.createCustomTarget(
+          identify: "text_field",
+          keyTarget: _textFieldKey,
+          text: "අවශ්‍ය දේ මෙහි ලියන්න",
+          align: ContentAlign.top,
+          shape: ShapeLightFocus.RRect,
+        ),
+        TutorialHelper.createCustomTarget(
+          identify: 'send_button',
+          keyTarget: _sendButtonKey,
+          align: ContentAlign.top,
+          text: 'පසුව මෙම බටනය ක්ලික් කරන්න',
+          shape: ShapeLightFocus.Circle,
+        ),
+        TutorialHelper.createCustomTarget(
+          identify: 'start_new_chat',
+          keyTarget: _startNewChatKey,
+          align: ContentAlign.top,
+          text: 'මෙම බොත්තම එබීමෙන් නව කතාබහක් ආරම්භ කරන්න.',
+          shape: ShapeLightFocus.Circle,
+        ),
+      ];
+
+      TutorialHelper.showTutorial(
+        context: context,
+        targets: targets,
+      );
+
+      _setTutorialShown(); // Set the tutorial as shown after completion
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _loadTutorialState(); // Ensure tutorial state is loaded
   }
 
   @override
@@ -47,48 +115,38 @@ class _MessageInputState extends State<MessageInput> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Display the selected image if available
           if (_selectedImage != null)
             Center(
               child: Container(
                 decoration: BoxDecoration(
-                  borderRadius:
-                      BorderRadius.circular(10.0), // Radius for the image corners
+                  borderRadius: BorderRadius.circular(10.0),
                   border: Border.all(
-                    color: Colors.grey, // Border color
-                    width: 2.0, // Border width
+                    color: Colors.grey,
+                    width: 2.0,
                   ),
                 ),
                 margin: const EdgeInsets.only(bottom: 8.0),
                 constraints: BoxConstraints(
-                  maxHeight: 100, // Adjust max height as needed
+                  maxHeight: 100,
                   maxWidth: double.infinity,
                 ),
-                clipBehavior:
-                    Clip.hardEdge, // Ensures the image respects the border radius
+                clipBehavior: Clip.hardEdge,
                 child: Image.file(
                   File(_selectedImage!.path),
-                  fit: BoxFit.cover, // Adjust fit as needed
+                  fit: BoxFit.cover,
                 ),
               ),
             ),
-
           Row(
             children: [
-              // Button to start a new chat
               IconButton(
                 icon: Icon(Icons.add, color: const Color.fromARGB(255, 94, 94, 94)),
                 onPressed: _startNewChat,
+                key: _startNewChatKey,
               ),
-             
-              // Button to pick an image
-              // IconButton(
-              //   icon: Icon(Icons.image, color: Colors.blue),
-              //   onPressed: _pickImage,
-              // ),
-             
               Expanded(
                 child: TextField(
+                  key: _textFieldKey,
                   controller: _controller,
                   onChanged: (text) {
                     _textNotifier.value = text;
@@ -109,31 +167,26 @@ class _MessageInputState extends State<MessageInput> {
                 valueListenable: _textNotifier,
                 builder: (context, text, child) {
                   return CircleAvatar(
+                    key: _sendButtonKey,
                     backgroundColor: Theme.of(context).primaryColor,
                     child: IconButton(
                       icon: Icon(Icons.send, color: Theme.of(context).secondaryHeaderColor),
                       onPressed: (text.isNotEmpty || _selectedImage != null)
                           ? () {
                               if (_selectedImage != null) {
-                                // Send both image and text
-                                Provider.of<ChatViewModel>(context,
-                                        listen: false)
+                                Provider.of<ChatViewModel>(context, listen: false)
                                     .sendImage(_selectedImage!, text);
                                 setState(() {
-                                  _selectedImage =
-                                      null; // Clear the selected image after sending
+                                  _selectedImage = null;
                                 });
                               } else {
-                                // Send only text
-                                Provider.of<ChatViewModel>(context,
-                                        listen: false)
+                                Provider.of<ChatViewModel>(context, listen: false)
                                     .sendMessage(text);
                               }
                               _controller.clear();
-                              _textNotifier.value =
-                                  ''; // Clear the notifier as well
+                              _textNotifier.value = '';
                             }
-                          : null, // Disable the button if text is empty and no image is selected
+                          : null,
                     ),
                   );
                 },

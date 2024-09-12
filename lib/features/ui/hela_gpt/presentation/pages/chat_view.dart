@@ -27,6 +27,7 @@ class _ChatViewState extends State<ChatView> {
       _showPlaceholderMessage = false;
     });
   }
+  
 
   Future<void> _shareChatHistory(BuildContext context) async {
     // Fetch the chat messages from the ChatViewModel
