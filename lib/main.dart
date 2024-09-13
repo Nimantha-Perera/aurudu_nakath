@@ -9,6 +9,10 @@ import 'package:aurudu_nakath/features/ui/hela_gpt/domain/usecases/send_img.dart
 import 'package:aurudu_nakath/features/ui/hela_gpt/domain/usecases/send_text_message.dart';
 import 'package:aurudu_nakath/features/ui/help/presentation/pages/help_screen.dart';
 import 'package:aurudu_nakath/features/ui/home/presentation/pages/dash_board.dart';
+import 'package:aurudu_nakath/features/ui/litha/data/datasouces/firebase_data_source.dart';
+import 'package:aurudu_nakath/features/ui/litha/data/repo/aurudu_nakath_repository_impl.dart';
+import 'package:aurudu_nakath/features/ui/litha/domain/usecase/get_aurudu_nakath_data.dart';
+import 'package:aurudu_nakath/features/ui/litha/presentation/bloc/aurudu_nakath_bloc.dart';
 import 'package:aurudu_nakath/features/ui/routes/routes.dart';
 import 'package:aurudu_nakath/features/ui/settings/data/repostories/settings_repository.dart';
 import 'package:aurudu_nakath/features/ui/settings/data/repostories/settings_repository_impl.dart';
@@ -36,6 +40,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/date_symbol_data_local.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:timezone/data/latest.dart' as tz;
@@ -43,6 +48,7 @@ import 'package:timezone/timezone.dart' as tz;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await initializeDateFormatting('si_LK');
 
   try {
     await Firebase.initializeApp(
@@ -64,6 +70,22 @@ void main() async {
   runApp(
     MultiProvider(
       providers: [
+        Provider<FirebaseDataSource>(
+          create: (_) => FirebaseDataSource(),
+        ),
+        ProxyProvider<FirebaseDataSource, AuruduNakathRepositoryImpl>(
+          update: (_, dataSource, __) =>
+              AuruduNakathRepositoryImpl(dataSource: dataSource),
+        ),
+        ProxyProvider<AuruduNakathRepositoryImpl, GetAuruduNakathData>(
+          update: (_, repository, __) =>
+              GetAuruduNakathData(repository: repository),
+        ),
+        ProxyProvider<GetAuruduNakathData, AuruduNakathBloc>(
+          update: (_, getAuruduNakathData, __) =>
+              AuruduNakathBloc(getAuruduNakathData: getAuruduNakathData),
+          dispose: (_, bloc) => bloc.close(),
+        ),
         Provider<SharedPreferences>.value(value: sharedPreferences),
         ChangeNotifierProvider(create: (_) => themeNotifier),
         Provider<SettingsRepository>(create: (_) => SettingsRepositoryImpl()),

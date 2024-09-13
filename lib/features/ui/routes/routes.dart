@@ -1,4 +1,5 @@
 import 'package:aurudu_nakath/features/ui/lagna_palapala/presentation/pages/lagna_palapala_screen.dart';
+import 'package:aurudu_nakath/features/ui/litha/presentation/pages/litha_main.dart';
 import 'package:flutter/material.dart';
 import 'package:aurudu_nakath/features/ui/Compass/compass.dart';
 import 'package:aurudu_nakath/features/ui/aurudu_nakath/presentation/pages/main_screen.dart';
@@ -27,6 +28,7 @@ class AppRoutes {
   static const String setting = '/setting';
   static const String other_tools = '/other_tools';
   static const String lagna_palapala = '/lagna_palapala';
+  static const String litha = '/litha';
 
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
@@ -34,6 +36,9 @@ class AppRoutes {
         return _createPageRoute(HomeScreen());
       case help:
         return _createPageRoute(HelpScreen());
+
+      case litha:
+        return _createPageRoute(LithaMainScreen());  
       case other_tools:
         return _createPageRoute(Other_Tools());
 

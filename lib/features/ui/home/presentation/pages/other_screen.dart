@@ -50,7 +50,7 @@ class _Other_ToolsState extends State<Other_Tools> {
                 ),
                 ButtonsCard(
                   text: "ලිත",
-                  onTap: () => Navigator.pushNamed(context, AppRoutes.hela_gpt),
+                  onTap: () => Navigator.pushNamed(context, AppRoutes.litha),
                   color: const Color(0xFFFABC3F),
                   textColor: const Color.fromARGB(255, 83, 83, 83),
                   icon: const Icon(Icons.document_scanner_rounded, color: Colors.white),
