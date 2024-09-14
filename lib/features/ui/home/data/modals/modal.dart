@@ -1,11 +1,11 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-
 class Notice {
-  final bool isTimeCount;
-  final Timestamp timestamp;
+  final String? title;
+  final String? subtitle;
+  final DateTime? noticeTime; // Make this nullable
 
   Notice({
-    required this.isTimeCount,
-    required this.timestamp,
+    required this.title,
+    required this.subtitle,
+    required this.noticeTime,
   });
 }

@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:aurudu_nakath/Notifications/notification_service.dart';
 import 'package:aurudu_nakath/features/ui/Compass/compass.dart';
 import 'package:aurudu_nakath/Tools/tools_menu.dart';
 import 'package:aurudu_nakath/features/ui/errors/error_screen.dart';
@@ -22,6 +23,7 @@ import 'package:aurudu_nakath/features/ui/theme/light_theme.dart';
 import 'package:aurudu_nakath/firebase_options.dart';
 import 'package:aurudu_nakath/loadin_screen/firebase_api.dart';
 import 'package:aurudu_nakath/loadin_screen/loading.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:device_preview/device_preview.dart';
@@ -52,14 +54,24 @@ void main() async {
     return;
   }
 
+  NotificationService notificationService =
+      NotificationService(); // Create instance of NotificationService
+  await notificationService.initialize(); // Initialize notifications
+
   final themeNotifier = ThemeNotifier();
   await themeNotifier.loadTheme();
   await dotenv.load(fileName: "assets/.env");
+
+
 
   final sharedPreferences = await SharedPreferences.getInstance();
   final apiKey = dotenv.env['API_KEY'] ?? "";
   final apiUrl =
       "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=$apiKey";
+
+
+
+  
 
   runApp(
     MultiProvider(
@@ -112,6 +124,8 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
+
+    
     _sharedPreferencesFuture = SharedPreferences.getInstance();
     _appWidget = _checkConnectivityAndFirstTime();
     Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
@@ -120,6 +134,9 @@ class _MyAppState extends State<MyApp> {
       });
     });
   }
+
+
+
 
   Future<Widget> _checkConnectivityAndFirstTime() async {
     final connectivityResult = await (Connectivity().checkConnectivity());
@@ -132,7 +149,7 @@ class _MyAppState extends State<MyApp> {
     final isFirstTime = sharedPreferences.getBool('isFirstTime') ?? true;
     if (isFirstTime) {
       // Set 'isFirstTime' to false after showing the onboarding screen
-  
+
       return Onboarding(); // Return onboarding screen if first time
     }
     return DashBoard(); // Return the main dashboard otherwise
@@ -155,7 +172,8 @@ class _MyAppState extends State<MyApp> {
                     : ThemeMode.light, // Optimized theme mode
                 initialRoute: AppRoutes.home,
                 onGenerateRoute: AppRoutes.generateRoute,
-                home: snapshot.data ?? DashBoard(), // Default to Dashboard if no data
+                home: snapshot.data ??
+                    DashBoard(), // Default to Dashboard if no data
               );
             } else {
               return MaterialApp(

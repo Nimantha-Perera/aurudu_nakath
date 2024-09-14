@@ -1,3 +1,4 @@
+import 'package:aurudu_nakath/features/ui/home/data/modals/modal.dart';
 import 'package:aurudu_nakath/features/ui/home/data/repostory/notice_repository.dart';
 import 'package:aurudu_nakath/features/ui/permissions/permissions_hadler.dart';
 import 'package:aurudu_nakath/features/ui/tutorial/tutorial_coach_mark.dart';
@@ -21,7 +22,7 @@ class _DashBoardState extends State<DashBoard> {
   final PermissionHandler permissionHandler = PermissionHandler();
   bool _isNotificationGranted = false;
   late final NoticeRepository _noticeRepository; // Add NoticeRepository
-  late Stream<List<String>> _noticesStream; // Stream for notices
+  late Stream<List<Notice>> _noticesStream; // Stream for notices
 
   // GlobalKeys for tutorial targets
   final GlobalKey _notificationIconKey = GlobalKey();
@@ -103,21 +104,21 @@ class _DashBoardState extends State<DashBoard> {
       TutorialHelper.createCustomTarget(
         identify: "NotificationIcon",
         keyTarget: _notificationIconKey,
-        text: "දිනපතා දැනුම්දීම් ලබා ගැනීමට මෙය තට්ටු කරන්න",
+        text: "දිනපතා දැනුම්දීම් ලබා ගැනීමට මෙය Touch කරන්න",
         align: ContentAlign.bottom,
         shape: ShapeLightFocus.Circle,
       ),
       TutorialHelper.createCustomTarget(
         identify: "NoticeCarousel",
         keyTarget: _noticeCarouselKey,
-        text: "මෙහි විශේෂ දැනුම්දීම් පෙන්වනු ලබයි.",
+        text: "මෙහි නැකැත් කෙටි විස්තර පෙන්වනු ලබයි.",
         align: ContentAlign.bottom,
         shape: ShapeLightFocus.RRect,
       ),
       TutorialHelper.createCustomTarget(
         identify: "Jyothishya",
         keyTarget: _jyothishyaKey,
-        text: "ජ්‍යෝතීශ්‍ය සේවාවන්",
+        text: "ජ්‍යෝතීශ්‍ය සේවාවන් මෙතනින් ලබා ගන්න.",
         align: ContentAlign.bottom,
         shape: ShapeLightFocus.RRect,
       ),
@@ -160,7 +161,7 @@ class _DashBoardState extends State<DashBoard> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          "විශේෂ දැනුම්දීම්", // Special notifications
+                          "කෙටි දැන්වීම්", // Special notifications
                           style: TextStyle(fontSize: 12),
                         ),
                         IconButton(

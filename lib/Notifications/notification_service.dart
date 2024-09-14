@@ -31,6 +31,7 @@ class NotificationService {
 
     // Initialize Firebase Messaging
     _firebaseInit();
+    getFcmToken();
   }
 
   Future<void> _requestPermission() async {
