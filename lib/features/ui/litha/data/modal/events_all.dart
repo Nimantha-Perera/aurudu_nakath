@@ -1,6 +1,7 @@
 import 'dart:ui';
 
-import 'package:aurudu_nakath/features/ui/litha/presentation/pages/widget/calendar_widget.dart';
+import 'package:aurudu_nakath/features/ui/litha/domain/entities/event.dart';
+
 import 'package:flutter/material.dart';
 
 

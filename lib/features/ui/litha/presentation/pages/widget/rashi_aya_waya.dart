@@ -1,14 +1,15 @@
-import 'package:aurudu_nakath/features/ui/litha/domain/entities/sunan_agawatima.dart';
+import 'package:aurudu_nakath/features/ui/litha/domain/entities/maru_sitina_disawa.dart';
+import 'package:aurudu_nakath/features/ui/litha/domain/entities/rashi_aya_waya.dart';
 import 'package:flutter/material.dart';
 
-class SunanAgawatimaWidget extends StatelessWidget {
-  final List<SunanAgawatima> sunanAgawatima;
+class RashiAyaWayaScreen extends StatelessWidget {
+  final List<RashiAyawaya> rashi_aya_waya;
 
-  const SunanAgawatimaWidget({Key? key, required this.sunanAgawatima}) : super(key: key);
+  const RashiAyaWayaScreen({Key? key, required this.rashi_aya_waya}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    if (sunanAgawatima.isEmpty) {
+    if (rashi_aya_waya.isEmpty) {
       return const Center(
         child: Text(
           'No data available',
@@ -27,7 +28,7 @@ class SunanAgawatimaWidget extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             const Text(
-              'සූනන් අගවැටීම',
+              'මරු සිටින දිශාව',
               style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
               textAlign: TextAlign.center,
             ),
@@ -52,7 +53,7 @@ class SunanAgawatimaWidget extends StatelessWidget {
                       child: Padding(
                         padding: EdgeInsets.all(12),
                         child: Text(
-                          'ස්ථානය',
+                          'රාශිය',
                           style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: Colors.black),
                           textAlign: TextAlign.center,
                         ),
@@ -62,7 +63,17 @@ class SunanAgawatimaWidget extends StatelessWidget {
                       child: Padding(
                         padding: EdgeInsets.all(12),
                         child: Text(
-                          'පලාඵලය',
+                          'අය',
+                          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: Colors.black),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    ),
+                    TableCell(
+                      child: Padding(
+                        padding: EdgeInsets.all(12),
+                        child: Text(
+                          'වැය',
                           style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: Colors.black),
                           textAlign: TextAlign.center,
                         ),
@@ -70,13 +81,13 @@ class SunanAgawatimaWidget extends StatelessWidget {
                     ),
                   ],
                 ),
-                ...sunanAgawatima.map((data) => TableRow(
+                ...rashi_aya_waya.map((data) => TableRow(
                       children: [
                         TableCell(
                           child: Padding(
                             padding: const EdgeInsets.all(12),
                             child: Text(
-                              data.thana,
+                              data.rashi,
                               textAlign: TextAlign.center,
                             ),
                           ),
@@ -85,7 +96,16 @@ class SunanAgawatimaWidget extends StatelessWidget {
                           child: Padding(
                             padding: const EdgeInsets.all(12),
                             child: Text(
-                              data.palapala,
+                              data.aya,
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                        ),
+                        TableCell(
+                          child: Padding(
+                            padding: const EdgeInsets.all(12),
+                            child: Text(
+                              data.waya,
                               textAlign: TextAlign.center,
                             ),
                           ),

@@ -1,5 +1,6 @@
 import 'package:aurudu_nakath/features/ui/litha/domain/entities/event.dart';
 import 'package:aurudu_nakath/features/ui/litha/domain/entities/maru_sitina_disawa.dart';
+import 'package:aurudu_nakath/features/ui/litha/domain/entities/rashi_aya_waya.dart';
 import 'package:aurudu_nakath/features/ui/litha/domain/entities/sunan_agawatima.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
@@ -84,29 +85,55 @@ class FirebaseDataSource {
     }
   }
 
-  Future<List<String>> getKonaMasa() async {
+
+   Future<List<RashiAyawaya>> getayaWaya() async {
     try {
-      DataSnapshot snapshot = await _database.child('aurudu_nakath/kona_masa').get();
-      List<String> konaMasaList = [];
+      DataSnapshot snapshot = await _database.child('aurudu_nakath/lagna_rashi_aya_waya').get();
+      List<RashiAyawaya> rashiayawayaList = [];
 
       if (snapshot.value != null) {
-        if (snapshot.value is List) {
-          konaMasaList = List<String>.from(snapshot.value as List);
-        } else if (snapshot.value is Map) {
-          Map<dynamic, dynamic> values =
-              snapshot.value as Map<dynamic, dynamic>;
-          values.forEach((key, value) {
-            konaMasaList.add(value.toString());
-          });
-        }
+        Map<dynamic, dynamic> values = snapshot.value as Map<dynamic, dynamic>;
+        values.forEach((key, value) {
+          rashiayawayaList.add(RashiAyawaya(
+            rashi: value['lagnaya'],
+            aya: value['aya'],
+            waya: value['waya'],
+          ));
+        });
       }
 
-      return konaMasaList;
+      return rashiayawayaList;
     } catch (e) {
-      print('Error fetching kona masa data: $e');
+      print('Error fetching maru sitina disawa data: $e');
       return [];
     }
   }
+
+  Future<List<String>> getKonaMasa() async {
+  try {
+    DataSnapshot snapshot = await _database.child('aurudu_nakath/kona_masa').get();
+    List<String> konaMasaList = [];
+
+    if (snapshot.value != null) {
+      if (snapshot.value is List) {
+        konaMasaList = (snapshot.value as List).where((item) => item != null).map((item) => item.toString()).toList();
+      } else if (snapshot.value is Map) {
+        Map<dynamic, dynamic> values = snapshot.value as Map<dynamic, dynamic>;
+        values.forEach((key, value) {
+          if (value != null) {
+            konaMasaList.add(value.toString());
+          }
+        });
+      }
+    }
+
+    return konaMasaList;
+  } catch (e) {
+    print('Error fetching kona masa data: $e');
+    return [];
+  }
+}
+
 
   Future<List<SunanAgawatima>> getSunanAgawatima() async {
     try {

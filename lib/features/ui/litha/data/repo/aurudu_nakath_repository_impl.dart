@@ -15,12 +15,14 @@ class AuruduNakathRepositoryImpl implements AuruduNakathRepository {
     final maruSitinaDisawa = await dataSource.getMaruSitinaDisawa();
     final konaMasa = await dataSource.getKonaMasa();
     final sunanAgawatima = await dataSource.getSunanAgawatima();
+    final rashiAyawaya = await dataSource.getayaWaya();
 
     return AuruduNakathData(
       // events: events,
       maruSitinaDisawa: maruSitinaDisawa,
       konaMasa: konaMasa,
       sunanAgawatima: sunanAgawatima,
+      rashi_aya_waya: rashiAyawaya,
     );
   }
 }

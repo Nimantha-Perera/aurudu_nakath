@@ -53,7 +53,7 @@ class MaruSitinaDisawaWidget extends StatelessWidget {
                         padding: EdgeInsets.all(12),
                         child: Text(
                           'දවස',
-                          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: Colors.black),
                           textAlign: TextAlign.center,
                         ),
                       ),
@@ -63,7 +63,7 @@ class MaruSitinaDisawaWidget extends StatelessWidget {
                         padding: EdgeInsets.all(12),
                         child: Text(
                           'දිශාව',
-                          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: Colors.black),
                           textAlign: TextAlign.center,
                         ),
                       ),

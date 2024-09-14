@@ -92,21 +92,21 @@ class _CompassState extends State<Compass> {
       appBar: AppBar(
         title: Text(
           'මාලිමාව',
-         style: TextStyle(color: Colors.white, fontSize: 18),
+        style: GoogleFonts.notoSerifSinhala(fontSize: 14.0, color: Colors.white)
         ),
         centerTitle: true,
-        backgroundColor: Color(0xFFFABC3F),
+        backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
         foregroundColor: Colors.white,
       ),
-      backgroundColor: Colors.white,
+     
       body: Stack(
         children: [
-          Positioned.fill(
-            child: Image.asset(
-              'assets/background.jpg',
-              fit: BoxFit.cover,
-            ),
-          ),
+          // Positioned.fill(
+          //   child: Image.asset(
+          //     'assets/background.jpg',
+          //     fit: BoxFit.cover,
+          //   ),
+          // ),
           Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
