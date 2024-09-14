@@ -4,7 +4,6 @@ import 'package:aurudu_nakath/Tools/tools_menu.dart';
 import 'package:aurudu_nakath/features/ui/errors/error_screen.dart';
 import 'package:aurudu_nakath/features/ui/hela_gpt/domain/usecases/clear_chat.dart';
 import 'package:aurudu_nakath/features/ui/hela_gpt/domain/usecases/fetch_and%20_manegemessage.dart';
-
 import 'package:aurudu_nakath/features/ui/hela_gpt/domain/usecases/send_img.dart';
 import 'package:aurudu_nakath/features/ui/hela_gpt/domain/usecases/send_text_message.dart';
 import 'package:aurudu_nakath/features/ui/help/presentation/pages/help_screen.dart';
@@ -23,18 +22,13 @@ import 'package:aurudu_nakath/features/ui/theme/light_theme.dart';
 import 'package:aurudu_nakath/firebase_options.dart';
 import 'package:aurudu_nakath/loadin_screen/firebase_api.dart';
 import 'package:aurudu_nakath/loadin_screen/loading.dart';
-import 'package:aurudu_nakath/screens/aurudu_nakath.dart';
-import 'package:aurudu_nakath/screens/hela_ai.dart';
-import 'package:aurudu_nakath/screens/lagna.dart';
-import 'package:aurudu_nakath/screens/nakath_sittuwa.dart';
-import 'package:aurudu_nakath/screens/raahu_kalaya.dart';
-import 'package:aurudu_nakath/screens/splash_screen.dart';
+
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:device_preview/device_preview.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:aurudu_nakath/screens/home.dart';
+
 import 'package:aurudu_nakath/features/ui/intro_screens/onboarding_screen/onboarding_screen.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -113,16 +107,35 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   Future<Widget>? _appWidget;
+  late Future<SharedPreferences> _sharedPreferencesFuture;
 
   @override
   void initState() {
     super.initState();
+    _sharedPreferencesFuture = SharedPreferences.getInstance();
     _appWidget = _checkConnectivityAndFirstTime();
     Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
       setState(() {
         _appWidget = _checkConnectivityAndFirstTime();
       });
     });
+  }
+
+  Future<Widget> _checkConnectivityAndFirstTime() async {
+    final connectivityResult = await (Connectivity().checkConnectivity());
+
+    if (connectivityResult == ConnectivityResult.none) {
+      return ErrorScreen(); // Show error screen if no connectivity
+    }
+
+    final sharedPreferences = await _sharedPreferencesFuture;
+    final isFirstTime = sharedPreferences.getBool('isFirstTime') ?? true;
+    if (isFirstTime) {
+      // Set 'isFirstTime' to false after showing the onboarding screen
+  
+      return Onboarding(); // Return onboarding screen if first time
+    }
+    return DashBoard(); // Return the main dashboard otherwise
   }
 
   @override
@@ -142,8 +155,7 @@ class _MyAppState extends State<MyApp> {
                     : ThemeMode.light, // Optimized theme mode
                 initialRoute: AppRoutes.home,
                 onGenerateRoute: AppRoutes.generateRoute,
-                home: snapshot.data ??
-                    DashBoard(), // Default to Dashboard if no data
+                home: snapshot.data ?? DashBoard(), // Default to Dashboard if no data
               );
             } else {
               return MaterialApp(
@@ -155,25 +167,5 @@ class _MyAppState extends State<MyApp> {
         );
       },
     );
-  }
-
-  Future<Widget> _checkConnectivityAndFirstTime() async {
-    try {
-      var connectivityResult = await Connectivity().checkConnectivity();
-      if (connectivityResult == ConnectivityResult.none) {
-        return ErrorScreen(); // No internet connection
-      }
-    } catch (e) {
-      return ErrorScreen(); // Connectivity check error
-    }
-
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    bool isFirstTime = prefs.getBool('isFirstTime') ?? true;
-
-    if (isFirstTime) {
-      await prefs.setBool('isFirstTime', false);
-      return Onboarding();
-    }
-    return DashBoard();
   }
 }

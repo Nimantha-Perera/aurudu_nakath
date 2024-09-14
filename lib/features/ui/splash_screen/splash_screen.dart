@@ -1,5 +1,5 @@
 import 'package:aurudu_nakath/features/ui/home/presentation/pages/dash_board.dart';
-import 'package:aurudu_nakath/screens/home.dart';
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 

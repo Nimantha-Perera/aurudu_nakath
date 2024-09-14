@@ -9,8 +9,7 @@ import 'package:aurudu_nakath/features/ui/home/presentation/pages/other_screen.d
 import 'package:aurudu_nakath/features/ui/rahu_kalaya/presentation/pages/raahu_kaalaya_page.dart';
 import 'package:aurudu_nakath/features/ui/settings/presentation/pages/settings_page.dart';
 import 'package:aurudu_nakath/main.dart';
-import 'package:aurudu_nakath/screens/home.dart';
-import 'package:aurudu_nakath/screens/nakath_sittuwa.dart';
+
 import 'package:aurudu_nakath/features/ui/help/presentation/pages/help_screen.dart';
 import 'package:aurudu_nakath/features/ui/intro_screens/onboarding_screen/onboarding_screen.dart';
 import 'package:aurudu_nakath/features/ui/home/presentation/pages/dash_board.dart';
@@ -32,8 +31,7 @@ class AppRoutes {
 
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
-      case home:
-        return _createPageRoute(HomeScreen());
+   
       case help:
         return _createPageRoute(HelpScreen());
 
