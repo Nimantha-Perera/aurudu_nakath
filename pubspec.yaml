@@ -115,26 +115,10 @@ flutter:
   assets:
     - assets/new_images/
     - assets/animations/
+    - assets/icons/
     - assets/new_images/intro_images/
     - assets/.env
-    - assets/mandala.png
-    - assets/logo.png
-    - assets/background_ai.png
-    - assets/internet-on-the-go-animate.svg
-    - assets/icon/Internet on the go-cuate.png
-    - assets/icon/Done-rafiki.png
-    - assets/no_connection.json
-    - assets/bg/iPhone SE - 2.png
-    - assets/Mandala2.png
-    - assets/background.jpg
-    - assets/bulath_kolaya.png
-    - assets/malimawa/sincom.png
-
-    - assets/monn_sun/moon.png
-    - assets/monn_sun/sun.png
-    - assets/arimbuwa/arimbuwa.png
-    - assets/arimbuwa/arimbuwa_end.png
-    - assets/helagpt_bannerad.png
+    
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

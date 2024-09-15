@@ -1,66 +1,75 @@
 import 'package:aurudu_nakath/features/ui/home/presentation/pages/buttons_card.dart';
 import 'package:aurudu_nakath/features/ui/routes/routes.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
-class Other_Tools extends StatefulWidget {
-  const Other_Tools({super.key});
+class OtherTools extends StatefulWidget {
+  const OtherTools({super.key});
 
   @override
-  State<Other_Tools> createState() => _Other_ToolsState();
+  State<OtherTools> createState() => _OtherToolsState();
 }
 
-class _Other_ToolsState extends State<Other_Tools> {
+class _OtherToolsState extends State<OtherTools> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: const Color.fromARGB(0, 255, 193, 7),
-        foregroundColor: Colors.white,
+        backgroundColor: AppBarTheme.of(context).backgroundColor,
+        elevation: 0,
+        title: Text(
+          'ජ්‍යෝතීශ්‍ය මෙනුව',  
+          style: GoogleFonts.notoSerifSinhala(fontSize: 14.0, color: Colors.white),
+        ),
         leading: IconButton(
-          icon: Icon(Icons.arrow_back,color: Colors.black,),
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () {
             Navigator.pop(context);
           },
         ),
+        centerTitle: true,
       ),
-      body: Center(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20.0),
+      body: Container(
+        child: Center(
           child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: GridView.count(
-              shrinkWrap: true, // To make the GridView take only the needed space
-              crossAxisCount: 2, // Display 2 buttons per row
-              mainAxisSpacing: 20, // Vertical spacing between the buttons
-              crossAxisSpacing: 20, // Horizontal spacing between the buttons
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                ButtonsCard(
-                  text: "අවුරුදු නැකැත්",
-                  onTap: () => Navigator.pushNamed(context, AppRoutes.aurudu_nakath),
-                  color: const Color(0xFFFABC3F),
-                  textColor: const Color.fromARGB(255, 83, 83, 83),
-                  icon: const Icon(Icons.timelapse_rounded, color: Colors.white),
-                ),
-                ButtonsCard(
-                  text: "‍රාහු කාලය",
-                  onTap: () => Navigator.pushNamed(context, AppRoutes.rahu_kalaya),
-                  color: const Color(0xFFFABC3F),
-                  textColor: const Color.fromARGB(255, 83, 83, 83),
-                  icon: const Icon(Icons.watch_later_rounded, color: Colors.white),
-                ),
-                ButtonsCard(
-                  text: "ලිත",
-                  onTap: () => Navigator.pushNamed(context, AppRoutes.litha),
-                  color: const Color(0xFFFABC3F),
-                  textColor: const Color.fromARGB(255, 83, 83, 83),
-                  icon: const Icon(Icons.document_scanner_rounded, color: Colors.white),
-                ),
-                ButtonsCard(
-                  text: "ලග්න පලාඵල",
-                  onTap: () => Navigator.pushNamed(context, AppRoutes.lagna),
-                  color: const Color(0xFFFABC3F),
-                  textColor: const Color.fromARGB(255, 83, 83, 83),
-                  icon: const Icon(Icons.shelves, color: Colors.white),
+                SizedBox(
+                  height: 400, // Define a fixed height for the GridView
+                  child: GridView.count(
+                    crossAxisCount: 2,
+                    mainAxisSpacing: 24, // Increased spacing for cleaner layout
+                    crossAxisSpacing: 16,
+                    padding: const EdgeInsets.all(16.0),
+                    children: [
+                      _buildCustomCard(
+                        text: "අවුරුදු නැකැත්",
+                        color: const Color(0xFFFABC3F),
+                        icon: Icons.timelapse_rounded,
+                        routeName: AppRoutes.aurudu_nakath,
+                      ),
+                      _buildCustomCard(
+                        text: "‍රාහු කාලය",
+                        color: const Color(0xFFFABC3F),
+                        icon: Icons.watch_later_rounded,
+                        routeName: AppRoutes.rahu_kalaya,
+                      ),
+                      _buildCustomCard(
+                        text: "ලිත",
+                        color: const Color(0xFFFABC3F),
+                        image: AssetImage('assets/icons/astronomy.png'),
+                        routeName: AppRoutes.litha,
+                      ),
+                      _buildCustomCard(
+                        text: "ලග්න පලාඵල",
+                        color: const Color(0xFFFABC3F),
+                        icon: Icons.shelves,
+                        routeName: AppRoutes.lagna,
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ),
@@ -69,4 +78,58 @@ class _Other_ToolsState extends State<Other_Tools> {
       ),
     );
   }
+
+   Widget _buildCustomCard({
+    required String text,
+    required Color color,
+    IconData? icon, // Make the icon nullable
+    ImageProvider<Object>? image, // Add an optional image parameter
+    required String routeName,
+  }) {
+    return GestureDetector(
+      onTap: () => Navigator.pushNamed(context, routeName),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(16.0), // Add ripple effect with rounded corners
+        splashColor: Colors.orange.withOpacity(0.3), // Define the ripple color
+        highlightColor: Colors.transparent, // Remove default highlight
+        onTap: () => Navigator.pushNamed(context, routeName),
+        child: Card(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16.0),
+          ),
+          elevation: 8,
+          color: color,
+          shadowColor: Colors.orangeAccent.withOpacity(0.5),
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                // Conditionally display either the icon or the image
+                image != null
+                    ? Image(
+                        image: image,
+                        height: 50,
+                        width: 50,
+                      )
+                    : Icon(icon, size: 50, color: Colors.white),
+                const SizedBox(height: 16),
+                Text(
+                  text,
+                  textAlign: TextAlign.center,
+                  style: GoogleFonts.lato(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: const Color.fromARGB(255, 83, 83, 83),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+
 }

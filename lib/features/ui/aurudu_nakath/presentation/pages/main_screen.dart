@@ -13,8 +13,8 @@ class AuruduNakath extends StatefulWidget {
 
 class _AuruduNakathState extends State<AuruduNakath> {
   late NakathTimerManager timerManager;
-  String countdownText1 = 'ගනනය කරමින්...';
-  String countdownText2 = 'ගනනය කරමින්...';
+  // String countdownText1 = 'ගනනය කරමින්...';
+  // String countdownText2 = 'ගනනය කරමින්...';
 
   @override
   void initState() {
@@ -31,10 +31,10 @@ class _AuruduNakathState extends State<AuruduNakath> {
   void updateCountdown() {
     setState(() {
       // Update countdown texts using the timer manager
-      countdownText1 = timerManager.getCountdownText(
-          timerManager.getDifference(timerManager.futureDate1));
-      countdownText2 = timerManager.getCountdownText(
-          timerManager.getDifference(timerManager.futureDate2));
+      // countdownText1 = timerManager.getCountdownText(
+      //     timerManager.getDifference(timerManager.futureDate1));
+      // countdownText2 = timerManager.getCountdownText(
+      //     timerManager.getDifference(timerManager.futureDate2));
     });
   }
 
@@ -56,7 +56,7 @@ class _AuruduNakathState extends State<AuruduNakath> {
         // color: Theme.of(context).colorScheme.secondary,
         child: Column(
           children: [
-            _buildCountdownCard('අලුත් අවුරුදු උදාව සඳහා තව', countdownText2), // Countdown using the updated timer logic
+            // _buildCountdownCard('අලුත් අවුරුදු උදාව සඳහා තව', countdownText2), // Countdown using the updated timer logic
             Expanded(child: NakathData()), // Use the separated NakathData widget
           ],
         ),

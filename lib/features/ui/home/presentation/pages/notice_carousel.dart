@@ -145,44 +145,44 @@ class _NoticeCarouselState extends State<NoticeCarousel> {
     );
   }
 
-  Widget _buildCarousel(List<Notice> notices) {
-    return Column(
-      children: [
-        CarouselSlider(
-          options: CarouselOptions(
-            height: 120,
-            autoPlay: true,
-            enlargeCenterPage: false,
-            autoPlayInterval: Duration(seconds: 5),
-            viewportFraction: 0.93,
-            onPageChanged: (index, reason) {
-              setState(() {
-                _currentIndex = index;
-              });
-            },
-          ),
-          items: notices.map((notice) => _buildCarouselItem(notice)).toList(),
+Widget _buildCarousel(List<Notice> notices) {
+  return Column(
+    children: [
+      CarouselSlider(
+        options: CarouselOptions(
+          height: 120,
+          autoPlay: false, // Disable auto sliding
+          enlargeCenterPage: false,
+          viewportFraction: 1.0, // Display one item at a time
+          onPageChanged: (index, reason) {
+            setState(() {
+              _currentIndex = index;
+            });
+          },
         ),
-        SizedBox(height: 12),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: notices.asMap().entries.map((entry) {
-            return Container(
-              width: 8,
-              height: 8,
-              margin: EdgeInsets.symmetric(horizontal: 4),
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: _currentIndex == entry.key
-                    ? Theme.of(context).primaryColor
-                    : Colors.grey.withOpacity(0.5),
-              ),
-            );
-          }).toList(),
-        ),
-      ],
-    );
-  }
+        items: notices.map((notice) => _buildCarouselItem(notice)).toList(),
+      ),
+      SizedBox(height: 12),
+      Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: notices.asMap().entries.map((entry) {
+          return Container(
+            width: 8,
+            height: 8,
+            margin: EdgeInsets.symmetric(horizontal: 4),
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: _currentIndex == entry.key
+                  ? Theme.of(context).primaryColor
+                  : Colors.grey.withOpacity(0.5),
+            ),
+          );
+        }).toList(),
+      ),
+    ],
+  );
+}
+
 
  Widget _buildCarouselItem(Notice notice) {
   return Container(

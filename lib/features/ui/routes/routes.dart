@@ -31,14 +31,13 @@ class AppRoutes {
 
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
-   
       case help:
         return _createPageRoute(HelpScreen());
 
       case litha:
-        return _createPageRoute(LithaMainScreen());  
+        return _createPageRoute(LithaMainScreen());
       case other_tools:
-        return _createPageRoute(Other_Tools());
+        return _createPageRoute(OtherTools());
 
       case setting:
         return _createPageRoute(SettingsPage());
