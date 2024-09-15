@@ -1,7 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-class LoadingScreen extends StatelessWidget {
+class LoadingScreen extends StatefulWidget {
+  @override
+  _LoadingScreenState createState() => _LoadingScreenState();
+}
+
+class _LoadingScreenState extends State<LoadingScreen>
+    with SingleTickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -28,7 +34,7 @@ class LoadingScreen extends StatelessWidget {
             SizedBox(height: 24),
             // Custom text style for 'Loading...'
             Text(
-              'Please wait...',
+              'රැඳී සිටින්න...',
               style: GoogleFonts.poppins(
                 textStyle: TextStyle(
                   fontSize: 18,
@@ -40,7 +46,7 @@ class LoadingScreen extends StatelessWidget {
             ),
             SizedBox(height: 8),
             // Subtle animated text
-            _buildAnimatedDots(context),
+            _buildAnimatedDots(),
           ],
         ),
       ),
@@ -48,7 +54,7 @@ class LoadingScreen extends StatelessWidget {
   }
 
   // Animated text that adds visual interest
-  Widget _buildAnimatedDots(BuildContext context) {
+  Widget _buildAnimatedDots() {
     return TweenAnimationBuilder(
       tween: Tween(begin: 0.0, end: 1.0),
       duration: Duration(seconds: 1),
@@ -65,14 +71,7 @@ class LoadingScreen extends StatelessWidget {
           ),
         );
       },
-      onEnd: () => _repeatAnimation(context), // Pass the context here
+      onEnd: () => setState(() {}), // SetState triggers rebuild safely
     );
-  }
-
-  // Looping the animation for continuous effect
-  void _repeatAnimation(BuildContext context) {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      (context as Element).markNeedsBuild(); // Trigger rebuild for the animation
-    });
   }
 }

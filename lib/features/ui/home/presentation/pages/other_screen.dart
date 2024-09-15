@@ -65,7 +65,7 @@ class _OtherToolsState extends State<OtherTools> {
                       _buildCustomCard(
                         text: "ලග්න පලාඵල",
                         color: const Color(0xFFFABC3F),
-                        icon: Icons.shelves,
+                        image: AssetImage('assets/icons/constellation.png'),
                         routeName: AppRoutes.lagna,
                       ),
                     ],
@@ -109,19 +109,15 @@ class _OtherToolsState extends State<OtherTools> {
                 image != null
                     ? Image(
                         image: image,
-                        height: 50,
-                        width: 50,
+                        height: 40,
+                        width: 40,
                       )
-                    : Icon(icon, size: 50, color: Colors.white),
+                    : Icon(icon, size: 40, color: Colors.white),
                 const SizedBox(height: 16),
                 Text(
                   text,
                   textAlign: TextAlign.center,
-                  style: GoogleFonts.lato(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: const Color.fromARGB(255, 83, 83, 83),
-                  ),
+                  
                 ),
               ],
             ),

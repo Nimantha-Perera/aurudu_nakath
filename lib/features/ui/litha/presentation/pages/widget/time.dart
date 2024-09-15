@@ -55,9 +55,10 @@ class _TimeNowState extends State<TimeNow> {
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-              'නැකැත් සඳහා වත්මන් වේලාව',
+              'නැකැත් සඳහා වත්මන් වේලාව', textAlign: TextAlign.center,
               style: TextStyle(
-                fontSize: 20,
+                fontSize: 17,
+                
                 fontWeight: FontWeight.bold,
                 color: Theme.of(context).primaryColor,
               ),
@@ -67,7 +68,7 @@ class _TimeNowState extends State<TimeNow> {
               _timeString,
               style: TextStyle(
                 fontSize: 26,
-                fontWeight: FontWeight.bold,
+             
                 color: Theme.of(context).primaryColor,
               ),
             ),
