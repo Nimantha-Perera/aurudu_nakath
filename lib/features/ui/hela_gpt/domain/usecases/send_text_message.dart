@@ -1,11 +1,23 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:audioplayers/audioplayers.dart';
 
 class SendTextMessageUseCase {
   final String apiKey;
   final String apiUrl;
+  late final AudioPlayer audioPlayer;
 
-  SendTextMessageUseCase(this.apiKey, this.apiUrl);
+  SendTextMessageUseCase(this.apiKey, this.apiUrl) {
+    audioPlayer = AudioPlayer();
+  }
+
+  Future<void> playMessageSentSound() async {
+    try {
+      await audioPlayer.play(AssetSource('sounds/send.mp3'));
+    } catch (e) {
+      print('Error playing sound: $e');
+    }
+  }
 
   Future<String> sendMessage(String message) async {
     final header = {'Content-Type': 'application/json'};
@@ -29,6 +41,9 @@ class SendTextMessageUseCase {
         headers: header,
         body: jsonEncode(data),
       );
+
+      // Play the sound effect when the message is sent
+      await playMessageSentSound();
 
       if (response.statusCode == 200) {
         final responseBody = jsonDecode(response.body);
