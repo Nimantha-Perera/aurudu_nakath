@@ -185,7 +185,7 @@ class _DashBoardState extends State<DashBoard> {
                       noticesStream: _noticesStream,
                     ),
 
-                    SizedBox(height: 50),
+                    SizedBox(height: 10),
 
                     // Jyothishya Sewa (Astrological Service) with a tutorial key
                     Jyothishya(key: _jyothishyaKey),

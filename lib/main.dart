@@ -9,6 +9,7 @@ import 'package:aurudu_nakath/features/ui/hela_gpt/domain/usecases/send_img.dart
 import 'package:aurudu_nakath/features/ui/hela_gpt/domain/usecases/send_text_message.dart';
 import 'package:aurudu_nakath/features/ui/help/presentation/pages/help_screen.dart';
 import 'package:aurudu_nakath/features/ui/home/presentation/pages/dash_board.dart';
+import 'package:aurudu_nakath/features/ui/in_app_update/in_app_update.dart';
 import 'package:aurudu_nakath/features/ui/litha/data/datasouces/firebase_data_source.dart';
 import 'package:aurudu_nakath/features/ui/litha/data/repo/aurudu_nakath_repository_impl.dart';
 import 'package:aurudu_nakath/features/ui/litha/domain/usecase/get_aurudu_nakath_data.dart';
@@ -17,6 +18,7 @@ import 'package:aurudu_nakath/features/ui/routes/routes.dart';
 import 'package:aurudu_nakath/features/ui/settings/data/repostories/settings_repository.dart';
 import 'package:aurudu_nakath/features/ui/settings/data/repostories/settings_repository_impl.dart';
 import 'package:aurudu_nakath/features/ui/settings/presentation/bloc/settings_bloc.dart';
+import 'package:aurudu_nakath/features/ui/shake_and_navigate/shake_navigation.dart';
 import 'package:aurudu_nakath/features/ui/theme/change_theme_notifier.dart';
 import 'package:aurudu_nakath/features/ui/theme/dark_theme.dart';
 import 'package:aurudu_nakath/features/ui/theme/light_theme.dart';
@@ -62,16 +64,10 @@ void main() async {
   await themeNotifier.loadTheme();
   await dotenv.load(fileName: "assets/.env");
 
-
-
   final sharedPreferences = await SharedPreferences.getInstance();
   final apiKey = dotenv.env['API_KEY'] ?? "";
   final apiUrl =
       "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=$apiKey";
-
-
-
-  
 
   runApp(
     MultiProvider(
@@ -120,12 +116,17 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   Future<Widget>? _appWidget;
   late Future<SharedPreferences> _sharedPreferencesFuture;
+  //  ShakeNavigation? _shakeNavigation;
 
   @override
   void initState() {
     super.initState();
+    //  _shakeNavigation = ShakeNavigation(context);
 
-    
+
+    //in app update check
+    update(context);
+
     _sharedPreferencesFuture = SharedPreferences.getInstance();
     _appWidget = _checkConnectivityAndFirstTime();
     Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
@@ -134,9 +135,6 @@ class _MyAppState extends State<MyApp> {
       });
     });
   }
-
-
-
 
   Future<Widget> _checkConnectivityAndFirstTime() async {
     final connectivityResult = await (Connectivity().checkConnectivity());
