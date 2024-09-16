@@ -25,7 +25,7 @@ class Jyothishya extends StatelessWidget {
                 },
                 child: Text(
                   "තවත් >",
-                  style: TextStyle(color: Colors.blue, fontSize: 10),
+                  style: TextStyle(color: const Color.fromARGB(255, 124, 124, 124), fontSize: 10),
                 ),
               )
             ],

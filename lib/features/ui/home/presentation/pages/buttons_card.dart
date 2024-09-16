@@ -19,7 +19,8 @@ class ButtonsCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Stack(
-      clipBehavior: Clip.none, // To allow the icon to be positioned outside the button boundaries
+      clipBehavior: Clip
+          .none, // To allow the icon to be positioned outside the button boundaries
       children: [
         Container(
           decoration: BoxDecoration(
@@ -37,21 +38,25 @@ class ButtonsCard extends StatelessWidget {
           child: TextButton(
             onPressed: onTap,
             style: ButtonStyle(
-              backgroundColor: MaterialStateProperty.all(Colors.transparent), // Make the background transparent to show the shadow
+              backgroundColor: MaterialStateProperty.all(Colors
+                  .transparent), // Make the background transparent to show the shadow
               shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                 RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(20),
                 ),
               ),
-              padding: MaterialStateProperty.all<EdgeInsetsGeometry>(EdgeInsets.zero),
-              minimumSize: MaterialStateProperty.all<Size>(const Size(170, 100)),
-              overlayColor: MaterialStateProperty.all<Color>(const Color.fromARGB(137, 255, 255, 255)),
+              padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
+                  EdgeInsets.zero),
+              minimumSize:
+                  MaterialStateProperty.all<Size>(const Size(170, 100)),
+              overlayColor: MaterialStateProperty.all<Color>(
+                  const Color.fromARGB(137, 255, 255, 255)),
             ),
             child: Center(
               child: Text(
                 text,
                 textAlign: TextAlign.center,
-                style: TextStyle(color: textColor),
+                style: TextStyle(color: textColor, fontSize: 15),
               ),
             ),
           ),

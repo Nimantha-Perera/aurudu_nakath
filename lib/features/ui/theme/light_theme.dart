@@ -8,7 +8,7 @@ import 'package:google_fonts/google_fonts.dart';
     backgroundColor: Color(0xFFFABC3F),
     elevation: 0,
   ),
-  primaryColorLight: Color(0xFFFFF3E0),
+  primaryColorLight: Color.fromARGB(255, 255, 253, 136),
   canvasColor: const Color.fromARGB(255, 46, 46, 46),
   cardColor: Colors.white,
   focusColor: Color.fromARGB(255, 51, 51, 51),
@@ -23,6 +23,6 @@ import 'package:google_fonts/google_fonts.dart';
       primary: Color.fromARGB(255, 53, 53, 53), // Set your primary color
       secondary: Color.fromARGB(255, 255, 255, 255), // Set your secondary color
       surface: Color.fromARGB(255, 231, 231, 231), // Customize other color properties if needed
-      tertiary: Color(0xFFE0FFC2)),
+      tertiary: Color.fromARGB(255, 218, 218, 218)),
   fontFamily: GoogleFonts.notoSerifSinhala().fontFamily,
 );

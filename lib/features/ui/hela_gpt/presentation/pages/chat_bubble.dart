@@ -78,51 +78,84 @@ class _ChatBubbleState extends State<ChatBubble> with SingleTickerProviderStateM
             maxWidth: MediaQuery.of(context).size.width * 0.75,
           ),
           child: Card(
-            color: widget.backgroundColor,
-            elevation: 2,
+            elevation: 3,
+            shadowColor: Colors.black.withOpacity(0.1),
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
-              side: BorderSide(color: Colors.grey.withOpacity(0.2), width: 1),
+              borderRadius: widget.borderRadius,
             ),
             child: InkWell(
               onLongPress: () => _copyToClipboard(context),
-              borderRadius: BorderRadius.circular(12),
-              child: Padding(
-                padding: EdgeInsets.all(12.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    MarkdownBody(
-                      data: widget.message,
-                      styleSheet: MarkdownStyleSheet(
-                        p: TextStyle(color: widget.textColor, fontSize: 16.0),
-                        h1: TextStyle(color: widget.textColor, fontSize: 24.0, fontWeight: FontWeight.bold),
-                        h2: TextStyle(color: widget.textColor, fontSize: 22.0, fontWeight: FontWeight.bold),
-                        code: TextStyle(backgroundColor: Colors.grey.withOpacity(0.2), fontFamily: 'monospace'),
-                        codeblockPadding: EdgeInsets.all(8),
-                        codeblockDecoration: BoxDecoration(
-                          color: Colors.grey.withOpacity(0.1),
-                          borderRadius: BorderRadius.circular(8),
+              borderRadius: widget.borderRadius,
+              child: Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [
+                      widget.backgroundColor.withOpacity(0.95),
+                      widget.backgroundColor,
+                    ],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                  borderRadius: widget.borderRadius,
+                ),
+                child: Padding(
+                  padding: EdgeInsets.all(14.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      MarkdownBody(
+                        data: widget.message,
+                        styleSheet: MarkdownStyleSheet(
+                          p: TextStyle(
+                            color: widget.textColor,
+                            fontSize: 16.0,
+                            fontWeight: FontWeight.w400,
+                            height: 1.4,
+                          ),
+                          h1: TextStyle(
+                            color: widget.textColor,
+                            fontSize: 24.0,
+                            fontWeight: FontWeight.bold,
+                          ),
+                          h2: TextStyle(
+                            color: widget.textColor,
+                            fontSize: 22.0,
+                            fontWeight: FontWeight.bold,
+                          ),
+                          code: TextStyle(
+                            backgroundColor: Colors.grey.withOpacity(0.2),
+                            fontFamily: 'monospace',
+                            color: widget.textColor.withOpacity(0.9),
+                          ),
+                          codeblockPadding: EdgeInsets.all(8),
+                          codeblockDecoration: BoxDecoration(
+                            color: Colors.grey.withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                        ),
+                        onTapLink: (text, url, title) {
+                          if (url != null) {
+                            _launchURL(url);
+                          }
+                        },
+                        builders: {
+                          'code': CustomCodeBlockBuilder(),
+                        },
+                      ),
+                      SizedBox(height: 6),
+                      Align(
+                        alignment: Alignment.bottomRight,
+                        child: Text(
+                          '${DateTime.now().hour}:${DateTime.now().minute.toString().padLeft(2, '0')}',
+                          style: TextStyle(
+                            color: widget.textColor.withOpacity(0.6),
+                            fontSize: 12,
+                            fontStyle: FontStyle.italic,
+                          ),
                         ),
                       ),
-                      onTapLink: (text, url, title) {
-                        if (url != null) {
-                          _launchURL(url);
-                        }
-                      },
-                      builders: {
-                        'code': CustomCodeBlockBuilder(),
-                      },
-                    ),
-                    SizedBox(height: 4),
-                    Align(
-                      alignment: Alignment.bottomRight,
-                      child: Text(
-                        '${DateTime.now().hour}:${DateTime.now().minute}',
-                        style: TextStyle(color: widget.textColor.withOpacity(0.6), fontSize: 12),
-                      ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -139,7 +172,7 @@ class CustomCodeBlockBuilder extends MarkdownElementBuilder {
     if (element.tag != 'code') return null;
 
     String language = '';
-    
+
     // Check if the element has any classes
     if (element.attributes['class'] != null) {
       final classes = element.attributes['class']!.split(' ');
@@ -179,6 +212,7 @@ class CustomCodeBlockBuilder extends MarkdownElementBuilder {
             style: TextStyle(
               fontFamily: 'monospace',
               fontSize: 14,
+              color: Colors.black87,
             ),
           ),
         ],
