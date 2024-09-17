@@ -23,6 +23,6 @@ import 'package:google_fonts/google_fonts.dart';
       primary: Color.fromARGB(255, 53, 53, 53), // Set your primary color
       secondary: Color.fromARGB(255, 255, 255, 255), // Set your secondary color
       surface: Color.fromARGB(255, 231, 231, 231), // Customize other color properties if needed
-      tertiary: Color.fromARGB(255, 218, 218, 218)),
+      tertiary: Color.fromARGB(255, 255, 250, 219)),
   fontFamily: GoogleFonts.notoSerifSinhala().fontFamily,
 );

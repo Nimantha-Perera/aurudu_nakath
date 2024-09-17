@@ -95,7 +95,7 @@ flutter {
 }
 
 dependencies {
-   
+    implementation 'com.android.billingclient:billing:6.0.0'
+    // Other dependencies
 }
-
 

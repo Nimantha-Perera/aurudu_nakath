@@ -21,6 +21,12 @@
         android:value="importent_messeges"/>
 
 
+        <!-- Billing permmisions -->
+         <meta-data
+        android:name="com.android.vending.BILLING"
+        android:value="true"/>
+
+
    
 
 

@@ -1,121 +1,173 @@
+import 'package:aurudu_nakath/features/ui/subcriptions_provider/subcription_privider.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+ // Update with the actual package import
 
 class FullScreenDrawer extends StatelessWidget {
   final VoidCallback onClose;
 
-  FullScreenDrawer({required this.onClose});
+  const FullScreenDrawer({Key? key, required this.onClose}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    final subscriptionProvider = Provider.of<SubscriptionProvider>(context);
+    final product = subscriptionProvider.product;
+    
+
     return Scaffold(
-      backgroundColor: Colors.black54,
-      body: Stack(
-        children: [
-          Positioned.fill(
-            child: Container(
-              color: Colors.white,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+      body: SafeArea(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _buildHeader(context),
+            Expanded(
+              child: ListView(
+                padding: const EdgeInsets.symmetric(horizontal: 24.0),
                 children: [
-                  Padding(
-                    padding: EdgeInsets.all(16.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          'Pro Features',
-                          style: TextStyle(
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.teal,
-                          ),
-                        ),
-                        IconButton(
-                          icon: Icon(Icons.close, color: Colors.teal),
-                          onPressed: onClose,
-                        ),
-                      ],
-                    ),
+                  _buildFeatureItem(
+                    context,
+                    icon: Icons.chat_bubble_outline,
+                    title: 'හෙළ GPT සමඟ ඇති තරම් chat කරන්න',
+                    subtitle: 'හෙල GPT Pro ලබාගැනීමෙන් ඔබට හෙළ GPT සමඟ සීමා නොමැතිව chat කරන්න පුලුවන්.',
                   ),
-                  Expanded(
-                    child: ListView(
-                      padding: EdgeInsets.symmetric(horizontal: 16.0),
-                      children: [
-                        ListTile(
-                          leading: Icon(Icons.star, color: Colors.teal),
-                          title: Text(
-                            'සම්බන්ධතා විකල්පය',
-                            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                          ),
-                          subtitle: Text(
-                            'වෙත සම්බන්ධතා සඳහා වඩාත් සුදුසු අංග.',
-                            style: TextStyle(fontSize: 16),
-                          ),
-                        ),
-                        Divider(thickness: 1, color: Colors.grey[300]),
-                        ListTile(
-                          leading: Icon(Icons.star, color: Colors.teal),
-                          title: Text(
-                            'සාධාරණ පිළිගැනීම',
-                            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                          ),
-                          subtitle: Text(
-                            'ඉහළ ප්‍රතිචාර සහ පිළිගැනීම.',
-                            style: TextStyle(fontSize: 16),
-                          ),
-                        ),
-                        Divider(thickness: 1, color: Colors.grey[300]),
-                        ListTile(
-                          leading: Icon(Icons.star, color: Colors.teal),
-                          title: Text(
-                            'පෞද්ගලික සබැඳි',
-                            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                          ),
-                          subtitle: Text(
-                            'ඔබගේ පෞද්ගලික සබැඳි සඳහා වඩාත් සුදුසුකම්.',
-                            style: TextStyle(fontSize: 16),
-                          ),
-                        ),
-                        Divider(thickness: 1, color: Colors.grey[300]),
-                        SizedBox(height: 20),
-                        // Add buttons with white background, black text, and rounded corners
-                        ElevatedButton(
-                          onPressed: () {
-                            // Add your button action here
-                          },
-                          style: ElevatedButton.styleFrom(
-                            foregroundColor: Colors.black, backgroundColor: Colors.white,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12.0),
-                            ),
-                            padding: EdgeInsets.symmetric(vertical: 16.0),
-                            side: BorderSide(color: Colors.black, width: 2),
-                          ),
-                          child: Text('Explore Features'),
-                        ),
-                        SizedBox(height: 16),
-                        ElevatedButton(
-                          onPressed: () {
-                            // Add your button action here
-                          },
-                          style: ElevatedButton.styleFrom(
-                            foregroundColor: Colors.black, backgroundColor: Colors.white,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12.0),
-                            ),
-                            padding: EdgeInsets.symmetric(vertical: 16.0),
-                            side: BorderSide(color: Colors.black, width: 2),
-                          ),
-                          child: Text('Contact Support'),
-                        ),
-                      ],
+                  _buildFeatureItem(
+                    context,
+                    icon: Icons.description_outlined,
+                    title: 'සවිස්තරාත්මක ප්‍රතිචාර',
+                    subtitle: 'හෙල GPT Pro ලබාගැනීමෙන් ඔබට සවිස්තරාත්මක ප්‍රතිචාර ලබාගත හැකී.',
+                  ),
+                  _buildFeatureItem(
+                    context,
+                    icon: Icons.person_outline,
+                    title: 'පෞද්ගලික සබැඳි',
+                    subtitle: 'ඔබගේ පෞද්ගලික සබැඳි සඳහා වඩාත් සුදුසුකම්.',
+                  ),
+                  const SizedBox(height: 40),
+                  if (product != null)
+                    _buildButton(
+                      context,
+                      'රු 650/= (මසකට)',
+                      onPressed: () {
+                        subscriptionProvider.buySubscription();
+                      },
                     ),
+                  const SizedBox(height: 16),
+                  _buildButton(
+                    context,
+                    'සහය සම්බන්ධ කරගන්න',
+                    onPressed: () {
+                      // Add your button action here
+                    },
+                    isPrimary: false,
                   ),
                 ],
               ),
             ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildHeader(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(24.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            'හෙළ GPT Pro විශේෂාංග',
+            style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+              fontWeight: FontWeight.bold,
+              fontSize: 18,
+              color: Color.fromARGB(255, 109, 109, 109),
+            ),
+          ),
+          IconButton(
+            icon: const Icon(Icons.close, color: Color.fromARGB(255, 255, 208, 0)),
+            onPressed: onClose,
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildFeatureItem(BuildContext context, {
+    required IconData icon,
+    required String title,
+    required String subtitle,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 24.0),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: Colors.yellow[50],
+              borderRadius: BorderRadius.circular(12),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.yellow.withOpacity(0.2),
+                  blurRadius: 8,
+                  offset: const Offset(0, 4),
+                ),
+              ],
+            ),
+            child: Icon(icon, color: Colors.yellow[700], size: 28),
+          ),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: Colors.yellow[800],
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  subtitle,
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: Colors.grey[600],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildButton(BuildContext context, String text, {
+    required VoidCallback onPressed,
+    bool isPrimary = true,
+  }) {
+    return ElevatedButton(
+      onPressed: onPressed,
+      style: ElevatedButton.styleFrom(
+        foregroundColor: isPrimary ? Colors.white : Colors.yellow[700],
+        backgroundColor: isPrimary ? Colors.yellow[700] : Colors.white,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(50.0),
+        ),
+        padding: const EdgeInsets.symmetric(vertical: 16.0),
+        elevation: isPrimary ? 4 : 0,
+        shadowColor: isPrimary ? Colors.yellow.withOpacity(0.4) : Colors.transparent,
+        side: isPrimary ? null : BorderSide(color: Colors.yellow[700]!, width: 2),
+      ),
+      child: Text(
+        text,
+        style: TextStyle(
+          fontSize: 16,
+          fontWeight: FontWeight.bold,
+          letterSpacing: 0.5,
+        ),
       ),
     );
   }

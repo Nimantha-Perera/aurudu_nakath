@@ -1,10 +1,9 @@
-import 'package:aurudu_nakath/features/ui/Compass/neu_corc;e.dart';
+import 'package:aurudu_nakath/features/ui/compass/neu_corc;e.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_compass/flutter_compass.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'dart:math' as math;
-
 
 class Compass extends StatefulWidget {
   const Compass({super.key});
@@ -36,7 +35,8 @@ class _CompassState extends State<Compass> {
       stream: FlutterCompass.events,
       builder: (context, snapshot) {
         if (snapshot.hasError) {
-          return Center(child: Text('Error reading heading: ${snapshot.error}'));
+          return Center(
+              child: Text('Error reading heading: ${snapshot.error}'));
         }
 
         if (!snapshot.hasData) {
@@ -50,15 +50,19 @@ class _CompassState extends State<Compass> {
         }
 
         return Center(
-          child: NeuCircle(
-            child: Transform.rotate(
-              angle: (heading * (math.pi / 180) * -1),
-              child: Image.asset(
-                'assets/malimawa/sincom.png',
-                color: Colors.black87,
-                fit: BoxFit.fill,
+          child: SizedBox(
+            width: 280,  // Adjust width as desired
+            height: 280, // Adjust height as desired
+            child: NeuCircle(
+              child: Transform.rotate(
+                angle: (heading * (math.pi / 180) * -1),
+                child: Image.asset(
+                  'assets/compass/sincom.png',
+                  color: Colors.black87,
+                  fit: BoxFit.fill,
+                ),
+                alignment: Alignment.center,
               ),
-              alignment: Alignment.center,
             ),
           ),
         );
@@ -66,11 +70,13 @@ class _CompassState extends State<Compass> {
     );
   }
 
+
   Widget _buildPermissionSheet() {
     return Center(
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
-          foregroundColor: Colors.white, backgroundColor: Colors.blueAccent,
+          foregroundColor: Colors.white,
+          backgroundColor: Colors.blueAccent,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
           ),
@@ -90,15 +96,13 @@ class _CompassState extends State<Compass> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          'මාලිමාව',
-        style: GoogleFonts.notoSerifSinhala(fontSize: 14.0, color: Colors.white)
-        ),
+        title: Text('මාලිමාව',
+            style: GoogleFonts.notoSerifSinhala(
+                fontSize: 14.0, color: Colors.white)),
         centerTitle: true,
         backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
         foregroundColor: Colors.white,
       ),
-     
       body: Stack(
         children: [
           // Positioned.fill(
@@ -113,8 +117,7 @@ class _CompassState extends State<Compass> {
               Expanded(
                 child: _buildCompass(),
               ),
-              if (!_hasPermission)
-                _buildPermissionSheet(),
+              if (!_hasPermission) _buildPermissionSheet(),
             ],
           ),
         ],

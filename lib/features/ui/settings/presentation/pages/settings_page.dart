@@ -1,6 +1,3 @@
-import 'package:aurudu_nakath/features/ui/routes/routes.dart';
-import 'package:aurudu_nakath/features/ui/theme/dark_theme.dart';
-import 'package:aurudu_nakath/features/ui/theme/light_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
@@ -13,7 +10,7 @@ class SettingsPage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('සැකසුම්',style: GoogleFonts.notoSerifSinhala(fontSize: 14.0, color: Colors.white)),
+        title: Text('සැකසුම්', style: GoogleFonts.notoSerifSinhala(fontSize: 14.0, color: Colors.white)),
         centerTitle: true,
         backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
       ),
@@ -43,22 +40,39 @@ class SettingsPage extends StatelessWidget {
     );
   }
 
-  // Theme Switcher with SharedPreferences check
+  // Theme Switcher with light, dark, and system options
   Widget _buildThemeSwitcher(BuildContext context, ThemeNotifier themeNotifier) {
     return Card(
       color: Theme.of(context).cardColor,
       margin: const EdgeInsets.symmetric(vertical: 8.0),
       elevation: 3,
-      child: ListTile(
-        title: Text('අඳුරු මුහුනත', style: TextStyle(fontSize: 13)),
-        trailing: Switch(
-          value: themeNotifier.getTheme() == darkTheme,
-          onChanged: (value) async {
-            // Switch between light and dark themes and save preference
-            themeNotifier.setTheme(value ? darkTheme : lightTheme);
-            await themeNotifier.saveTheme(value ? 'dark' : 'light'); // Save the theme preference
-          },
-        ),
+      child: Column(
+        children: [
+          RadioListTile<ThemeMode>(
+            title: Text('පද්ධති මුහුණත අනුව (System Defalt)', style: TextStyle(fontSize: 13)),
+            value: ThemeMode.system,
+            groupValue: themeNotifier.getThemeMode(),
+            onChanged: (value) {
+              themeNotifier.switchThemeMode(ThemeMode.system);
+            },
+          ),
+          RadioListTile<ThemeMode>(
+            title: Text('ආලෝක මුහුණත (Light Mode)', style: TextStyle(fontSize: 13)),
+            value: ThemeMode.light,
+            groupValue: themeNotifier.getThemeMode(),
+            onChanged: (value) {
+              themeNotifier.switchThemeMode(ThemeMode.light);
+            },
+          ),
+          RadioListTile<ThemeMode>(
+            title: Text('අඳුරු මුහුණත (Dark Mode)', style: TextStyle(fontSize: 13)),
+            value: ThemeMode.dark,
+            groupValue: themeNotifier.getThemeMode(),
+            onChanged: (value) {
+              themeNotifier.switchThemeMode(ThemeMode.dark);
+            },
+          ),
+        ],
       ),
     );
   }
@@ -101,7 +115,6 @@ class SettingsPage extends StatelessWidget {
           subtitle: Text('යෙදුම භාවිතයෙන් සහාය ලබා ගන්න.', style: TextStyle(fontSize: 11)),
           onTap: () {
             // Navigate to the Help & Support Page
-           Navigator.pushNamed(context, AppRoutes.help);
           },
         ),
         ListTile(

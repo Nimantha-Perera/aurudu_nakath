@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:aurudu_nakath/Notifications/notification_service.dart';
-import 'package:aurudu_nakath/features/ui/Compass/compass.dart';
+import 'package:aurudu_nakath/features/ui/compass/compass.dart';
 import 'package:aurudu_nakath/Tools/tools_menu.dart';
 import 'package:aurudu_nakath/features/ui/errors/error_screen.dart';
 import 'package:aurudu_nakath/features/ui/hela_gpt/domain/usecases/clear_chat.dart';
@@ -19,6 +19,7 @@ import 'package:aurudu_nakath/features/ui/settings/data/repostories/settings_rep
 import 'package:aurudu_nakath/features/ui/settings/data/repostories/settings_repository_impl.dart';
 import 'package:aurudu_nakath/features/ui/settings/presentation/bloc/settings_bloc.dart';
 import 'package:aurudu_nakath/features/ui/shake_and_navigate/shake_navigation.dart';
+import 'package:aurudu_nakath/features/ui/subcriptions_provider/subcription_privider.dart';
 import 'package:aurudu_nakath/features/ui/theme/change_theme_notifier.dart';
 import 'package:aurudu_nakath/features/ui/theme/dark_theme.dart';
 import 'package:aurudu_nakath/features/ui/theme/light_theme.dart';
@@ -72,6 +73,9 @@ void main() async {
   runApp(
     MultiProvider(
       providers: [
+        ChangeNotifierProvider<SubscriptionProvider>(
+          create: (_) => SubscriptionProvider(),
+        ),
         Provider<FirebaseDataSource>(
           create: (_) => FirebaseDataSource(),
         ),
@@ -123,7 +127,6 @@ class _MyAppState extends State<MyApp> {
     super.initState();
     //  _shakeNavigation = ShakeNavigation(context);
 
-
     //in app update check
     update(context);
 
@@ -163,11 +166,9 @@ class _MyAppState extends State<MyApp> {
             if (snapshot.connectionState == ConnectionState.done) {
               return MaterialApp(
                 debugShowCheckedModeBanner: false,
-                theme: themeNotifier.getTheme(),
+                theme: lightTheme,
                 darkTheme: darkTheme,
-                themeMode: themeNotifier.getTheme() == darkTheme
-                    ? ThemeMode.dark
-                    : ThemeMode.light, // Optimized theme mode
+                themeMode: themeNotifier.getThemeMode(), // Optimized theme mode
                 initialRoute: AppRoutes.home,
                 onGenerateRoute: AppRoutes.generateRoute,
                 home: snapshot.data ??

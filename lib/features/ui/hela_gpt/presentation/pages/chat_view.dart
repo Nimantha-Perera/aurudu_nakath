@@ -77,31 +77,33 @@ class _ChatViewState extends State<ChatView> {
             ),
           ],
         ),
-        body: Consumer<ChatViewModel>(
-          builder: (context, viewModel, child) {
-            bool isChatEmpty = viewModel.messages.isEmpty;
+        body: SafeArea( // SafeArea added here
+          child: Consumer<ChatViewModel>(
+            builder: (context, viewModel, child) {
+              bool isChatEmpty = viewModel.messages.isEmpty;
 
-            return Stack(
-              children: [
-                Column(
-                  children: [
-                    if (_showPlaceholderMessage)
-                      PlaceholderMessage(onClose: _hidePlaceholderMessage),
-                    Expanded(
-                      child: ChatList(viewModel: viewModel),
-                    ),
-                    MessageInput(),
-                  ],
-                ),
-                if (!isChatEmpty)
-                  Positioned(
-                    bottom: 76.0,
-                    right: 16.0,
-                    child: ShareButton(),
+              return Stack(
+                children: [
+                  Column(
+                    children: [
+                      if (_showPlaceholderMessage)
+                        PlaceholderMessage(onClose: _hidePlaceholderMessage),
+                      Expanded(
+                        child: ChatList(viewModel: viewModel),
+                      ),
+                      MessageInput(),
+                    ],
                   ),
-              ],
-            );
-          },
+                  if (!isChatEmpty)
+                    Positioned(
+                      bottom: 76.0,
+                      right: 16.0,
+                      child: ShareButton(),
+                    ),
+                ],
+              );
+            },
+          ),
         ),
       ),
     );

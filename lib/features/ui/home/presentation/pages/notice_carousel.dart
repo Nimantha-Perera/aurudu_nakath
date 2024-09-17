@@ -150,6 +150,7 @@ Widget _buildCarousel(List<Notice> notices) {
     children: [
       CarouselSlider(
         options: CarouselOptions(
+          
           height: 120,
           autoPlay: false, // Disable auto sliding
           enlargeCenterPage: false,
