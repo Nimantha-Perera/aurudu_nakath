@@ -7,9 +7,13 @@ class SubscriptionProvider extends ChangeNotifier {
   bool _isSubscribed = false;
   bool _available = true;
   ProductDetails? _product;
+  bool _purchaseSuccess = false;
+  bool _restoredPurchase = false;
 
   bool get isSubscribed => _isSubscribed;
   ProductDetails? get product => _product;
+  bool get purchaseSuccess => _purchaseSuccess;
+  bool get restoredPurchase => _restoredPurchase;
 
   // Callbacks for dialog and navigation
   void Function()? onPurchaseSuccess;
@@ -21,8 +25,6 @@ class SubscriptionProvider extends ChangeNotifier {
       _listenToPurchaseUpdates(purchases);
     });
   }
-
-
 
   Future<void> _initializeStore() async {
     final bool isAvailable = await _iap.isAvailable();
@@ -44,6 +46,9 @@ class SubscriptionProvider extends ChangeNotifier {
       _product = response.productDetails.first;
       notifyListeners();
     }
+
+    // Restore any previous purchases
+    _restorePurchases();
   }
 
   void buySubscription() {
@@ -53,10 +58,13 @@ class SubscriptionProvider extends ChangeNotifier {
     }
   }
 
+  
+
   void _listenToPurchaseUpdates(List<PurchaseDetails> purchases) async {
     for (PurchaseDetails purchase in purchases) {
       if (purchase.status == PurchaseStatus.purchased) {
         _isSubscribed = true;
+        _purchaseSuccess = true;
         notifyListeners();
         if (onPurchaseSuccess != null) {
           onPurchaseSuccess!();
@@ -68,11 +76,21 @@ class SubscriptionProvider extends ChangeNotifier {
         }
       } else if (purchase.status == PurchaseStatus.restored) {
         _isSubscribed = true;
+        _restoredPurchase = true;
         notifyListeners();
         if (onPurchaseSuccess != null) {
           onPurchaseSuccess!();
         }
       }
+    }
+  }
+  
+
+  Future<void> _restorePurchases() async {
+    try {
+      await _iap.restorePurchases();
+    } catch (e) {
+      print('Error restoring purchases: $e');
     }
   }
 }

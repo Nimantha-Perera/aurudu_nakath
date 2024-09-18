@@ -7,6 +7,10 @@ import 'package:aurudu_nakath/features/ui/hela_gpt/domain/usecases/clear_chat.da
 import 'package:aurudu_nakath/features/ui/hela_gpt/domain/usecases/fetch_and%20_manegemessage.dart';
 import 'package:aurudu_nakath/features/ui/hela_gpt/domain/usecases/send_img.dart';
 import 'package:aurudu_nakath/features/ui/hela_gpt/domain/usecases/send_text_message.dart';
+import 'package:aurudu_nakath/features/ui/helagpt_pro/domain/usecases/clear_chat.dart';
+import 'package:aurudu_nakath/features/ui/helagpt_pro/domain/usecases/fetch_and%20_manegemessage.dart';
+import 'package:aurudu_nakath/features/ui/helagpt_pro/domain/usecases/send_img.dart';
+import 'package:aurudu_nakath/features/ui/helagpt_pro/domain/usecases/send_text_message.dart';
 import 'package:aurudu_nakath/features/ui/help/presentation/pages/help_screen.dart';
 import 'package:aurudu_nakath/features/ui/home/presentation/pages/dash_board.dart';
 import 'package:aurudu_nakath/features/ui/in_app_update/in_app_update.dart';
@@ -106,6 +110,14 @@ void main() async {
             create: (_) => SendImageMessageUseCase(apiKey)),
         Provider<ClearChatHistoryUseCase>(
             create: (_) => ClearChatHistoryUseCase(sharedPreferences)),
+        Provider<FetchManageMessagesUseCase2>(
+            create: (_) => FetchManageMessagesUseCase2(sharedPreferences)),
+        Provider<SendTextMessageUseCase2>(
+            create: (_) => SendTextMessageUseCase2(apiKey, apiUrl)),
+        Provider<SendImageMessageUseCase2>(
+            create: (_) => SendImageMessageUseCase2(apiKey)),
+        Provider<ClearChatHistoryUseCase2>(
+            create: (_) => ClearChatHistoryUseCase2(sharedPreferences)),
       ],
       child: MyApp(),
     ),

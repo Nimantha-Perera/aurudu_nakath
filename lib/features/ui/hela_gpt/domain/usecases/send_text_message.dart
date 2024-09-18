@@ -29,15 +29,15 @@ class SendTextMessageUseCase {
     DateTime now = DateTime.now();
     DateTime lastMessageTime;
 
-    if (messageList.length >= 10) {
+    if (messageList.length >= 20) {
       // Get the time of the 10th message
       lastMessageTime = DateTime.fromMillisecondsSinceEpoch(
-          sendTimes[messageList.length - 10]);
+          sendTimes[messageList.length - 20]);
       Duration timeSinceLastMessage = now.difference(lastMessageTime);
 
-      if (timeSinceLastMessage.inHours < 10) {
+      if (timeSinceLastMessage.inHours < 5) {
         // Calculate the next available time
-        DateTime nextAvailableTime = lastMessageTime.add(Duration(hours: 10));
+        DateTime nextAvailableTime = lastMessageTime.add(Duration(hours: 5));
         String formattedTime =
             DateFormat('yyyy-MM-dd HH:mm:ss').format(nextAvailableTime);
         return "ඔබගේ දවසේ හෙළ GPT කතාබස් සීමාව ඉක්මවා ගොස් ඇත ඔබ නැවත කතාබස් ආරම්භ කිරීම සඳහා $formattedTime තෙක් රැඳී සිටිය යුතුය.";
@@ -45,7 +45,7 @@ class SendTextMessageUseCase {
     }
 
     // Add new message and its send time
-    if (messageList.length >= 10) {
+    if (messageList.length >= 20) {
       messageList.removeAt(0);
       sendTimes.removeAt(0);
     }
@@ -67,7 +67,10 @@ class SendTextMessageUseCase {
       ],
       "generationConfig": {
         // Specify Sinhala as the target language
-      }
+        "temperature": 0.5,
+        "topP": 0.5,
+      },
+      
     };
 
     try {

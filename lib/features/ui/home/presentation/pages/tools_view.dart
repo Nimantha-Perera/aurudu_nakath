@@ -32,7 +32,7 @@ class Tools extends StatelessWidget {
                   ButtonsCard(
                     text: "හෙළ GPT",
                     onTap: () {
-                      Navigator.pushNamed(context, AppRoutes.hela_gpt);
+                      Navigator.pushNamed(context, AppRoutes.helagptPro);
                     },
                     color: Color(0xFFA02334),
                     textColor: Colors.white,
