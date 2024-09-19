@@ -1,7 +1,8 @@
-import 'package:aurudu_nakath/features/ui/permissions/permissions_hadler.dart';
-import 'package:aurudu_nakath/features/ui/routes/routes.dart';
+import 'package:aurudu_nakath/features/ui/subcriptions_provider/subcription_privider.dart';
 import 'package:flutter/material.dart';
+import 'package:aurudu_nakath/features/ui/routes/routes.dart';
 import 'package:aurudu_nakath/features/ui/home/presentation/pages/buttons_card.dart';
+import 'package:provider/provider.dart'; // Import provider for subscription management
 
 class Tools extends StatelessWidget {
   const Tools({super.key});
@@ -10,7 +11,7 @@ class Tools extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       height: 120,
-      margin: EdgeInsets.only(top: 30), // Set height for the horizontal list
+      margin: EdgeInsets.only(top: 30),
       child: Column(
         children: [
           Row(
@@ -29,14 +30,24 @@ class Tools extends StatelessWidget {
               scrollDirection: Axis.horizontal,
               child: Row(
                 children: [
-                  ButtonsCard(
-                    text: "හෙළ GPT",
-                    onTap: () {
-                      Navigator.pushNamed(context, AppRoutes.helagptPro);
+                  Consumer<SubscriptionProvider>(
+                    builder: (context, subscriptionProvider, child) {
+                      return ButtonsCard(
+                        text: "හෙළ GPT",
+                        onTap: () {
+                          if (subscriptionProvider.isSubscribed) {
+                            // If the user is subscribed, navigate to HelaGPT Pro
+                            Navigator.pushNamed(context, AppRoutes.helagptPro);
+                          } else {
+                            // If the user is not subscribed, navigate to normal HelaGPT
+                            Navigator.pushNamed(context, AppRoutes.helagptnormless);
+                          }
+                        },
+                        color: Color(0xFFA02334),
+                        textColor: Colors.white,
+                        icon: Icon(Icons.arrow_outward_rounded, color: Colors.white),
+                      );
                     },
-                    color: Color(0xFFA02334),
-                    textColor: Colors.white,
-                    icon: Icon(Icons.arrow_outward_rounded, color: Colors.white),
                   ),
                   SizedBox(width: 10),
                   ButtonsCard(
@@ -59,8 +70,6 @@ class Tools extends StatelessWidget {
                     icon: Icon(Icons.settings, color: Colors.white),
                   ),
                   SizedBox(width: 10),
-                  // Add more buttons if needed
-                  
                 ],
               ),
             ),

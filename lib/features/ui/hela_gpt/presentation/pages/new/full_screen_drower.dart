@@ -1,5 +1,4 @@
 import 'dart:ui';
-
 import 'package:aurudu_nakath/features/ui/subcriptions_provider/subcription_privider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -24,12 +23,6 @@ class FullScreenDrawer extends StatelessWidget {
               child: ListView(
                 padding: const EdgeInsets.symmetric(horizontal: 24.0),
                 children: [
-                  if (subscriptionProvider.purchaseSuccess)
-                    _buildSuccessMessage('ගෙවීම සාර්ථකයි!',
-                        'ඔබ හෙළ GPT Pro සඳහා සාර්ථකව දායකවී ඇත.'),
-                  if (subscriptionProvider.restoredPurchase)
-                    _buildSuccessMessage(
-                        'අළුත් කළා!', 'ඔබගේ මිලදී ගැනීම් නැවත සක්‍රීය කර ඇත.'),
                   _buildFeatureItem(
                     context,
                     icon: Icons.chat_bubble_outline,
@@ -54,18 +47,18 @@ class FullScreenDrawer extends StatelessWidget {
                   _buildButton(
                     context,
                     'දායකත්වය ප්‍රතිසාධනය කරන්න',
-                    onPressed: () {
-                      if (subscriptionProvider.restoredPurchase) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text("Successfully restored purchase."),
-                          ),
-                        );
+                    onPressed: () async {
+                       if (subscriptionProvider.restoredPurchase) {
+                         _showResultDialog(context, true, isRestore: true);
                       } else {
                         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                           content: Text("Failed to restore purchase."),
+                          behavior: SnackBarBehavior.floating,
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10)),
                         ));
                       }
+                     
                     },
                     isPrimary: false,
                   ),
@@ -74,8 +67,9 @@ class FullScreenDrawer extends StatelessWidget {
                     _buildButton(
                       context,
                       'රු 650/= (මසකට)',
-                      onPressed: () {
-                        subscriptionProvider.buySubscription();
+                      onPressed: () async {
+                       subscriptionProvider.buySubscription();
+                        _showResultDialog(context, true);
                       },
                     ),
                   const SizedBox(height: 16),
@@ -89,38 +83,6 @@ class FullScreenDrawer extends StatelessWidget {
                   ),
                 ],
               ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildSuccessMessage(String title, String message) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 16.0),
-      child: Container(
-        padding: const EdgeInsets.all(16.0),
-        decoration: BoxDecoration(
-          color: Colors.green[50],
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: Colors.green[700]!),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              title,
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: Colors.green[800],
-              ),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              message,
-              style: TextStyle(fontSize: 16, color: Colors.green[600]),
             ),
           ],
         ),
@@ -230,6 +192,76 @@ class FullScreenDrawer extends StatelessWidget {
           letterSpacing: 0.5,
         ),
       ),
+    );
+  }
+
+  void _showResultDialog(BuildContext context, bool success, {bool isRestore = false}) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+          elevation: 0,
+          backgroundColor: Colors.transparent,
+          child: Container(
+            padding: EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              shape: BoxShape.rectangle,
+              borderRadius: BorderRadius.circular(20),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black26,
+                  blurRadius: 10.0,
+                  offset: const Offset(0.0, 10.0),
+                ),
+              ],
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                Icon(
+                  success ? Icons.check_circle : Icons.error,
+                  color: success ? Colors.green : Colors.red,
+                  size: 64,
+                ),
+                SizedBox(height: 20),
+                Text(
+                  success
+                      ? (isRestore ? 'දායකත්වය ප්‍රතිසාධනය කළා!' : 'ගෙවීම සාර්ථකයි!')
+                      : (isRestore ? 'ප්‍රතිසාධනය අසාර්ථකයි' : 'ගෙවීම අසාර්ථකයි'),
+                  style: TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+                SizedBox(height: 15),
+                Text(
+                  success
+                      ? (isRestore
+                          ? 'ඔබගේ මිලදී ගැනීම් නැවත සක්‍රීය කර ඇත.'
+                          : 'ඔබ හෙළ GPT Pro සඳහා සාර්ථකව දායකවී ඇත.')
+                      : 'කරුණාකර නැවත උත්සාහ කරන්න',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 16),
+                ),
+                SizedBox(height: 20),
+                TextButton(
+                  child: Text(
+                    'හරි',
+                    style: TextStyle(fontSize: 18),
+                  ),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 }

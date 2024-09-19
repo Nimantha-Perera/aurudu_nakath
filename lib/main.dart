@@ -138,7 +138,7 @@ class _MyAppState extends State<MyApp> {
   void initState() {
     super.initState();
     //  _shakeNavigation = ShakeNavigation(context);
-
+ Provider.of<SubscriptionProvider>(context, listen: false).loadSubscriptionStatus();
     //in app update check
     update(context);
 

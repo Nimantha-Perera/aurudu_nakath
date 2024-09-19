@@ -1,23 +1,18 @@
-import 'package:aurudu_nakath/features/ui/helagpt_pro/helagpt_pro.dart';
-import 'package:aurudu_nakath/features/ui/helagpt_pro/presentation/pages/helagptpro.dart';
-import 'package:aurudu_nakath/features/ui/lagna_palapala/presentation/pages/lagna_palapala_screen.dart';
-import 'package:aurudu_nakath/features/ui/litha/presentation/pages/litha_main.dart';
-import 'package:aurudu_nakath/features/ui/subcriptions_provider/subcription_privider.dart';
-import 'package:flutter/material.dart';
-import 'package:aurudu_nakath/features/ui/compass/compass.dart';
 import 'package:aurudu_nakath/features/ui/aurudu_nakath/presentation/pages/main_screen.dart';
+import 'package:aurudu_nakath/features/ui/compass/compass.dart';
 import 'package:aurudu_nakath/features/ui/errors/error_screen.dart';
 import 'package:aurudu_nakath/features/ui/hela_gpt/presentation/pages/chat_view.dart';
+import 'package:aurudu_nakath/features/ui/helagpt_pro/presentation/pages/helagptpro.dart';
+import 'package:aurudu_nakath/features/ui/help/presentation/pages/help_screen.dart';
+import 'package:aurudu_nakath/features/ui/home/presentation/pages/dash_board.dart';
 import 'package:aurudu_nakath/features/ui/home/presentation/pages/other_screen.dart';
+import 'package:aurudu_nakath/features/ui/intro_screens/onboarding_screen/onboarding_screen.dart';
+import 'package:aurudu_nakath/features/ui/lagna_palapala/presentation/pages/lagna_palapala_screen.dart';
+import 'package:aurudu_nakath/features/ui/litha/presentation/pages/litha_main.dart';
 import 'package:aurudu_nakath/features/ui/rahu_kalaya/presentation/pages/raahu_kaalaya_page.dart';
 import 'package:aurudu_nakath/features/ui/settings/presentation/pages/settings_page.dart';
-import 'package:aurudu_nakath/main.dart';
-
-import 'package:aurudu_nakath/features/ui/help/presentation/pages/help_screen.dart';
-import 'package:aurudu_nakath/features/ui/intro_screens/onboarding_screen/onboarding_screen.dart';
-import 'package:aurudu_nakath/features/ui/home/presentation/pages/dash_board.dart';
+import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
 
 class AppRoutes {
   static const String home = '/';
@@ -33,49 +28,52 @@ class AppRoutes {
   static const String other_tools = '/other_tools';
   static const String lagna_palapala = '/lagna_palapala';
   static const String litha = '/litha';
+  static const String helagptnormless = '/helagptnormless';
 
   static Route<dynamic> generateRoute(RouteSettings settings) {
-    return MaterialPageRoute(
-      builder: (context) {
-        final subscriptionProvider =
-            Provider.of<SubscriptionProvider>(context, listen: false);
+    switch (settings.name) {
+      case help:
+        return _buildPageWithSlideTransition(HelpScreen(), Offset(1, 0));  // Slide from right
+      case litha:
+        return _buildPageWithSlideTransition(LithaMainScreen(), Offset(1, 0));  // Slide from right
+      case other_tools:
+        return _buildPageWithSlideTransition(OtherTools(), Offset(1, 0));  // Slide from right
+      case helagptPro:
+        return _buildPageWithSlideTransition(HelaGPT_PRO(), Offset(1, 0));  // Slide from right
+      case helagptnormless:
+        return _buildPageWithSlideTransition(ChatView(), Offset(1, 0));  // Slide from right
+      case setting:
+        return _buildPageWithSlideTransition(SettingsPage(), Offset(1, 0));  // Slide from right
+      case malimawa:
+        return _buildPageWithSlideTransition(Compass(), Offset(1, 0));  // Slide from right
+      case onboarding:
+        return _buildPageWithSlideTransition(Onboarding(), Offset(1, 0));  // Slide from right
+      case aurudu_nakath:
+        return _buildPageWithSlideTransition(AuruduNakath(), Offset(1, 0));  // Slide from right
+      case lagna:
+        return _buildPageWithSlideTransition(LagnaPalapala(), Offset(1, 0));  // Slide from right
+      case rahu_kalaya:
+        return _buildPageWithSlideTransition(RaahuKaalaya(), Offset(1, 0));  // Slide from right
+      case dashboard:
+        return _buildPageWithSlideTransition(DashBoard(), Offset(1, 0));  // Slide from right
+      default:
+        return _buildPageWithSlideTransition(ErrorScreen(), Offset(1, 0));  // Slide from right (fallback)
+    }
+  }
 
-        switch (settings.name) {
-          case help:
-            return HelpScreen();
+  // Slide transition route
+  static PageRouteBuilder _buildPageWithSlideTransition(Widget page, Offset beginOffset) {
+    return PageRouteBuilder(
+      pageBuilder: (context, animation, secondaryAnimation) => page,
+      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+        const curve = Curves.easeInOut;
+        var tween = Tween(begin: beginOffset, end: Offset.zero).chain(CurveTween(curve: curve));
+        var slideAnimation = animation.drive(tween);
 
-          case litha:
-            return LithaMainScreen();
-          case other_tools:
-            return OtherTools();
-
-          case helagptPro:
-            // Check if the user is subscribed
-            if (subscriptionProvider.isSubscribed) {
-              return HelaGPT_PRO();  // Allow access to HelaGPT Pro screen
-            } else {
-              // Show an error screen or redirect to a subscription page
-              return ChatView();
-            }
-
-          case setting:
-            return SettingsPage();
-          case malimawa:
-            return Compass();
-          case onboarding:
-            return Onboarding();
-          case aurudu_nakath:
-            return AuruduNakath();
-          case lagna:
-            return LagnaPalapala();
-          case rahu_kalaya:
-            return RaahuKaalaya();
-          case dashboard:
-            return DashBoard();
-
-          default:
-            return ErrorScreen(); // Fallback route
-        }
+        return SlideTransition(
+          position: slideAnimation,
+          child: child,
+        );
       },
     );
   }
