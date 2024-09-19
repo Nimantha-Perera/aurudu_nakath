@@ -1,12 +1,44 @@
+import 'package:aurudu_nakath/features/ui/routes/routes.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:aurudu_nakath/features/ui/theme/change_theme_notifier.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
-class SettingsPage extends StatelessWidget {
+
+class SettingsPage extends StatefulWidget {
   @override
+  State<SettingsPage> createState() => _SettingsPageState();
+}
+
+
+
+
+class _SettingsPageState extends State<SettingsPage> {
+  @override
+
+    String _version = '';
+
+
+     @override
+  void initState() {
+    super.initState();
+    _getAppVersion();
+  }
+
+
+
+  Future<void> _getAppVersion() async {
+    PackageInfo packageInfo = await PackageInfo.fromPlatform();
+    setState(() {
+      _version = packageInfo.version; // Get the app version
+    });
+  }
   Widget build(BuildContext context) {
     final themeNotifier = Provider.of<ThemeNotifier>(context);
+
+
+
 
     return Scaffold(
       appBar: AppBar(
@@ -33,7 +65,7 @@ class SettingsPage extends StatelessWidget {
                 ],
               ),
             ),
-            _buildAppVersionSection(),
+            _buildAppVersionSection(context),
           ],
         ),
       ),
@@ -115,6 +147,7 @@ class SettingsPage extends StatelessWidget {
           subtitle: Text('යෙදුම භාවිතයෙන් සහාය ලබා ගන්න.', style: TextStyle(fontSize: 11)),
           onTap: () {
             // Navigate to the Help & Support Page
+            Navigator.pushNamed(context, AppRoutes.help);
           },
         ),
         ListTile(
@@ -130,18 +163,22 @@ class SettingsPage extends StatelessWidget {
   }
 
   // App Version Section (Centered at Bottom)
-  Widget _buildAppVersionSection() {
+ Widget _buildAppVersionSection(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 16.0),
       child: Column(
         children: [
           Text(
             'App Version',
-            style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: const Color.fromARGB(255, 109, 109, 109)),
+            style: TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.bold,
+              color: const Color.fromARGB(255, 109, 109, 109),
+            ),
           ),
           SizedBox(height: 4),
           Text(
-            '2.2',
+            _version.isNotEmpty ? _version : 'Loading...', // Show version when loaded
             style: TextStyle(fontSize: 11, color: Colors.grey),
           ),
         ],

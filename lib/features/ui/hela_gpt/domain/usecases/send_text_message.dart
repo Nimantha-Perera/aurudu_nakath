@@ -69,6 +69,21 @@ class SendTextMessageUseCase {
         // Specify Sinhala as the target language
         "temperature": 0.5,
         "topP": 0.5,
+        "maxOutputTokens": 500,
+      //   "safetySettings": [
+      //   {
+      //     "category": "HARM_CATEGORY_HATE_SPEECH",
+      //     "threshold": "BLOCK_MEDIUM_AND_ABOVE"
+      //   },
+      //   {
+      //     "category": "HARM_CATEGORY_SEXUALLY_EXPLICIT",
+      //     "threshold": "BLOCK_MEDIUM_AND_ABOVE"
+      //   },
+      //   {
+      //     "category": "HARM_CATEGORY_DANGEROUS_CONTENT",
+      //     "threshold": "BLOCK_MEDIUM_AND_ABOVE"
+      //   }
+      // ]
       },
       
     };

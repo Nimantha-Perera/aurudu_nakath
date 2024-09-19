@@ -25,28 +25,51 @@ class FullScreenDrawer extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(horizontal: 24.0),
                 children: [
                   if (subscriptionProvider.purchaseSuccess)
-                    _buildSuccessMessage('ගෙවීම සාර්ථකයි!', 'ඔබ හෙළ GPT Pro සඳහා සාර්ථකව දායකවී ඇත.'),
+                    _buildSuccessMessage('ගෙවීම සාර්ථකයි!',
+                        'ඔබ හෙළ GPT Pro සඳහා සාර්ථකව දායකවී ඇත.'),
                   if (subscriptionProvider.restoredPurchase)
-                    _buildSuccessMessage('අළුත් කළා!', 'ඔබගේ මිලදී ගැනීම් නැවත සක්‍රීය කර ඇත.'),
+                    _buildSuccessMessage(
+                        'අළුත් කළා!', 'ඔබගේ මිලදී ගැනීම් නැවත සක්‍රීය කර ඇත.'),
                   _buildFeatureItem(
                     context,
                     icon: Icons.chat_bubble_outline,
-                    title: 'හෙළ GPT සමඟ ඇති තරම් chat කරන්න',
-                    subtitle: 'හෙල GPT Pro ලබාගැනීමෙන් ඔබට හෙළ GPT සමඟ සීමා නොමැතිව chat කරන්න පුලුවන්.',
+                    title: 'ඇති තරම් chat කරන්න',
+                    subtitle:
+                        'හෙල GPT Pro ලබාගැනීමෙන් ඔබට හෙළ GPT සමඟ සීමා නොමැතිව chat කරන්න පුලුවන්.',
                   ),
                   _buildFeatureItem(
                     context,
                     icon: Icons.description_outlined,
                     title: 'සවිස්තරාත්මක ප්‍රතිචාර',
-                    subtitle: 'හෙල GPT Pro ලබාගැනීමෙන් ඔබට සවිස්තරාත්මක ප්‍රතිචාර ලබාගත හැකී.',
+                    subtitle:
+                        'හෙල GPT Pro ලබාගැනීමෙන් ඔබට සවිස්තරාත්මක ප්‍රතිචාර ලබාගත හැකී.',
                   ),
                   _buildFeatureItem(
                     context,
-                    icon: Icons.person_outline,
-                    title: 'පෞද්ගලික සබැඳි',
-                    subtitle: 'ඔබගේ පෞද්ගලික සබැඳි සඳහා වඩාත් සුදුසුකම්.',
+                    icon: Icons.image_rounded,
+                    title: 'ජායාරූප සමඟින් ප්‍රශ්න අසන්න',
+                    subtitle: 'හෙළ GPT Pro භාවිතයෙන් ඔබට ජායාරූප සමඟින් ප්‍රශ්න අසන්න පුලුවන්.',
                   ),
                   const SizedBox(height: 40),
+                  _buildButton(
+                    context,
+                    'දායකත්වය ප්‍රතිසාධනය කරන්න',
+                    onPressed: () {
+                      if (subscriptionProvider.restoredPurchase) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text("Successfully restored purchase."),
+                          ),
+                        );
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                          content: Text("Failed to restore purchase."),
+                        ));
+                      }
+                    },
+                    isPrimary: false,
+                  ),
+                  const SizedBox(height: 16),
                   if (product != null)
                     _buildButton(
                       context,
@@ -114,13 +137,14 @@ class FullScreenDrawer extends StatelessWidget {
           Text(
             'හෙළ GPT Pro විශේෂාංග',
             style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-              fontWeight: FontWeight.bold,
-              fontSize: 18,
-              color: const Color.fromARGB(255, 109, 109, 109),
-            ),
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18,
+                  color: const Color.fromARGB(255, 109, 109, 109),
+                ),
           ),
           IconButton(
-            icon: const Icon(Icons.close, color: Color.fromARGB(255, 255, 208, 0)),
+            icon: const Icon(Icons.close,
+                color: Color.fromARGB(255, 255, 208, 0)),
             onPressed: onClose,
           ),
         ],
@@ -162,16 +186,16 @@ class FullScreenDrawer extends StatelessWidget {
                 Text(
                   title,
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: Colors.yellow[800],
-                  ),
+                        fontWeight: FontWeight.bold,
+                        color: Colors.yellow[800],
+                      ),
                 ),
                 const SizedBox(height: 4),
                 Text(
                   subtitle,
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: Colors.grey[600],
-                  ),
+                        color: Colors.grey[600],
+                      ),
                 ),
               ],
             ),
@@ -193,8 +217,10 @@ class FullScreenDrawer extends StatelessWidget {
         ),
         padding: const EdgeInsets.symmetric(vertical: 16.0),
         elevation: isPrimary ? 4 : 0,
-        shadowColor: isPrimary ? Colors.yellow.withOpacity(0.4) : Colors.transparent,
-        side: isPrimary ? null : BorderSide(color: Colors.yellow[700]!, width: 2),
+        shadowColor:
+            isPrimary ? Colors.yellow.withOpacity(0.4) : Colors.transparent,
+        side:
+            isPrimary ? null : BorderSide(color: Colors.yellow[700]!, width: 2),
       ),
       child: Text(
         text,

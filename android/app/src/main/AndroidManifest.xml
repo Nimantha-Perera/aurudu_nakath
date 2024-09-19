@@ -8,6 +8,10 @@
 <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM"/>
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+      <!-- Billing permmisions -->
+         <meta-data
+        android:name="com.android.vending.BILLING"
+        android:value="true"/>
     
 
 
@@ -21,10 +25,7 @@
         android:value="importent_messeges"/>
 
 
-        <!-- Billing permmisions -->
-         <meta-data
-        android:name="com.android.vending.BILLING"
-        android:value="true"/>
+      
 
 
    

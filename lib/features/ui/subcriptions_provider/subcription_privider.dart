@@ -58,8 +58,6 @@ class SubscriptionProvider extends ChangeNotifier {
     }
   }
 
-  
-
   void _listenToPurchaseUpdates(List<PurchaseDetails> purchases) async {
     for (PurchaseDetails purchase in purchases) {
       if (purchase.status == PurchaseStatus.purchased) {
@@ -84,7 +82,6 @@ class SubscriptionProvider extends ChangeNotifier {
       }
     }
   }
-  
 
   Future<void> _restorePurchases() async {
     try {
@@ -92,5 +89,15 @@ class SubscriptionProvider extends ChangeNotifier {
     } catch (e) {
       print('Error restoring purchases: $e');
     }
+  }
+
+  String get formattedPrice {
+    if (_product == null) return '';
+    return _product!.price; // This already includes currency symbol
+  }
+
+  String get subscriptionDetails {
+    if (_product == null) return '';
+    return '${_product!.title}\n${_product!.description}\n$formattedPrice/month';
   }
 }
