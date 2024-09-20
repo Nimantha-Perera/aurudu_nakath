@@ -50,7 +50,7 @@ Future<void> sendMessage(String message) async {
   if (_isAutoReply(message)) {
     response = 'හෙලෝ මම හෙළ GPT ඉතා විශාල භාශා අකෘතියක්. ඔබට ඇති ඕනෑම ගැටලුවක් මගෙන් අහන්න පුලුවන් මම ඔබට උපකාර කරන්නම්';
   } else {
-    response = await _sendTextMessageUseCase.sendMessage(message);
+    response = await _sendTextMessageUseCase.sendTextToGemini(message);
   }
 
   _messages.add(ChatMessage(message: response, isMe: false, timestamp: DateTime.now()));

@@ -1,3 +1,6 @@
+import 'package:aurudu_nakath/features/ui/hela_gpt/domain/usecases/send_img.dart';
+import 'package:aurudu_nakath/features/ui/helagpt_pro/domain/usecases/send_img.dart';
+import 'package:aurudu_nakath/features/ui/helagpt_pro/domain/usecases/send_text_message.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:image_picker/image_picker.dart';
@@ -31,11 +34,12 @@ class _MessageInputState extends State<MessageInput> {
     super.dispose();
   }
 
-  void _startNewChat() {
+  Future<void> _startNewChat() async {
     final chatViewModel = Provider.of<ChatViewModel>(context, listen: false);
     chatViewModel.clearChat();
     _controller.clear();
     _textNotifier.value = '';
+     await Provider.of<SendTextMessageUseCase2>(context, listen: false).clearConversationHistory();
     _selectedImage = null;
   }
 
