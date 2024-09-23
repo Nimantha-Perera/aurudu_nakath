@@ -1,16 +1,64 @@
-
-
 import 'package:aurudu_nakath/features/ui/helagpt_pro/presentation/bloc/chat_view_model.dart';
 import 'package:aurudu_nakath/features/ui/helagpt_pro/presentation/pages/chat_bubble.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:lottie/lottie.dart';
 
-class ChatList extends StatelessWidget {
+class ChatList extends StatefulWidget {
   final ChatViewModel viewModel;
-  final ScrollController _scrollController = ScrollController();
 
   ChatList({required this.viewModel});
+
+  @override
+  _ChatListState createState() => _ChatListState();
+}
+
+class _ChatListState extends State<ChatList> {
+  final ScrollController _scrollController = ScrollController();
+  bool _shouldAutoScroll = true;
+
+  @override
+  void initState() {
+    super.initState();
+    widget.viewModel.addListener(_handleNewMessage);
+    _scrollController.addListener(_scrollListener);
+    WidgetsBinding.instance.addPostFrameCallback((_) => _scrollToBottom());
+  }
+
+  @override
+  void dispose() {
+    widget.viewModel.removeListener(_handleNewMessage);
+    _scrollController.removeListener(_scrollListener);
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void _scrollListener() {
+    if (_scrollController.hasClients) {
+      double maxScroll = _scrollController.position.maxScrollExtent;
+      double currentScroll = _scrollController.position.pixels;
+      double delta = 50.0; // Threshold to consider user is near bottom
+      _shouldAutoScroll = (maxScroll - currentScroll) <= delta;
+    }
+  }
+
+  void _handleNewMessage() {
+    if (_shouldAutoScroll) {
+      _scrollToBottom();
+    }
+  }
+
+  void _scrollToBottom() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (_scrollController.hasClients) {
+        _scrollController.animateTo(
+          _scrollController.position.maxScrollExtent,
+          duration: Duration(milliseconds: 300),
+          curve: Curves.easeOut,
+        );
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -18,20 +66,17 @@ class ChatList extends StatelessWidget {
 
     return ListView.builder(
       controller: _scrollController,
-      itemCount: viewModel.messages.length + (viewModel.isTyping ? 1 : 0),
+      itemCount: widget.viewModel.messages.length + (widget.viewModel.isTyping ? 1 : 0),
       itemBuilder: (context, index) {
-        if (index < viewModel.messages.length) {
-          var message = viewModel.messages[index];
-          String currentMessageDate =
-              DateFormat('y MMM d').format(message.timestamp);
+        if (index < widget.viewModel.messages.length) {
+          var message = widget.viewModel.messages[index];
+          String currentMessageDate = DateFormat('y MMM d').format(message.timestamp);
 
           bool shouldShowDate = currentMessageDate != lastMessageDate;
           lastMessageDate = currentMessageDate;
 
           return Column(
-            crossAxisAlignment: message.isMe
-                ? CrossAxisAlignment.end
-                : CrossAxisAlignment.start,
+            crossAxisAlignment: message.isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
             children: [
               if (shouldShowDate)
                 Center(
@@ -46,11 +91,8 @@ class ChatList extends StatelessWidget {
                   message: message.message,
                   isMe: message.isMe,
                   backgroundColor: message.isMe
-                      ? Theme.of(context)
-                          .colorScheme
-                          .tertiary // Light green for user
-                      : Theme.of(context)
-                          .primaryColorLight, // Light orange for bot
+                      ? Theme.of(context).colorScheme.tertiary
+                      : Theme.of(context).primaryColorLight,
                   textColor: message.isMe
                       ? Theme.of(context).canvasColor
                       : Theme.of(context).canvasColor,

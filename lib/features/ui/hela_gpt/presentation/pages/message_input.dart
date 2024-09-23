@@ -113,70 +113,106 @@ class _MessageInputState extends State<MessageInput> with SingleTickerProviderSt
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 12.0),
+      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
       decoration: BoxDecoration(
         color: Theme.of(context).cardColor,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            blurRadius: 8,
-            offset: const Offset(0, -2),
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 10,
+            offset: const Offset(0, -3),
           ),
         ],
       ),
       child: SafeArea(
         child: Row(
           children: [
-            IconButton(
-              key: _startNewChatKey,
-              icon: const Icon(Icons.refresh),
-              onPressed: _startNewChat,
-              tooltip: 'Start New Chat',
-            ),
+            _buildNewChatButton(),
+            const SizedBox(width: 12),
             Expanded(
-              child: Container(
-                decoration: BoxDecoration(
-                  color: Theme.of(context).inputDecorationTheme.fillColor,
-                  borderRadius: BorderRadius.circular(24.0),
-                ),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: TextField(
-                        key: _textFieldKey,
-                        controller: _controller,
-                        onChanged: (text) {
-                          if (text.isNotEmpty) {
-                            _animationController.forward();
-                          } else {
-                            _animationController.reverse();
-                          }
-                        },
-                        decoration: InputDecoration(
-                          hintText: 'අවශ්‍ය දේ මෙහි ලියන්න...',
-                          border: InputBorder.none,
-                          contentPadding: const EdgeInsets.symmetric(horizontal: 16.0),
-                        ),
-                      ),
-                    ),
-                    ScaleTransition(
-                      scale: _sendButtonAnimation,
-                      child: Container(
-                        margin: const EdgeInsets.only(right: 4.0),
-                        child: IconButton(
-                          key: _sendButtonKey,
-                          icon: const Icon(Icons.send),
-                          onPressed: _sendMessage,
-                          color: Theme.of(context).primaryColor,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+              child: _buildInputField(),
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildNewChatButton() {
+    return Container(
+      key: _startNewChatKey,
+      decoration: BoxDecoration(
+        color: Theme.of(context).primaryColor.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: IconButton(
+        icon: Icon(Icons.refresh, color: Theme.of(context).primaryColor),
+        onPressed: _startNewChat,
+        tooltip: 'Start New Chat',
+      ),
+    );
+  }
+
+  Widget _buildInputField() {
+    return Container(
+      decoration: BoxDecoration(
+        color: Theme.of(context).inputDecorationTheme.fillColor ?? Colors.grey.shade200,
+        borderRadius: BorderRadius.circular(24.0),
+        border: Border.all(
+          color: Theme.of(context).primaryColor.withOpacity(0.3),
+          width: 1.5,
+        ),
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: TextField(
+              key: _textFieldKey,
+              controller: _controller,
+              onChanged: (text) {
+                if (text.isNotEmpty) {
+                  _animationController.forward();
+                } else {
+                  _animationController.reverse();
+                }
+              },
+              decoration: InputDecoration(
+                hintText: 'අවශ්‍ය දේ මෙහි ලියන්න...',
+                border: InputBorder.none,
+                contentPadding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
+                hintStyle: TextStyle(color: Colors.grey.shade600),
+              ),
+              style: TextStyle(color: Theme.of(context).textTheme.bodyLarge?.color),
+            ),
+          ),
+          AnimatedBuilder(
+            animation: _sendButtonAnimation,
+            builder: (context, child) {
+              return Transform.scale(
+                scale: _sendButtonAnimation.value,
+                child: child,
+              );
+            },
+            child: Container(
+              margin: const EdgeInsets.only(right: 4.0),
+              child: Material(
+                color: Colors.transparent,
+                child: InkWell(
+                  key: _sendButtonKey,
+                  onTap: _sendMessage,
+                  customBorder: const CircleBorder(),
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Icon(
+                      Icons.send,
+                      color: Theme.of(context).primaryColor,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
