@@ -21,14 +21,15 @@ class SendTextMessageUseCase {
       print('Error playing sound: $e');
     }
   }
-final List<String> _conversationHistory = [];
+
+  final List<String> _conversationHistory = [];
 
   Future<String> sendTextToGemini(String userText) async {
     final model = GenerativeModel(model: 'gemini-1.5-flash', apiKey: apiKey);
-    
+
     // Add the user text to the conversation history
     _conversationHistory.add('User: $userText');
-    
+
     // Construct the prompt from the conversation history
     final prompt = _conversationHistory.join('\n');
 
@@ -41,10 +42,10 @@ final List<String> _conversationHistory = [];
       if (response != null) {
         playMessageSentSound();
         final geminiResponse = response.text ?? 'No response text available';
-        
+
         // Add Gemini's response to the conversation history
         _conversationHistory.add('$geminiResponse');
-        
+
         print('Gemini response: $geminiResponse');
         return geminiResponse;
       } else {
@@ -53,6 +54,10 @@ final List<String> _conversationHistory = [];
     } catch (e) {
       return "Failed to process text: $e";
     }
+  }
+
+  Future<void> clearConversationHistory() async {
+    _conversationHistory.clear();
   }
 
   // Future<String> sendMessage(String message) async {
@@ -119,7 +124,7 @@ final List<String> _conversationHistory = [];
   //     //   }
   //     // ]
   //     },
-      
+
   //   };
 
   //   try {

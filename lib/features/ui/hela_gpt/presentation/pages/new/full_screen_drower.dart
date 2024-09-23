@@ -1,7 +1,6 @@
-import 'dart:ui';
-import 'package:aurudu_nakath/features/ui/subcriptions_provider/subcription_privider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:aurudu_nakath/features/ui/subcriptions_provider/subcription_privider.dart';
 
 class FullScreenDrawer extends StatelessWidget {
   final VoidCallback onClose;
@@ -12,6 +11,7 @@ class FullScreenDrawer extends StatelessWidget {
   Widget build(BuildContext context) {
     final subscriptionProvider = Provider.of<SubscriptionProvider>(context);
     final product = subscriptionProvider.product;
+    final isSubscribed = subscriptionProvider.isSubscribed;
 
     return Scaffold(
       body: SafeArea(
@@ -48,28 +48,30 @@ class FullScreenDrawer extends StatelessWidget {
                     context,
                     'දායකත්වය ප්‍රතිසාධනය කරන්න',
                     onPressed: () async {
-                       if (subscriptionProvider.restoredPurchase) {
-                         _showResultDialog(context, true, isRestore: true);
+                      if (subscriptionProvider.restoredPurchase) {
+                        _showRestoreDialog(context);
                       } else {
-                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                          content: Text("Failed to restore purchase."),
-                          behavior: SnackBarBehavior.floating,
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10)),
-                        ));
+                        _showErrorDialog(
+                            context, "දායකත්වය ප්‍රතිසාධනය කිරීම අසාර්ථක විය.");
                       }
-                     
                     },
                     isPrimary: false,
                   ),
                   const SizedBox(height: 16),
-                  if (product != null)
+                  // Show purchase button only if not subscribed
+                  if (!isSubscribed && product != null)
                     _buildButton(
                       context,
                       'රු 650/= (මසකට)',
                       onPressed: () async {
-                       subscriptionProvider.buySubscription();
-                        _showResultDialog(context, true);
+                        subscriptionProvider.buySubscription();
+                        subscriptionProvider.onPurchaseSuccess = () {
+                          _showSuccessDialog(
+                              context, "දායක වීම සාර්ථකයි. ඔබ දැන් මුල් තිරයට ගොස් නැවත ආරම්භ කරන්න.");
+                        };
+                        subscriptionProvider.onPurchaseError = () {
+                          _showErrorDialog(context, "මිලදී ගැනීම අසාර්ථක විය.");
+                        };
                       },
                     ),
                   const SizedBox(height: 16),
@@ -168,7 +170,7 @@ class FullScreenDrawer extends StatelessWidget {
   }
 
   Widget _buildButton(BuildContext context, String text,
-      {required VoidCallback onPressed, bool isPrimary = true}) {
+      {required VoidCallback? onPressed, bool isPrimary = true}) {
     return ElevatedButton(
       onPressed: onPressed,
       style: ElevatedButton.styleFrom(
@@ -195,73 +197,53 @@ class FullScreenDrawer extends StatelessWidget {
     );
   }
 
-  void _showResultDialog(BuildContext context, bool success, {bool isRestore = false}) {
+  void _showSuccessDialog(BuildContext context, String message) {
     showDialog(
       context: context,
-      builder: (BuildContext context) {
-        return Dialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20),
+      builder: (context) => AlertDialog(
+        title: Text('සාර්ථකයි', style: TextStyle(color: Colors.green[800])),
+        content: Text(message, style: Theme.of(context).textTheme.bodyMedium),
+        actions: [
+          TextButton(
+            child: Text('හරි'),
+            onPressed: () => Navigator.of(context).pop(),
           ),
-          elevation: 0,
-          backgroundColor: Colors.transparent,
-          child: Container(
-            padding: EdgeInsets.all(20),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              shape: BoxShape.rectangle,
-              borderRadius: BorderRadius.circular(20),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black26,
-                  blurRadius: 10.0,
-                  offset: const Offset(0.0, 10.0),
-                ),
-              ],
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                Icon(
-                  success ? Icons.check_circle : Icons.error,
-                  color: success ? Colors.green : Colors.red,
-                  size: 64,
-                ),
-                SizedBox(height: 20),
-                Text(
-                  success
-                      ? (isRestore ? 'දායකත්වය ප්‍රතිසාධනය කළා!' : 'ගෙවීම සාර්ථකයි!')
-                      : (isRestore ? 'ප්‍රතිසාධනය අසාර්ථකයි' : 'ගෙවීම අසාර්ථකයි'),
-                  style: TextStyle(
-                    fontSize: 22,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-                SizedBox(height: 15),
-                Text(
-                  success
-                      ? (isRestore
-                          ? 'ඔබගේ මිලදී ගැනීම් නැවත සක්‍රීය කර ඇත.'
-                          : 'ඔබ හෙළ GPT Pro සඳහා සාර්ථකව දායකවී ඇත.')
-                      : 'කරුණාකර නැවත උත්සාහ කරන්න',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 16),
-                ),
-                SizedBox(height: 20),
-                TextButton(
-                  child: Text(
-                    'හරි',
-                    style: TextStyle(fontSize: 18),
-                  ),
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                ),
-              ],
-            ),
+        ],
+      ),
+    );
+  }
+
+  void _showErrorDialog(BuildContext context, String message) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('දෝෂයක්', style: TextStyle(color: Colors.red[800])),
+        content: Text(message, style: Theme.of(context).textTheme.bodyMedium),
+        actions: [
+          TextButton(
+            child: Text('හරි'),
+            onPressed: () => Navigator.of(context).pop(),
           ),
-        );
-      },
+        ],
+      ),
+    );
+  }
+
+  void _showRestoreDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title:
+            Text('ප්‍රතිසාධනය සාර්ථකයි', style: TextStyle(color: Colors.blue[800])),
+        content:
+            Text('දායකත්වය ප්‍රතිසාධනය විය.', style: Theme.of(context).textTheme.bodyMedium),
+        actions: [
+          TextButton(
+            child: Text('හරි'),
+            onPressed: () => Navigator.of(context).pop(),
+          ),
+        ],
+      ),
     );
   }
 }

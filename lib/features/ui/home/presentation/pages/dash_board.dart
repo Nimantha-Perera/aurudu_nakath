@@ -1,12 +1,14 @@
 import 'package:aurudu_nakath/features/ui/home/data/modals/modal.dart';
 import 'package:aurudu_nakath/features/ui/home/data/repostory/notice_repository.dart';
 import 'package:aurudu_nakath/features/ui/permissions/permissions_hadler.dart';
+import 'package:aurudu_nakath/features/ui/subcriptions_provider/subcription_privider.dart';
 import 'package:aurudu_nakath/features/ui/tutorial/tutorial_coach_mark.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:aurudu_nakath/features/ui/home/presentation/pages/jyothishya_sewa.dart';
 import 'package:aurudu_nakath/features/ui/home/presentation/pages/tools_view.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:provider/provider.dart';
 import 'package:tutorial_coach_mark/tutorial_coach_mark.dart'; // Import Tutorial Coach Mark
 import 'notice_carousel.dart'; // Import the new widget
 import 'package:shared_preferences/shared_preferences.dart'; // Import Shared Preferences
@@ -23,6 +25,7 @@ class _DashBoardState extends State<DashBoard> {
   bool _isNotificationGranted = false;
   late final NoticeRepository _noticeRepository; // Add NoticeRepository
   late Stream<List<Notice>> _noticesStream; // Stream for notices
+  late SubscriptionProvider _subscriptionProvider;
 
   // GlobalKeys for tutorial targets
   final GlobalKey _notificationIconKey = GlobalKey();
@@ -39,6 +42,8 @@ class _DashBoardState extends State<DashBoard> {
     _checkNotificationPermission();
     _noticeRepository = NoticeRepositoryImpl(firestore: FirebaseFirestore.instance);
     _noticesStream = _noticeRepository.getNotices(); // Initialize stream
+    _subscriptionProvider = Provider.of<SubscriptionProvider>(context, listen: false);
+    
     _loadTutorialState();
   }
 
