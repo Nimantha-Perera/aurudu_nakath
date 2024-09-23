@@ -117,7 +117,7 @@ class _CompassState extends State<Compass> {
               Expanded(
                 child: _buildCompass(),
               ),
-              if (!_hasPermission) _buildPermissionSheet(),
+              
             ],
           ),
         ],

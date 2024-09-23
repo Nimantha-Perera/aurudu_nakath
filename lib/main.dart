@@ -28,7 +28,6 @@ import 'package:aurudu_nakath/features/ui/theme/change_theme_notifier.dart';
 import 'package:aurudu_nakath/features/ui/theme/dark_theme.dart';
 import 'package:aurudu_nakath/features/ui/theme/light_theme.dart';
 import 'package:aurudu_nakath/firebase_options.dart';
-import 'package:aurudu_nakath/loadin_screen/firebase_api.dart';
 import 'package:aurudu_nakath/loadin_screen/loading.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 

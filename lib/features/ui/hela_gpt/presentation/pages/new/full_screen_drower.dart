@@ -1,3 +1,4 @@
+import 'package:aurudu_nakath/features/ui/routes/routes.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:aurudu_nakath/features/ui/subcriptions_provider/subcription_privider.dart';
@@ -206,7 +207,7 @@ class FullScreenDrawer extends StatelessWidget {
         actions: [
           TextButton(
             child: Text('හරි'),
-            onPressed: () => Navigator.of(context).pop(),
+            onPressed: () => Navigator.pushNamed(context, AppRoutes.dashboard),
           ),
         ],
       ),

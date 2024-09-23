@@ -1,4 +1,3 @@
-
 import 'package:aurudu_nakath/features/ui/helagpt_pro/presentation/bloc/chat_view_model.dart';
 import 'package:aurudu_nakath/features/ui/helagpt_pro/presentation/pages/message_input.dart';
 import 'package:aurudu_nakath/features/ui/helagpt_pro/presentation/pages/new/chatlist.dart';
@@ -47,16 +46,42 @@ class _ChatViewState extends State<HelaGPT_PRO> {
       )..fetchMessages(),
       child: Scaffold(
         appBar: AppBar(
-          title: Text('හෙළ GPT Pro'),
-          centerTitle: true,
+          title: Text(
+            'හෙළ GPT Pro',
+            style: TextStyle(
+              fontSize: 15,
+              color: Colors.white, // Set the title color to white for contrast
+            ),
+          ),
+          centerTitle: true, // Center the title
+          backgroundColor: Theme.of(context).appBarTheme.backgroundColor, // Set a vibrant background color
+          elevation: 4.0, // Add a slight shadow for depth
           actions: [
             IconButton(
-              icon: Icon(Icons.help_outlined),
+              icon: Icon(
+                Icons.help_outlined,
+                color: Colors.white, // Change the icon color to match the theme
+                size: 28, // Slightly increase the icon size
+              ),
               onPressed: () => showHelpDialog(context),
+              tooltip: 'උදව්', // Add a tooltip in Sinhala for better UX
             ),
           ],
+          leading: IconButton(
+            icon: Icon(
+              Icons.menu,
+              color: Colors.white, // Icon color
+              size: 28, // Increase the size of the leading menu icon
+            ),
+            onPressed: () {
+              // Add functionality for opening a drawer or navigation
+            },
+            tooltip: 'මෙනු', // Tooltip for menu button in Sinhala
+          ),
+         
         ),
-        body: SafeArea( // SafeArea added here
+        body: SafeArea(
+          // SafeArea added here
           child: Consumer<ChatViewModel>(
             builder: (context, viewModel, child) {
               bool isChatEmpty = viewModel.messages.isEmpty;
