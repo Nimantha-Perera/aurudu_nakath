@@ -1,3 +1,4 @@
+import 'package:aurudu_nakath/features/ui/Review/review_provider.dart';
 import 'package:aurudu_nakath/features/ui/helagpt_pro/presentation/bloc/chat_view_model.dart';
 import 'package:aurudu_nakath/features/ui/helagpt_pro/presentation/pages/message_input.dart';
 import 'package:aurudu_nakath/features/ui/helagpt_pro/presentation/pages/new/chatlist.dart';
@@ -24,6 +25,14 @@ class _ChatViewState extends State<HelaGPT_PRO> {
     setState(() {
       _showPlaceholderMessage = false;
     });
+  }
+
+
+  @override
+  void initState() {
+    super.initState();
+     Provider.of<ReviewProvider>(context, listen: false).requestReview();
+   
   }
 
   void _openFullScreenDrawer() {

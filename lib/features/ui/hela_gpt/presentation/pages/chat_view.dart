@@ -1,3 +1,4 @@
+import 'package:aurudu_nakath/features/ui/Review/review_provider.dart';
 import 'package:aurudu_nakath/features/ui/hela_gpt/presentation/pages/message_input.dart';
 import 'package:aurudu_nakath/features/ui/hela_gpt/presentation/pages/new/chatlist.dart';
 import 'package:aurudu_nakath/features/ui/hela_gpt/presentation/pages/new/drawer_route.dart';
@@ -15,6 +16,9 @@ class ChatView extends StatefulWidget {
   _ChatViewState createState() => _ChatViewState();
 }
 
+
+
+
 class _ChatViewState extends State<ChatView> {
   bool _showPlaceholderMessage = true;
 
@@ -23,7 +27,12 @@ class _ChatViewState extends State<ChatView> {
       _showPlaceholderMessage = false;
     });
   }
-
+ @override
+  void initState() {
+    super.initState();
+     Provider.of<ReviewProvider>(context, listen: false).requestReview();
+   
+  }
   void _openFullScreenDrawer() {
     Navigator.of(context).push(
       FullScreenDrawerPageRoute(

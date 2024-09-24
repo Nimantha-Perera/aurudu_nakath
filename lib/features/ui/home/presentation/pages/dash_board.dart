@@ -1,7 +1,9 @@
+import 'package:aurudu_nakath/features/ui/Review/review_provider.dart';
 import 'package:aurudu_nakath/features/ui/home/domain/usecases/maintains_firebase.dart';
 import 'package:aurudu_nakath/features/ui/home/presentation/pages/jyothishya_sewa.dart';
 import 'package:aurudu_nakath/features/ui/home/presentation/pages/maintance_screen.dart';
 import 'package:aurudu_nakath/features/ui/home/presentation/pages/tools_view.dart';
+import 'package:aurudu_nakath/features/ui/theme/change_theme_notifier.dart';
 import 'package:flutter/material.dart';
 import 'package:aurudu_nakath/features/ui/home/data/modals/modal.dart';
 import 'package:aurudu_nakath/features/ui/home/data/repostory/notice_repository.dart';
@@ -43,6 +45,7 @@ class _DashBoardState extends State<DashBoard> {
   @override
   @override
   void initState() {
+    Provider.of<ReviewProvider>(context, listen: false).requestReview();
     super.initState();
     // Initialize Firestore instance
     final firestore = FirebaseFirestore.instance;
@@ -183,20 +186,21 @@ class _DashBoardState extends State<DashBoard> {
 
   @override
   Widget build(BuildContext context) {
+     final themeNotifier = Provider.of<ThemeNotifier>(context);
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.background,
       body: Stack(
         children: [
           // Background Image
           Opacity(
-            opacity: 0.1, // Adjust the opacity value (0.0 to 1.0)
+            opacity: 0.1,
             child: Container(
              
               decoration: BoxDecoration(
                 image: DecorationImage(
                   image: AssetImage(
-                    Theme.of(context).brightness == Brightness.dark
-                        ? 'assets/app_background/background.png' // Dark mode image
+                    themeNotifier.getThemeMode() == ThemeMode.dark
+                        ? 'assets/app_background/dark_background.png' // Dark mode image
                         : 'assets/app_background/background.png', // Light mode image
                   ),
                   fit: BoxFit.cover, // Adjust how the image fits the background

@@ -1,9 +1,24 @@
+import 'package:aurudu_nakath/features/ui/Review/review_provider.dart';
 import 'package:aurudu_nakath/features/ui/rahu_kalaya/data/modals/raahu_kaalaya_model.dart';
 import 'package:aurudu_nakath/features/ui/rahu_kalaya/data/modals/raahu_kaalaya_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 
-class RaahuKaalaya extends StatelessWidget {
+class RaahuKaalaya extends StatefulWidget {
+  @override
+  State<RaahuKaalaya> createState() => _RaahuKaalayaState();
+}
+
+class _RaahuKaalayaState extends State<RaahuKaalaya> {
+
+
+  @override
+  void initState() {
+    super.initState();
+     Provider.of<ReviewProvider>(context, listen: false).requestReview();
+   
+  }
   @override
   Widget build(BuildContext context) {
     return WillPopScope(

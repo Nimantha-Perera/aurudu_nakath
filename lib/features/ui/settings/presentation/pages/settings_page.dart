@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:aurudu_nakath/features/ui/theme/change_theme_notifier.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 
 class SettingsPage extends StatefulWidget {
@@ -71,6 +72,14 @@ class _SettingsPageState extends State<SettingsPage> {
       ),
     );
   }
+
+   Future<void> _launchURL(String url) async {
+  if (await canLaunch(url)) {
+    await launch(url);
+  } else {
+    throw 'Could not launch $url';
+  }
+}
 
   // Theme Switcher with light, dark, and system options
   Widget _buildThemeSwitcher(BuildContext context, ThemeNotifier themeNotifier) {
@@ -156,6 +165,7 @@ class _SettingsPageState extends State<SettingsPage> {
           subtitle: Text('අපගේ රහස්‍යතා ප්‍රතිපත්තිය සමාලෝචනය කරන්න.', style: TextStyle(fontSize: 11)),
           onTap: () {
             // Navigate to the Privacy Policy Page
+            _launchURL('https://www.termsfeed.com/live/79b4e42a-78ea-4d2f-a44a-273ab4006846');
           },
         ),
       ],

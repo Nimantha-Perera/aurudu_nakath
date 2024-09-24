@@ -1,6 +1,8 @@
+import 'package:aurudu_nakath/features/ui/Review/review_provider.dart';
 import 'package:aurudu_nakath/features/ui/aurudu_nakath/data/repostories/nakath_data.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 
 import 'nakath_timer_manager.dart'; // Import the NakathTimerManager
 
@@ -19,6 +21,7 @@ class _AuruduNakathState extends State<AuruduNakath> {
   @override
   void initState() {
     super.initState();
+     Provider.of<ReviewProvider>(context, listen: false).requestReview();
     timerManager = NakathTimerManager(updateCountdown); // Initialize timer manager
   }
 

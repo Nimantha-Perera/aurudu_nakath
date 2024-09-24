@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:aurudu_nakath/Notifications/notification_service.dart';
+import 'package:aurudu_nakath/features/ui/Review/review_provider.dart';
 import 'package:aurudu_nakath/features/ui/compass/compass.dart';
 import 'package:aurudu_nakath/Tools/tools_menu.dart';
 import 'package:aurudu_nakath/features/ui/errors/error_screen.dart';
@@ -76,6 +77,9 @@ void main() async {
   runApp(
     MultiProvider(
       providers: [
+        ChangeNotifierProvider<ReviewProvider>(
+          create: (_) => ReviewProvider(),
+        ),
         ChangeNotifierProvider<SubscriptionProvider>(
           create: (_) => SubscriptionProvider(),
         ),

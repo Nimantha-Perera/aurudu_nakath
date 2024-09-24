@@ -26,7 +26,7 @@ class HelpScreen extends StatelessWidget {
           SingleChildScrollView(
             child: Container(
               padding: const EdgeInsets.all(20.0),
-              color: Colors.transparent,
+              color: const Color.fromARGB(0, 136, 136, 136),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: topics.map((topic) {

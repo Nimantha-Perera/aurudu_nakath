@@ -74,7 +74,7 @@ class SendTextMessageUseCase {
   final model = GenerativeModel(
       model: 'gemini-1.5-flash',
       apiKey: apiKey,
-      generationConfig: GenerationConfig(maxOutputTokens: 150, temperature: 0.5),
+      generationConfig: GenerationConfig(maxOutputTokens: 200, temperature: 0.5),
       safetySettings: [
         SafetySetting(HarmCategory.hateSpeech, HarmBlockThreshold.high),
       ]);

@@ -9,15 +9,13 @@ class FullScreenDrawer extends StatelessWidget {
 
   const FullScreenDrawer({Key? key, required this.onClose}) : super(key: key);
 
-
-
   Future<void> _launchURL(String url) async {
-  if (await canLaunch(url)) {
-    await launch(url);
-  } else {
-    throw 'Could not launch $url';
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
+    }
   }
-}
 
   @override
   Widget build(BuildContext context) {
@@ -53,7 +51,8 @@ class FullScreenDrawer extends StatelessWidget {
                     context,
                     icon: Icons.image_rounded,
                     title: 'ජායාරූප සමඟින් ප්‍රශ්න අසන්න',
-                    subtitle: 'හෙළ GPT Pro භාවිතයෙන් ඔබට ජායාරූප සමඟින් ප්‍රශ්න අසන්න පුලුවන්.',
+                    subtitle:
+                        'හෙළ GPT Pro භාවිතයෙන් ඔබට ජායාරූප සමඟින් ප්‍රශ්න අසන්න පුලුවන්.',
                   ),
                   const SizedBox(height: 40),
                   _buildButton(
@@ -78,8 +77,8 @@ class FullScreenDrawer extends StatelessWidget {
                       onPressed: () async {
                         subscriptionProvider.buySubscription();
                         subscriptionProvider.onPurchaseSuccess = () {
-                          _showSuccessDialog(
-                              context, "දායක වීම සාර්ථකයි. ඔබ දැන් මුල් තිරයට ගොස් නැවත ආරම්භ කරන්න.");
+                          _showSuccessDialog(context,
+                              "දායක වීම සාර්ථකයි. ඔබ දැන් මුල් තිරයට ගොස් නැවත ආරම්භ කරන්න.");
                         };
                         subscriptionProvider.onPurchaseError = () {
                           _showErrorDialog(context, "මිලදී ගැනීම අසාර්ථක විය.");
@@ -246,10 +245,10 @@ class FullScreenDrawer extends StatelessWidget {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title:
-            Text('ප්‍රතිසාධනය සාර්ථකයි', style: TextStyle(color: Colors.blue[800])),
-        content:
-            Text('දායකත්වය ප්‍රතිසාධනය විය.', style: Theme.of(context).textTheme.bodyMedium),
+        title: Text('ප්‍රතිසාධනය සාර්ථකයි',
+            style: TextStyle(color: Colors.blue[800])),
+        content: Text('දායකත්වය ප්‍රතිසාධනය විය.',
+            style: Theme.of(context).textTheme.bodyMedium),
         actions: [
           TextButton(
             child: Text('හරි'),

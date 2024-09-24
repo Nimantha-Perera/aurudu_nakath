@@ -36,7 +36,7 @@ class IntroPage2 extends StatelessWidget {
 
                 // Subtitle
                 Text(
-                  "හෙළ කෘතීම බුද්ධිය භාවිතයෙන් ඔබට නැකැත් සේවාවන් ඉතා ඉක්මනින් ලබාගත හැකිය.",
+                  "හෙළ කෘතීම බුද්ධිය භාවිතයෙන් ඔබට නොදන්නා දේවල් දැනගන්න සහ විවිධ ගැටලු වලට පිලිතුරු ලබාගන්න පුලුවන්.",
                   style: GoogleFonts.notoSerifSinhala(
                     fontSize: 15,
                     color: Colors.white,

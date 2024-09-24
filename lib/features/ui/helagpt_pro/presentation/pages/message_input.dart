@@ -143,7 +143,7 @@ Widget build(BuildContext context) {
             SizedBox(width: 12),
             Expanded(
               child: Container(
-                key: _inputFieldKey,
+       
                 decoration: BoxDecoration(
                   color: Theme.of(context).colorScheme.surface,
                   borderRadius: BorderRadius.circular(30),
@@ -157,6 +157,7 @@ Widget build(BuildContext context) {
                   ],
                 ),
                 child: Row(
+                  key: _inputFieldKey,
                   children: [
                     IconButton(
                       icon: Icon(Icons.image, color: Theme.of(context).primaryColor),
