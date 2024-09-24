@@ -68,8 +68,8 @@ class _DashBoardState extends State<DashBoard> {
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
           builder: (context) => MaintenanceScreenDialog(
-            endTime:
-                isMaintenanceActive['end_time'], // You can replace this with the actual end time
+            endTime: isMaintenanceActive[
+                'end_time'], // You can replace this with the actual end time
           ),
         ),
       );
@@ -166,7 +166,7 @@ class _DashBoardState extends State<DashBoard> {
         TutorialHelper.createCustomTarget(
           identify: "Tools",
           keyTarget: _toolsKey,
-          text: "ඔබට ලබා ගත හැකි විවිධ මෙවලම් පරීක්ෂා කරන්න.",
+          text: "ඔබට ලබා ගත හැකි විවිධ මෙවලම් Scroll කර පරීක්ෂා කරන්න.",
           align: ContentAlign.top,
           shape: ShapeLightFocus.RRect,
         ),
@@ -187,9 +187,27 @@ class _DashBoardState extends State<DashBoard> {
       backgroundColor: Theme.of(context).colorScheme.background,
       body: Stack(
         children: [
+          // Background Image
+          Opacity(
+            opacity: 0.1, // Adjust the opacity value (0.0 to 1.0)
+            child: Container(
+             
+              decoration: BoxDecoration(
+                image: DecorationImage(
+                  image: AssetImage(
+                    Theme.of(context).brightness == Brightness.dark
+                        ? 'assets/app_background/background.png' // Dark mode image
+                        : 'assets/app_background/background.png', // Light mode image
+                  ),
+                  fit: BoxFit.cover, // Adjust how the image fits the background
+                ),
+              ),
+            ),
+          ),
           SafeArea(
+            
             child: Padding(
-              padding: const EdgeInsets.only(left: 30, right: 30, top: 0),
+              padding: const EdgeInsets.only(left: 30, right: 30, top: 50,bottom: 20),
               child: SingleChildScrollView(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -200,7 +218,7 @@ class _DashBoardState extends State<DashBoard> {
                       children: [
                         Text(
                           "කෙටි දැන්වීම්",
-                          style: TextStyle(fontSize: 12),
+                          // Adjust text color for better contrast
                         ),
                         IconButton(
                           key: _notificationIconKey,
@@ -211,6 +229,7 @@ class _DashBoardState extends State<DashBoard> {
                             _isNotificationGranted
                                 ? Icons.notifications_active
                                 : Icons.notifications_off,
+                            // Adjust icon color for better contrast
                           ),
                         ),
                       ],

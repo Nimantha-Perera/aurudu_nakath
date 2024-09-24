@@ -9,6 +9,7 @@ import 'package:aurudu_nakath/features/ui/helagpt_pro/presentation/pages/new/pla
 import 'package:aurudu_nakath/features/ui/helagpt_pro/presentation/pages/new/share_btn.dart';
 
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 
 class HelaGPT_PRO extends StatefulWidget {
@@ -46,12 +47,20 @@ class _ChatViewState extends State<HelaGPT_PRO> {
       )..fetchMessages(),
       child: Scaffold(
         appBar: AppBar(
-          title: Text(
-            'හෙළ GPT Pro',
-            style: TextStyle(
-              fontSize: 15,
-              color: Colors.white, // Set the title color to white for contrast
-            ),
+          title: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+
+              Text(
+                'හෙළ GPT Pro',
+                style: TextStyle(
+                  fontSize: 15,
+                  color: Colors.white, // Set the title color to white for contrast
+                ),
+              ),
+              SizedBox(width: 8),
+              Icon(FontAwesomeIcons.checkToSlot, size: 18, color: Color.fromARGB(255, 255, 255, 255)),
+            ],
           ),
           centerTitle: true, // Center the title
           backgroundColor: Theme.of(context).appBarTheme.backgroundColor, // Set a vibrant background color

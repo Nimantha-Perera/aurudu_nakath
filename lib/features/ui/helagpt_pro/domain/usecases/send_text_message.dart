@@ -47,7 +47,7 @@ final List<String> _conversationHistory = [];
         // Add Gemini's response to the conversation history
         _conversationHistory.add('$geminiResponse');
         
-        print('හෙළ GPT: $geminiResponse');
+        print('$geminiResponse');
         return geminiResponse;
       } else {
         return "No valid response from API";

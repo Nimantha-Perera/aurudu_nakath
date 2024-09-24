@@ -6,6 +6,7 @@ import 'package:aurudu_nakath/features/ui/hela_gpt/presentation/pages/new/help_d
 import 'package:aurudu_nakath/features/ui/hela_gpt/presentation/pages/new/placeholder.dart';
 import 'package:aurudu_nakath/features/ui/hela_gpt/presentation/pages/new/share_btn.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:aurudu_nakath/features/ui/hela_gpt/presentation/bloc/chat_view_model.dart';
 
@@ -65,7 +66,7 @@ class _ChatViewState extends State<ChatView> {
                   ),
                 ),
                 SizedBox(width: 8), // Add some space between text and icon
-                Icon(Icons.star, size: 18),
+                Icon(FontAwesomeIcons.bolt, size: 18),
               ],
             ),
           ),

@@ -182,7 +182,7 @@ class _MessageInputState extends State<MessageInput> with SingleTickerProviderSt
                 contentPadding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
                 hintStyle: TextStyle(color: Colors.grey.shade600),
               ),
-              style: TextStyle(color: Theme.of(context).textTheme.bodyLarge?.color),
+              style: TextStyle(color: Colors.black87),
             ),
           ),
           AnimatedBuilder(
@@ -205,7 +205,7 @@ class _MessageInputState extends State<MessageInput> with SingleTickerProviderSt
                     padding: const EdgeInsets.all(8.0),
                     child: Icon(
                       Icons.send,
-                      color: Theme.of(context).primaryColor,
+                      color: Colors.amber,
                     ),
                   ),
                 ),

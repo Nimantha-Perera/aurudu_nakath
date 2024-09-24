@@ -1,6 +1,7 @@
 import 'package:aurudu_nakath/features/ui/home/presentation/pages/buttons_card.dart';
 import 'package:aurudu_nakath/features/ui/routes/routes.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class Jyothishya extends StatelessWidget {
   const Jyothishya({super.key});
@@ -17,7 +18,7 @@ class Jyothishya extends StatelessWidget {
             children: [
               Text(
                 "ජ්‍යෝතීශ්‍ය",
-                style: TextStyle(fontSize: 12),
+               
               ),
               TextButton(
                 onPressed: () {
@@ -36,18 +37,20 @@ class Jyothishya extends StatelessWidget {
             children: [
               Expanded(
                 child: ButtonsCard(
+                  width: double.infinity,
                   text: "අවුරුදු නැකැත්",
                   onTap: () => {
                     Navigator.pushNamed(context, AppRoutes.aurudu_nakath)
                   },
                   color: Color(0xFFFABC3F),
                   textColor: const Color.fromARGB(255, 83, 83, 83),
-                  icon: Icon(Icons.timelapse_rounded, color: Colors.white),
+                  icon: Icon(FontAwesomeIcons.wpexplorer, color: Colors.white),
                 ),
               ),
               SizedBox(width: 10), // Add some spacing between cards
               Expanded(
                 child: ButtonsCard(
+                  width: double.infinity,
                   text: "‍රාහු කාලය",
                   onTap: () => {
                     Navigator.pushNamed(context, AppRoutes.rahu_kalaya)

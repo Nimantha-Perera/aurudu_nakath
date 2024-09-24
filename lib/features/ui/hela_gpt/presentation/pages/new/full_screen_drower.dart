@@ -2,11 +2,22 @@ import 'package:aurudu_nakath/features/ui/routes/routes.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:aurudu_nakath/features/ui/subcriptions_provider/subcription_privider.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class FullScreenDrawer extends StatelessWidget {
   final VoidCallback onClose;
 
   const FullScreenDrawer({Key? key, required this.onClose}) : super(key: key);
+
+
+
+  Future<void> _launchURL(String url) async {
+  if (await canLaunch(url)) {
+    await launch(url);
+  } else {
+    throw 'Could not launch $url';
+  }
+}
 
   @override
   Widget build(BuildContext context) {
@@ -81,6 +92,7 @@ class FullScreenDrawer extends StatelessWidget {
                     'සහය සම්බන්ධ කරගන්න',
                     onPressed: () {
                       // Add your button action here
+                      _launchURL('https://wa.link/y3wc48');
                     },
                     isPrimary: false,
                   ),

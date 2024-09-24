@@ -1,7 +1,8 @@
-import 'package:aurudu_nakath/features/ui/subcriptions_provider/subcription_privider.dart';
 import 'package:flutter/material.dart';
+import 'package:aurudu_nakath/features/ui/subcriptions_provider/subcription_privider.dart';
 import 'package:aurudu_nakath/features/ui/routes/routes.dart';
 import 'package:aurudu_nakath/features/ui/home/presentation/pages/buttons_card.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart'; // Import provider for subscription management
 
 class Tools extends StatelessWidget {
@@ -9,6 +10,12 @@ class Tools extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Get screen width
+    final double screenWidth = MediaQuery.of(context).size.width;
+
+    // Calculate the width of each button (you can adjust the ratio as needed)
+    final double buttonWidth = screenWidth * 0.4; // Each button takes 40% of the screen width
+
     return Container(
       height: 120,
       margin: EdgeInsets.only(top: 30),
@@ -19,7 +26,7 @@ class Tools extends StatelessWidget {
             children: [
               Text(
                 "අමතර මෙවලම්",
-                style: TextStyle(fontSize: 12),
+             
               ),
             ],
           ),
@@ -45,7 +52,8 @@ class Tools extends StatelessWidget {
                         },
                         color: Color(0xFFA02334),
                         textColor: Colors.white,
-                        icon: Icon(Icons.arrow_outward_rounded, color: Colors.white),
+                        icon: Icon(FontAwesomeIcons.commentDots, color: Colors.white),
+                        width: buttonWidth, // Use the calculated button width
                       );
                     },
                   ),
@@ -57,7 +65,8 @@ class Tools extends StatelessWidget {
                     },
                     color: Color(0xFFA02334),
                     textColor: Colors.white,
-                    icon: Icon(Icons.compass_calibration, color: Colors.white),
+                    icon: Icon(FontAwesomeIcons.safari, color: Colors.white),
+                    width: buttonWidth, // Use the calculated button width
                   ),
                   SizedBox(width: 10),
                   ButtonsCard(
@@ -68,6 +77,7 @@ class Tools extends StatelessWidget {
                     color: Color(0xFFA02334),
                     textColor: Colors.white,
                     icon: Icon(Icons.settings, color: Colors.white),
+                    width: buttonWidth, // Use the calculated button width
                   ),
                   SizedBox(width: 10),
                 ],

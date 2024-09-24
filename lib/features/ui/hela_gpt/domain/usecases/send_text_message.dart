@@ -25,75 +25,94 @@ class SendTextMessageUseCase {
   final List<String> _conversationHistory = [];
 
   Future<String> sendTextToGemini(String userText) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    List<String> messageList = prefs.getStringList('messages') ?? [];
-    List<int> sendTimes = _getIntList(prefs, 'sendTimes');
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  List<String> messageList = prefs.getStringList('messages') ?? [];
+  List<int> sendTimes = _getIntList(prefs, 'sendTimes');
 
-    DateTime now = DateTime.now();
-    DateTime lastMessageTime;
+  DateTime now = DateTime.now();
+  DateTime lastMessageTime;
 
-    // Ensure the message history has at least 10 messages
-    if (messageList.length >= 10) {
-      // Get the time of the 10th most recent message
-      lastMessageTime = DateTime.fromMillisecondsSinceEpoch(
-          sendTimes[messageList.length - 10]);
-      Duration timeSinceLastMessage = now.difference(lastMessageTime);
+  // Ensure the message history has at least 10 messages
+  if (messageList.length >= 10) {
+    // Get the time of the 10th most recent message
+    lastMessageTime = DateTime.fromMillisecondsSinceEpoch(
+        sendTimes[messageList.length - 10]);
+    Duration timeSinceLastMessage = now.difference(lastMessageTime);
 
-      // Check if the time difference is less than 5 hours
-      if (timeSinceLastMessage.inHours < 5) {
-        // Calculate the next available time
-        DateTime nextAvailableTime = lastMessageTime.add(Duration(hours: 5));
-        String formattedTime =
-            DateFormat('yyyy-MM-dd HH:mm:ss').format(nextAvailableTime);
-        return "ඔබගේ දවසේ හෙළ GPT කතාබස් සීමාව ඉක්මවා ගොස් ඇත. "
-               "ඔබ නැවත කතාබස් ආරම්භ කිරීම සඳහා $formattedTime තෙක් රැඳී සිටිය යුතුය.";
-      }
-    }
-
-    // Remove the oldest message if the list exceeds 20 messages
-    if (messageList.length >= 10) {
-      messageList.removeAt(0);
-      sendTimes.removeAt(0);
-    }
-
-    // Add the new message and its timestamp
-    messageList.add(userText);
-    sendTimes.add(now.millisecondsSinceEpoch);
-
-    // Save the updated message list and send times to SharedPreferences
-    await prefs.setStringList('messages', messageList);
-    await _setIntList(prefs, 'sendTimes', sendTimes);
-
-    // Add the user text to the conversation history
-    _conversationHistory.add('User: $userText');
-
-    // Construct the prompt from the conversation history
-    final prompt = _conversationHistory.join('\n');
-
-    // Send the conversation history to Gemini for a response
-    final model = GenerativeModel(model: 'gemini-1.5-flash', apiKey: apiKey);
-
-    try {
-      final response = await model.generateContent([
-        Content.multi([TextPart(prompt)]),
-      ]);
-
-      if (response != null) {
-        await playMessageSentSound();
-        final geminiResponse = response.text ?? 'No response text available';
-
-        // Add Gemini's response to the conversation history
-        _conversationHistory.add('හෙළ GPT: $geminiResponse');
-
-        print('Gemini response: $geminiResponse');
-        return geminiResponse;
-      } else {
-        return "No valid response from API";
-      }
-    } catch (e) {
-      return "Failed to process text: $e";
+    // Check if the time difference is less than 5 hours
+    if (timeSinceLastMessage.inHours < 5) {
+      // Calculate the next available time
+      DateTime nextAvailableTime = lastMessageTime.add(Duration(hours: 5));
+      String formattedTime =
+          DateFormat('yyyy-MM-dd HH:mm:ss').format(nextAvailableTime);
+      return "ඔබගේ දවසේ හෙළ GPT කතාබස් සීමාව ඉක්මවා ගොස් ඇත. "
+          "ඔබ නැවත කතාබස් ආරම්භ කිරීම සඳහා $formattedTime තෙක් රැඳී සිටිය යුතුය.";
     }
   }
+
+  // Remove the oldest message if the list exceeds 20 messages
+  if (messageList.length >= 10) {
+    messageList.removeAt(0);
+    sendTimes.removeAt(0);
+  }
+
+  // Add the new message and its timestamp
+  messageList.add(userText);
+  sendTimes.add(now.millisecondsSinceEpoch);
+
+  // Save the updated message list and send times to SharedPreferences
+  await prefs.setStringList('messages', messageList);
+  await _setIntList(prefs, 'sendTimes', sendTimes);
+
+  // Add the user text to the conversation history
+  _conversationHistory.add('User: $userText');
+
+  // Construct the prompt from the conversation history
+  final prompt = _conversationHistory.join('\n');
+
+  // Send the conversation history to Gemini for a response
+  final model = GenerativeModel(
+      model: 'gemini-1.5-flash',
+      apiKey: apiKey,
+      generationConfig: GenerationConfig(maxOutputTokens: 150, temperature: 0.5),
+      safetySettings: [
+        SafetySetting(HarmCategory.hateSpeech, HarmBlockThreshold.high),
+      ]);
+
+  try {
+    final response = await model.generateContent([
+      Content.multi([TextPart(prompt)]),
+    ]);
+
+    if (response != null) {
+      await playMessageSentSound();
+      final geminiResponse = response.text ?? 'No response text available';
+
+      // Add Gemini's response to the conversation history
+      _conversationHistory.add('$geminiResponse');
+
+      print('Gemini response: $geminiResponse');
+      return geminiResponse;
+    } else {
+      return "API එකෙන් වලංගු ප්‍රතිචාරයක් ලබා ගත නොහැක.";
+    }
+  } catch (e) {
+    // Handle different types of errors
+    String errorMessage;
+
+    if (e is GenerativeAIException) {
+      errorMessage = "හෙළ GPT සමඟ කතාබස් කිරීමේදී දෝෂයක් ඇතිවිය. කරුණාකර පසුව නැවත උත්සාහ කරන්න.";
+    } else {
+      errorMessage = "කතාබස් සම්බන්ධ කරුනක් ඇතිවිය. කරුණාකර පසුව නැවත උත්සාහ කරන්න.";
+    }
+
+    // Log the error for debugging
+    print('Error occurred: $e');
+    
+    return errorMessage;
+  }
+}
+
 
   Future<void> clearConversationHistory() async {
     _conversationHistory.clear();
@@ -106,7 +125,8 @@ class SendTextMessageUseCase {
     return jsonList.cast<int>();
   }
 
-  Future<void> _setIntList(SharedPreferences prefs, String key, List<int> list) async {
+  Future<void> _setIntList(
+      SharedPreferences prefs, String key, List<int> list) async {
     final jsonString = jsonEncode(list);
     await prefs.setString(key, jsonString);
   }

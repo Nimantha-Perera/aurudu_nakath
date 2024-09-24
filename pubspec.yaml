@@ -92,10 +92,9 @@ dev_dependencies:
 
 flutter_launcher_icons:
   android: true
-  ios: true
-  image_path: "assets/icon/ic_nakath.png"
+  image_path: "assets/app_icon/playstore.png"
   adaptive_icon_background: "#ffffff"
-  adaptive_icon_foreground: "assets/icon/ic_nakath.png"
+  adaptive_icon_foreground: "assets/app_icon/playstore.png"
 
 flutter_native_splash:
   color: "#ffffff"
@@ -126,6 +125,8 @@ flutter:
     - assets/.env
     - assets/sounds/
     - assets/compass/
+    - assets/app_icon/playstore.png
+    - assets/app_background/background.png
     
 
   # An image asset can refer to one or more resolution-specific "variants", see
