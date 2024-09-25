@@ -40,7 +40,7 @@ class _NoticeCarouselState extends State<NoticeCarousel> {
     });
   }
 
-  String _getCountdownText(DateTime noticeTime) {
+String _getCountdownText(DateTime noticeTime) {
   final Duration difference = noticeTime.difference(DateTime.now());
   if (difference.isNegative) {
     return 'අවසන්';
@@ -57,23 +57,17 @@ class _NoticeCarouselState extends State<NoticeCarousel> {
   // Create a list to store text components
   List<String> parts = [];
 
-  // Append text parts if they are non-zero
-  if (years > 0) parts.add("අවු $years");
-  if (months > 0) parts.add("මාස $months");
-  if (days % 30 > 0) parts.add("දින ${days % 30}");
-  if (hours > 0) parts.add("පැය $hours");
-  if (minutes > 0) parts.add("මි $minutes");
-  
-  // Special handling for seconds
-  if (seconds > 0) {
-    parts.add("තත් $seconds");
-  } else if (minutes > 0 || hours > 0 || days > 0 || months > 0 || years > 0) {
-    // Only add seconds if there are non-zero larger units
-    parts.add("තත් 59");
-  }
+  // Always show each part with two digits, even if zero
+ 
+  parts.add("මාස ${months.toString().padLeft(2, '0')}");
+  parts.add("දින ${(days % 30).toString().padLeft(2, '0')}");
+  parts.add("පැය ${hours.toString().padLeft(2, '0')}");
+  parts.add("මිනි ${minutes.toString().padLeft(2, '0')}");
+  parts.add("තත් ${seconds.toString().padLeft(2, '0')}");
 
   return parts.join(' ').trim();
 }
+
 
 
   @override

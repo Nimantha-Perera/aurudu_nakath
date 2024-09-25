@@ -46,6 +46,7 @@ class _DashBoardState extends State<DashBoard> {
   @override
   @override
   void initState() {
+   
     Provider.of<ReviewProvider>(context, listen: false).requestReview();
     super.initState();
     // Initialize Firestore instance
@@ -184,6 +185,8 @@ class _DashBoardState extends State<DashBoard> {
       _setTutorialShown();
     });
   }
+
+ 
 
   @override
   Widget build(BuildContext context) {

@@ -6,6 +6,8 @@ import 'package:aurudu_nakath/features/ui/hela_gpt/presentation/pages/new/full_s
 import 'package:aurudu_nakath/features/ui/hela_gpt/presentation/pages/new/help_dialog.dart';
 import 'package:aurudu_nakath/features/ui/hela_gpt/presentation/pages/new/placeholder.dart';
 import 'package:aurudu_nakath/features/ui/hela_gpt/presentation/pages/new/share_btn.dart';
+import 'package:aurudu_nakath/features/ui/hela_gpt/presentation/pages/new/side_nav/helagpt_sidenav..dart';
+
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
@@ -16,9 +18,6 @@ class ChatView extends StatefulWidget {
   _ChatViewState createState() => _ChatViewState();
 }
 
-
-
-
 class _ChatViewState extends State<ChatView> {
   bool _showPlaceholderMessage = true;
 
@@ -27,12 +26,13 @@ class _ChatViewState extends State<ChatView> {
       _showPlaceholderMessage = false;
     });
   }
- @override
+
+  @override
   void initState() {
     super.initState();
-     Provider.of<ReviewProvider>(context, listen: false).requestReview();
-   
+    Provider.of<ReviewProvider>(context, listen: false).requestReview();
   }
+
   void _openFullScreenDrawer() {
     Navigator.of(context).push(
       FullScreenDrawerPageRoute(
@@ -45,6 +45,7 @@ class _ChatViewState extends State<ChatView> {
 
   @override
   Widget build(BuildContext context) {
+    var icon = Icon(FontAwesomeIcons.bars, size: 18);
     return ChangeNotifierProvider(
       create: (context) => ChatViewModel(
         context.read(),
@@ -53,6 +54,7 @@ class _ChatViewState extends State<ChatView> {
         context.read(),
       )..fetchMessages(),
       child: Scaffold(
+        drawer: HelagptDrawer(),
         appBar: AppBar(
           title: ElevatedButton(
             style: ElevatedButton.styleFrom(
@@ -64,7 +66,7 @@ class _ChatViewState extends State<ChatView> {
               padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               elevation: 3,
             ),
-            onPressed: _openFullScreenDrawer, // Open full-screen drawer with transition
+            onPressed: _openFullScreenDrawer,
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -74,12 +76,20 @@ class _ChatViewState extends State<ChatView> {
                     fontSize: 12,
                   ),
                 ),
-                SizedBox(width: 8), // Add some space between text and icon
+                SizedBox(width: 8),
                 Icon(FontAwesomeIcons.bolt, size: 18),
               ],
             ),
           ),
           centerTitle: true,
+          leading: Builder(
+            builder: (context) => IconButton(
+              icon: icon,
+              onPressed: () {
+                Scaffold.of(context).openDrawer(); // Using Builder context
+              },
+            ),
+          ),
           actions: [
             IconButton(
               icon: Icon(Icons.help_outlined),
@@ -87,7 +97,7 @@ class _ChatViewState extends State<ChatView> {
             ),
           ],
         ),
-        body: SafeArea( // SafeArea added here
+        body: SafeArea(
           child: Consumer<ChatViewModel>(
             builder: (context, viewModel, child) {
               bool isChatEmpty = viewModel.messages.isEmpty;

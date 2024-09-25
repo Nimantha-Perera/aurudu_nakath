@@ -52,6 +52,7 @@ import 'package:timezone/timezone.dart' as tz;
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await initializeDateFormatting('si_LK');
+  
 
   try {
     await Firebase.initializeApp(
@@ -73,6 +74,9 @@ void main() async {
   final apiKey = dotenv.env['API_KEY'] ?? "";
   final apiUrl =
       "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=$apiKey";
+
+
+      
 
   runApp(
     MultiProvider(
@@ -133,6 +137,7 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
+  
   Future<Widget>? _appWidget;
   late Future<SharedPreferences> _sharedPreferencesFuture;
   //  ShakeNavigation? _shakeNavigation;

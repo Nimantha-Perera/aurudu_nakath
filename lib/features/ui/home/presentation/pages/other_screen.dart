@@ -1,7 +1,10 @@
 import 'package:aurudu_nakath/features/ui/home/presentation/pages/buttons_card.dart';
 import 'package:aurudu_nakath/features/ui/routes/routes.dart';
+import 'package:aurudu_nakath/features/ui/theme/change_theme_notifier.dart';
+import 'package:aurudu_nakath/features/ui/theme/dark_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 
 class OtherTools extends StatefulWidget {
   const OtherTools({super.key});
@@ -13,14 +16,16 @@ class OtherTools extends StatefulWidget {
 class _OtherToolsState extends State<OtherTools> {
   @override
   Widget build(BuildContext context) {
+    final themeNotifier = Provider.of<ThemeNotifier>(context);
+    final bool isDarkTheme = themeNotifier.getTheme() == darkTheme;
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: AppBarTheme.of(context).backgroundColor,
         elevation: 0,
         title: Text(
           'ජ්‍යෝතීශ්‍ය මෙනුව',
-          style:
-              GoogleFonts.notoSerifSinhala(fontSize: 14.0, color: Colors.white),
+          style: GoogleFonts.notoSerifSinhala(fontSize: 14.0, color: Colors.white),
         ),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.white),
@@ -30,57 +35,67 @@ class _OtherToolsState extends State<OtherTools> {
         ),
         centerTitle: true,
       ),
-      body: Container(
-        decoration: const BoxDecoration(
-            image: DecorationImage(
-          image: AssetImage('assets/app_background/background.png'),
-          fit: BoxFit.cover,
-        )),
-        child: Center(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                SizedBox(
-                  height: 400, // Define a fixed height for the GridView
-                  child: GridView.count(
-                    crossAxisCount: 2,
-                    mainAxisSpacing: 24, // Increased spacing for cleaner layout
-                    crossAxisSpacing: 16,
-                    padding: const EdgeInsets.all(16.0),
-                    children: [
-                      _buildCustomCard(
-                        text: "අවුරුදු නැකැත්",
-                        color: const Color(0xFFFABC3F),
-                        icon: Icons.timelapse_rounded,
-                        routeName: AppRoutes.aurudu_nakath,
-                      ),
-                      _buildCustomCard(
-                        text: "‍රාහු කාලය",
-                        color: const Color(0xFFFABC3F),
-                        icon: Icons.watch_later_rounded,
-                        routeName: AppRoutes.rahu_kalaya,
-                      ),
-                      _buildCustomCard(
-                        text: "ලිත",
-                        color: const Color(0xFFFABC3F),
-                        image: AssetImage('assets/icons/astronomy.png'),
-                        routeName: AppRoutes.litha,
-                      ),
-                      _buildCustomCard(
-                        text: "ලග්න පලාඵල",
-                        color: const Color(0xFFFABC3F),
-                        image: AssetImage('assets/icons/constellation.png'),
-                        routeName: AppRoutes.lagna,
-                      ),
-                    ],
-                  ),
-                ),
-              ],
+      body: Stack(
+        children: [
+          // Background image with color filter for opacity
+          ColorFiltered(
+            colorFilter: ColorFilter.mode(
+              isDarkTheme ? Colors.black.withOpacity(0.5) : Colors.white.withOpacity(0.2),
+              BlendMode.dstATop,
+            ),
+            child: Image.asset(
+              'assets/app_background/backimg.png',
+              fit: BoxFit.cover,
+              width: double.infinity,
+              height: double.infinity,
             ),
           ),
-        ),
+          Center(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  SizedBox(
+                    height: 400, // Define a fixed height for the GridView
+                    child: GridView.count(
+                      crossAxisCount: 2,
+                      mainAxisSpacing: 24, // Increased spacing for cleaner layout
+                      crossAxisSpacing: 16,
+                      padding: const EdgeInsets.all(16.0),
+                      children: [
+                        _buildCustomCard(
+                          text: "අවුරුදු නැකැත්",
+                          color: const Color(0xFFFABC3F),
+                          icon: Icons.timelapse_rounded,
+                          routeName: AppRoutes.aurudu_nakath,
+                        ),
+                        _buildCustomCard(
+                          text: "‍රාහු කාලය",
+                          color: const Color(0xFFFABC3F),
+                          icon: Icons.watch_later_rounded,
+                          routeName: AppRoutes.rahu_kalaya,
+                        ),
+                        _buildCustomCard(
+                          text: "ලිත",
+                          color: const Color(0xFFFABC3F),
+                          image: AssetImage('assets/icons/astronomy.png'),
+                          routeName: AppRoutes.litha,
+                        ),
+                        _buildCustomCard(
+                          text: "ලග්න පලාඵල",
+                          color: const Color(0xFFFABC3F),
+                          image: AssetImage('assets/icons/constellation.png'),
+                          routeName: AppRoutes.lagna,
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -95,11 +110,9 @@ class _OtherToolsState extends State<OtherTools> {
     return GestureDetector(
       onTap: () => Navigator.pushNamed(context, routeName),
       child: InkWell(
-        borderRadius: BorderRadius.circular(
-            16.0), // Add ripple effect with rounded corners
+        borderRadius: BorderRadius.circular(16.0), // Add ripple effect with rounded corners
         splashColor: Colors.orange.withOpacity(0.3), // Define the ripple color
         highlightColor: Colors.transparent, // Remove default highlight
-        onTap: () => Navigator.pushNamed(context, routeName),
         child: Card(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16.0),
@@ -124,6 +137,7 @@ class _OtherToolsState extends State<OtherTools> {
                 Text(
                   text,
                   textAlign: TextAlign.center,
+                  style: TextStyle(color: Colors.white), // Ensure text is visible
                 ),
               ],
             ),

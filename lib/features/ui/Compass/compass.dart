@@ -1,4 +1,4 @@
-import 'package:aurudu_nakath/features/ui/compass/neu_corc;e.dart';
+import 'package:aurudu_nakath/features/ui/compass/neu_circle.dart';
 import 'package:aurudu_nakath/features/ui/theme/change_theme_notifier.dart';
 import 'package:aurudu_nakath/features/ui/theme/dark_theme.dart';
 import 'package:flutter/material.dart';
