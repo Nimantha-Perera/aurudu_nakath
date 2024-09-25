@@ -1,4 +1,5 @@
 import 'package:aurudu_nakath/features/ui/Review/review_provider.dart';
+import 'package:aurudu_nakath/features/ui/hela_gpt/presentation/pages/new/side_nav/helagpt_sidenav..dart';
 import 'package:aurudu_nakath/features/ui/helagpt_pro/presentation/bloc/chat_view_model.dart';
 import 'package:aurudu_nakath/features/ui/helagpt_pro/presentation/pages/message_input.dart';
 import 'package:aurudu_nakath/features/ui/helagpt_pro/presentation/pages/new/chatlist.dart';
@@ -8,6 +9,7 @@ import 'package:aurudu_nakath/features/ui/helagpt_pro/presentation/pages/new/hel
 import 'package:aurudu_nakath/features/ui/helagpt_pro/presentation/pages/new/message_input.dart';
 import 'package:aurudu_nakath/features/ui/helagpt_pro/presentation/pages/new/placeholder.dart';
 import 'package:aurudu_nakath/features/ui/helagpt_pro/presentation/pages/new/share_btn.dart';
+import 'package:aurudu_nakath/features/ui/helagpt_pro/presentation/pages/new/side_nav/helagpt_pro_nav.dart';
 
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -27,12 +29,10 @@ class _ChatViewState extends State<HelaGPT_PRO> {
     });
   }
 
-
   @override
   void initState() {
     super.initState();
-     Provider.of<ReviewProvider>(context, listen: false).requestReview();
-   
+    Provider.of<ReviewProvider>(context, listen: false).requestReview();
   }
 
   void _openFullScreenDrawer() {
@@ -55,11 +55,11 @@ class _ChatViewState extends State<HelaGPT_PRO> {
         context.read(),
       )..fetchMessages(),
       child: Scaffold(
+        drawer: HelagptProDrawer(),
         appBar: AppBar(
           title: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-
               Text(
                 'හෙළ GPT Pro',
                 style: TextStyle(
@@ -68,11 +68,14 @@ class _ChatViewState extends State<HelaGPT_PRO> {
                 ),
               ),
               SizedBox(width: 8),
-              Icon(FontAwesomeIcons.checkToSlot, size: 18, color: Color.fromARGB(255, 255, 255, 255)),
+              Icon(Icons.auto_awesome,
+                  size: 18, color: Color.fromARGB(255, 255, 255, 255)),
             ],
           ),
           centerTitle: true, // Center the title
-          backgroundColor: Theme.of(context).appBarTheme.backgroundColor, // Set a vibrant background color
+          backgroundColor: Theme.of(context)
+              .appBarTheme
+              .backgroundColor, // Set a vibrant background color
           elevation: 4.0, // Add a slight shadow for depth
           actions: [
             IconButton(
@@ -85,18 +88,21 @@ class _ChatViewState extends State<HelaGPT_PRO> {
               tooltip: 'උදව්', // Add a tooltip in Sinhala for better UX
             ),
           ],
-          leading: IconButton(
-            icon: Icon(
-              Icons.menu,
-              color: Colors.white, // Icon color
-              size: 28, // Increase the size of the leading menu icon
-            ),
-            onPressed: () {
-              // Add functionality for opening a drawer or navigation
+          leading: Builder( // Wrap the IconButton in a Builder to provide a context under the Scaffold
+            builder: (context) {
+              return IconButton(
+                icon: Icon(
+                  Icons.menu,
+                  color: Colors.white, // Icon color
+                  size: 28, // Increase the size of the leading menu icon
+                ),
+                onPressed: () {
+                  Scaffold.of(context).openDrawer(); // Access Scaffold from the new context
+                },
+                tooltip: 'මෙනු', // Tooltip for menu button in Sinhala
+              );
             },
-            tooltip: 'මෙනු', // Tooltip for menu button in Sinhala
           ),
-         
         ),
         body: SafeArea(
           // SafeArea added here
@@ -131,3 +137,4 @@ class _ChatViewState extends State<HelaGPT_PRO> {
     );
   }
 }
+

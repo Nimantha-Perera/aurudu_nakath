@@ -25,7 +25,7 @@ class Tools extends StatelessWidget {
             children: [
               Text(
                 "අමතර මෙවලම්",
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                
               ),
             ],
           ),
@@ -57,6 +57,7 @@ class Tools extends StatelessWidget {
                                 if (subscriptionProvider.isSubscribed) {
                                   Navigator.pushNamed(context, AppRoutes.helagptPro);
                                 } else {
+                                  //Please Change this helagptnormless
                                   Navigator.pushNamed(context, AppRoutes.helagptnormless);
                                 }
                               } else {

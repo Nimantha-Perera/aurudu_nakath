@@ -1,6 +1,6 @@
-// lib/presentation/login/login_viewmodel.dart
 import 'package:aurudu_nakath/features/ui/Login/data/modal/user_model.dart';
 import 'package:aurudu_nakath/features/ui/Login/domain/usecase/sign_in_with_google.dart';
+import 'package:aurudu_nakath/features/ui/routes/routes.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -8,13 +8,18 @@ import 'package:shared_preferences/shared_preferences.dart';
 class LoginViewModel extends ChangeNotifier {
   final SignInWithGoogle _signInWithGoogle;
   CustomUser? _user;
+  bool _isLoading = false; // To manage loading state
 
   LoginViewModel(this._signInWithGoogle);
 
   CustomUser? get user => _user;
+  bool get isLoading => _isLoading;
 
   /// Logs in the user using Google Sign-In
   Future<void> login() async {
+    _isLoading = true; // Set loading state to true
+    notifyListeners();
+
     try {
       User? firebaseUser = await _signInWithGoogle.signIn();
       if (firebaseUser != null) {
@@ -27,9 +32,16 @@ class LoginViewModel extends ChangeNotifier {
         // Save user details in SharedPreferences
         await _saveUserDetails();
       }
-      notifyListeners(); // Notify listeners to update the UI
     } catch (e) {
       print("Login failed: $e");
+      // Handle specific error cases if needed (e.g., cancellation)
+      if (e is FirebaseAuthException) {
+        // Handle Firebase specific errors if required
+      }
+      _user = null; // Reset user on failure
+    } finally {
+      _isLoading = false; // Reset loading state
+      notifyListeners();
     }
   }
 
@@ -49,13 +61,21 @@ class LoginViewModel extends ChangeNotifier {
   }
 
   /// Logs out the user and clears their information
-  Future<void> logout() async {
+  Future<void> logout(BuildContext context) async {
     await _signInWithGoogle.signOut();
     _user = null; // Clear user info
 
-    // Clear SharedPreferences
+    // Get SharedPreferences instance
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.clear(); 
+
+    // Remove only the user-related keys
+    await prefs.remove('email');
+    await prefs.remove('displayName');
+    await prefs.remove('photoURL');
+
     notifyListeners(); // Notify listeners to update the UI
+
+    // Navigate to a different route
+    Navigator.pushNamed(context, AppRoutes.home);
   }
 }

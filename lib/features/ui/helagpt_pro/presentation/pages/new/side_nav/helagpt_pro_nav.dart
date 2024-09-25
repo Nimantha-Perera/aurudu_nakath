@@ -6,8 +6,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:aurudu_nakath/features/ui/Login/presentation/pages/login_viewmodel.dart';
 import 'package:aurudu_nakath/features/ui/routes/routes.dart';
 
-class HelagptDrawer extends StatelessWidget {
-  const HelagptDrawer({Key? key}) : super(key: key);
+class HelagptProDrawer extends StatelessWidget {
+  const HelagptProDrawer({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -62,10 +62,8 @@ class HelagptDrawer extends StatelessWidget {
                   backgroundColor: Color.fromARGB(255, 255, 208, 0),
                   child: CircleAvatar(
                     radius: 47,
-                    backgroundImage: photoURL != null
-                        ? NetworkImage(photoURL)
-                        : null
-                            ,
+                    backgroundImage:
+                        photoURL != null ? NetworkImage(photoURL) : null,
                   ),
                 ),
               ),
@@ -82,12 +80,20 @@ class HelagptDrawer extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(width: 8),
-                  
+                  Tooltip(
+                    message:
+                        'Pro User', // The text shown when hovering over the icon
+                    child: Icon(
+                      FontAwesomeIcons.checkCircle,
+                      color: const Color.fromARGB(255, 87, 87, 87),
+                      size: 17,
+                    ),
+                  ),
                 ],
               ),
               const SizedBox(height: 8),
               Text(
-                'හෙළ GPT ඔබගේ තාක්ශනික සහයක',
+                'හෙළ GPT PRO ඔබගේ තාක්ශනික සහයක',
                 style: GoogleFonts.notoSerifSinhala(
                   fontSize: 12,
                   color: Colors.black54,

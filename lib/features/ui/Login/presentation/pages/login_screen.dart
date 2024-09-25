@@ -9,10 +9,9 @@ class LoginScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final loginViewModel = Provider.of<LoginViewModel>(context);
-    
+
     return Scaffold(
       body: Container(
-        
         child: SafeArea(
           child: Center(
             child: SingleChildScrollView(
@@ -27,7 +26,7 @@ class LoginScreen extends StatelessWidget {
                     SizedBox(height: 50),
                     _buildGoogleSignInButton(context, loginViewModel),
                     SizedBox(height: 20),
-                    _buildSignUpLink(),
+                    _buildSignUpLink(context),
                   ],
                 ),
               ),
@@ -40,35 +39,38 @@ class LoginScreen extends StatelessWidget {
 
   Widget _buildLogo() {
     return Container(
-      width: 120,
-      height: 120,
-      decoration: BoxDecoration(
-        color: Colors.white,
-        shape: BoxShape.circle,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            spreadRadius: 5,
-            blurRadius: 15,
-            offset: Offset(0, 5),
-          ),
-        ],
+  width: 120,
+  height: 120,
+  decoration: BoxDecoration(
+    image: DecorationImage(image: AssetImage('assets/icons/lion.webp')),
+    color: Colors.white,
+    shape: BoxShape.circle,
+    boxShadow: [
+      BoxShadow(
+        color: Colors.black.withOpacity(0.1),
+        spreadRadius: 5,
+        blurRadius: 15,
+        offset: Offset(0, 5),
       ),
-      child: Center(
-        child: Icon(
-          Icons.auto_awesome,
-          size: 60,
-          color: Colors.indigo.shade800,
-        ),
-      ),
-    );
+    ],
+  ),
+  // child: Center(
+  //   child: Image.asset(
+  //     'assets/icons/lion.webp', // Replace with your image path
+  //     width: 100, // Set the width of the image
+  //     height: 60, // Set the height of the image
+  //     fit: BoxFit.cover, // Adjust the image fit as necessary
+  //   ),
+  // ),
+);
+
   }
 
   Widget _buildWelcomeText() {
     return Column(
       children: [
         Text(
-          'Hela GPT',
+          'හෙළ GPT',
           style: GoogleFonts.notoSerifSinhala(
             fontSize: 36,
             fontWeight: FontWeight.bold,
@@ -77,9 +79,17 @@ class LoginScreen extends StatelessWidget {
         ),
         SizedBox(height: 10),
         Text(
-          'ඔබගේ ජ්‍යෝතීශ්‍ය සහය',
+          'ඔබගේ තාක්ශනික සහායක',
           style: GoogleFonts.notoSerifSinhala(
             fontSize: 18,
+            color: const Color.fromARGB(255, 90, 90, 90),
+          ),
+        ),
+
+        Text(
+          'හෙළ GPT භාවිතාකිරීම සඳහා පූර්නය වන්න',
+          style: GoogleFonts.notoSerifSinhala(
+            fontSize: 12,
             color: const Color.fromARGB(255, 90, 90, 90),
           ),
         ),
@@ -89,11 +99,16 @@ class LoginScreen extends StatelessWidget {
 
   Widget _buildGoogleSignInButton(BuildContext context, LoginViewModel loginViewModel) {
     return ElevatedButton.icon(
-      // icon: Image.asset('assets/images/google_logo.png', height: 24),
-      label: Text(
-        'Sign in with Google',
-        style: TextStyle(fontSize: 16, color: Colors.indigo.shade800),
-      ),
+      label: loginViewModel.isLoading
+          ? SizedBox(
+              width: 16,
+              height: 16,
+              child: CircularProgressIndicator(color: Colors.indigo.shade800, strokeWidth: 2),
+            )
+          : Text(
+              'Google සමගින් පූර්ණය වන්න',
+              style: TextStyle(fontSize: 16, color: Colors.indigo.shade800),
+            ),
       style: ElevatedButton.styleFrom(
         backgroundColor: Colors.white,
         foregroundColor: Colors.indigo.shade800,
@@ -103,18 +118,19 @@ class LoginScreen extends StatelessWidget {
         ),
         elevation: 5,
       ),
-      onPressed: () => _handleSignIn(context, loginViewModel),
+      onPressed: loginViewModel.isLoading ? null : () => _handleSignIn(context, loginViewModel),
     );
   }
 
-  Widget _buildSignUpLink() {
+  Widget _buildSignUpLink(BuildContext context) {
     return TextButton(
       onPressed: () {
         // Navigate to sign-up screen if needed
         // Navigator.pushNamed(context, AppRoutes.signup);
+        showDialog(context: context, builder: (context) => AlertDialog(content: Text('කරුනාකර Google සමඟින් පූර්ණය වන්න'),));
       },
       child: Text(
-        'Don\'t have an account? Sign Up',
+        'ඔයාට ගිනුමක් නැද්ද? Sign Up',
         style: TextStyle(color: const Color.fromARGB(255, 90, 90, 90), fontSize: 16),
       ),
     );
@@ -133,6 +149,7 @@ class LoginScreen extends StatelessWidget {
         }
       }
     } catch (e) {
+      // Show error message if login fails
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Sign in failed. Please try again.')),
       );
