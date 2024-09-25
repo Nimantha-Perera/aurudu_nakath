@@ -1,3 +1,4 @@
+import 'package:aurudu_nakath/features/ui/Login/presentation/pages/login_screen.dart';
 import 'package:aurudu_nakath/features/ui/aurudu_nakath/presentation/pages/main_screen.dart';
 import 'package:aurudu_nakath/features/ui/compass/compass.dart';
 import 'package:aurudu_nakath/features/ui/errors/error_screen.dart';
@@ -29,6 +30,7 @@ class AppRoutes {
   static const String lagna_palapala = '/lagna_palapala';
   static const String litha = '/litha';
   static const String helagptnormless = '/helagptnormless';
+  static const String login = '/login';
 
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
@@ -36,6 +38,9 @@ class AppRoutes {
         return _buildPageWithSlideTransition(HelpScreen(), Offset(1, 0));  // Slide from right
       case litha:
         return _buildPageWithSlideTransition(LithaMainScreen(), Offset(1, 0));  // Slide from right
+
+      case login:
+        return _buildPageWithSlideTransition(LoginScreen(), Offset(1, 0));  // Slide from right  
       case other_tools:
         return _buildPageWithSlideTransition(OtherTools(), Offset(1, 0));  // Slide from right
       case helagptPro:

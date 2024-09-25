@@ -1,15 +1,30 @@
-// lib/domain/usecases/sign_in_with_google.dart
-import 'package:aurudu_nakath/features/ui/Login/domain/entitise/user_entity.dart';
+// lib/services/sign_in_with_google.dart
 import 'package:aurudu_nakath/features/ui/Login/domain/repo/auth_repository_interface.dart';
-
-
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 class SignInWithGoogle {
-  final AuthRepositoryInterface repository;
+  final GoogleSignIn _googleSignIn = GoogleSignIn();
+  final FirebaseAuth _auth = FirebaseAuth.instance;
 
-  SignInWithGoogle(this.repository);
+  SignInWithGoogle(AuthRepositoryInterface read);
 
-  Future<UserEntity?> call() {
-    return repository.signInWithGoogle();
+  Future<User?> signIn() async {
+    final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
+    if (googleUser == null) return null; // User canceled the sign-in
+
+    final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+    final credential = GoogleAuthProvider.credential(
+      accessToken: googleAuth.accessToken,
+      idToken: googleAuth.idToken,
+    );
+
+    UserCredential userCredential = await _auth.signInWithCredential(credential);
+    return userCredential.user;
+  }
+
+  Future<void> signOut() async {
+    await _auth.signOut();
+    await _googleSignIn.signOut();
   }
 }

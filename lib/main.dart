@@ -1,5 +1,10 @@
 import 'dart:convert';
 import 'package:aurudu_nakath/Notifications/notification_service.dart';
+import 'package:aurudu_nakath/features/ui/Login/data/repostorys/auth_repository.dart';
+import 'package:aurudu_nakath/features/ui/Login/domain/repo/auth_repository_interface.dart';
+import 'package:aurudu_nakath/features/ui/Login/domain/usecase/sign_in_with_google.dart';
+import 'package:aurudu_nakath/features/ui/Login/presentation/pages/login_screen.dart';
+import 'package:aurudu_nakath/features/ui/Login/presentation/pages/login_viewmodel.dart';
 import 'package:aurudu_nakath/features/ui/Review/review_provider.dart';
 import 'package:aurudu_nakath/features/ui/compass/compass.dart';
 import 'package:aurudu_nakath/Tools/tools_menu.dart';
@@ -81,6 +86,10 @@ void main() async {
   runApp(
     MultiProvider(
       providers: [
+        Provider<AuthRepositoryInterface>(create: (_) => AuthRepository()),
+        Provider<SignInWithGoogle>(
+            create: (context) => SignInWithGoogle(context.read<AuthRepositoryInterface>())),
+        ChangeNotifierProvider(create: (context) => LoginViewModel(context.read<SignInWithGoogle>())),
         ChangeNotifierProvider<ReviewProvider>(
           create: (_) => ReviewProvider(),
         ),
