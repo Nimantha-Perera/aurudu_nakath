@@ -1,9 +1,14 @@
 import 'package:aurudu_nakath/features/ui/compass/neu_corc;e.dart';
+import 'package:aurudu_nakath/features/ui/theme/change_theme_notifier.dart';
+import 'package:aurudu_nakath/features/ui/theme/dark_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_compass/flutter_compass.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'dart:math' as math;
+
+import 'package:provider/provider.dart';
 
 class Compass extends StatefulWidget {
   const Compass({super.key});
@@ -30,29 +35,31 @@ class _CompassState extends State<Compass> {
     }
   }
 
-  Widget _buildCompass() {
-    return StreamBuilder<CompassEvent>(
-      stream: FlutterCompass.events,
-      builder: (context, snapshot) {
-        if (snapshot.hasError) {
-          return Center(
-              child: Text('Error reading heading: ${snapshot.error}'));
-        }
-
-        if (!snapshot.hasData) {
-          return Center(child: CircularProgressIndicator());
-        }
-
-        double? heading = snapshot.data!.heading;
-
-        if (heading == null) {
-          return Center(child: Text('Compass data not available'));
-        }
-
+Widget _buildCompass() {
+  return StreamBuilder<CompassEvent>(
+    stream: FlutterCompass.events,
+    builder: (context, snapshot) {
+      if (snapshot.hasError) {
         return Center(
+            child: Text('Error reading heading: ${snapshot.error}'));
+      }
+
+      if (!snapshot.hasData) {
+        return Center(child: CircularProgressIndicator());
+      }
+
+      double? heading = snapshot.data!.heading;
+
+      if (heading == null) {
+        return Center(child: Text('Compass data not available'));
+      }
+
+      return Center(
+        child: Tooltip( // Add Tooltip here
+          message: 'මෙය ඔබගේ වර්තමාන දිශාව පෙන්වයි', // Tooltip text in Sinhala
           child: SizedBox(
-            width: 280,  // Adjust width as desired
-            height: 280, // Adjust height as desired
+            width: 280,
+            height: 280,
             child: NeuCircle(
               child: Transform.rotate(
                 angle: (heading * (math.pi / 180) * -1),
@@ -65,10 +72,11 @@ class _CompassState extends State<Compass> {
               ),
             ),
           ),
-        );
-      },
-    );
-  }
+        ),
+      );
+    },
+  );
+}
 
 
   Widget _buildPermissionSheet() {
@@ -94,6 +102,7 @@ class _CompassState extends State<Compass> {
 
   @override
   Widget build(BuildContext context) {
+    final themeNotifier = Provider.of<ThemeNotifier>(context);
     return Scaffold(
       appBar: AppBar(
         title: Text('මාලිමාව',
@@ -111,13 +120,54 @@ class _CompassState extends State<Compass> {
           //     fit: BoxFit.cover,
           //   ),
           // ),
+
+          Opacity(
+            opacity: themeNotifier.getTheme() == darkTheme ? 0.8 : 0.2,
+            child: Container(
+              decoration: BoxDecoration(
+                image: DecorationImage(
+                  image: AssetImage(
+                    themeNotifier.getTheme() == darkTheme
+                        ? 'assets/app_background/backimg.png' // Dark mode image
+                        : 'assets/app_background/backimg.png', // Light mode image
+                  ),
+                  fit: BoxFit.cover, // Adjust how the image fits the background
+                ),
+              ),
+            ),
+          ),
+
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(16.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                Flexible(
+                  child: Text(
+                    'නිවැරදි දිශාව ලබාගැනීම සඳහා ඔබගේ විද්‍යුත් උපකරන වලින් ඈත්ව ඇති ස්තානයක ඔබගේ දුරකතනය ස්තානගත කරන්න.',
+                    textAlign: TextAlign.center,
+                    style: GoogleFonts.notoSerifSinhala(
+                      fontSize: 14,
+                      color: const Color.fromARGB(179, 119, 119, 119),
+                    ),
+                  ),
+                ),
+                // SizedBox(width: 12),
+                // Icon(
+                //   FontAwesomeIcons.arrowUp,
+                //   color: Colors.white70,
+                //   size: 20,
+                // ),
+              ],
+            ),
+          ),
           Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Expanded(
                 child: _buildCompass(),
               ),
-              
             ],
           ),
         ],

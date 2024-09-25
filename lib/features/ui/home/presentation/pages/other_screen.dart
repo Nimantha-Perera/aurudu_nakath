@@ -18,8 +18,9 @@ class _OtherToolsState extends State<OtherTools> {
         backgroundColor: AppBarTheme.of(context).backgroundColor,
         elevation: 0,
         title: Text(
-          'ජ්‍යෝතීශ්‍ය මෙනුව',  
-          style: GoogleFonts.notoSerifSinhala(fontSize: 14.0, color: Colors.white),
+          'ජ්‍යෝතීශ්‍ය මෙනුව',
+          style:
+              GoogleFonts.notoSerifSinhala(fontSize: 14.0, color: Colors.white),
         ),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.white),
@@ -30,6 +31,11 @@ class _OtherToolsState extends State<OtherTools> {
         centerTitle: true,
       ),
       body: Container(
+        decoration: const BoxDecoration(
+            image: DecorationImage(
+          image: AssetImage('assets/app_background/background.png'),
+          fit: BoxFit.cover,
+        )),
         child: Center(
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -79,7 +85,7 @@ class _OtherToolsState extends State<OtherTools> {
     );
   }
 
-   Widget _buildCustomCard({
+  Widget _buildCustomCard({
     required String text,
     required Color color,
     IconData? icon, // Make the icon nullable
@@ -89,7 +95,8 @@ class _OtherToolsState extends State<OtherTools> {
     return GestureDetector(
       onTap: () => Navigator.pushNamed(context, routeName),
       child: InkWell(
-        borderRadius: BorderRadius.circular(16.0), // Add ripple effect with rounded corners
+        borderRadius: BorderRadius.circular(
+            16.0), // Add ripple effect with rounded corners
         splashColor: Colors.orange.withOpacity(0.3), // Define the ripple color
         highlightColor: Colors.transparent, // Remove default highlight
         onTap: () => Navigator.pushNamed(context, routeName),
@@ -117,7 +124,6 @@ class _OtherToolsState extends State<OtherTools> {
                 Text(
                   text,
                   textAlign: TextAlign.center,
-                  
                 ),
               ],
             ),
@@ -126,6 +132,4 @@ class _OtherToolsState extends State<OtherTools> {
       ),
     );
   }
-
-
 }

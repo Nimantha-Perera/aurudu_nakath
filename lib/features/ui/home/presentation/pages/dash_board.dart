@@ -4,6 +4,7 @@ import 'package:aurudu_nakath/features/ui/home/presentation/pages/jyothishya_sew
 import 'package:aurudu_nakath/features/ui/home/presentation/pages/maintance_screen.dart';
 import 'package:aurudu_nakath/features/ui/home/presentation/pages/tools_view.dart';
 import 'package:aurudu_nakath/features/ui/theme/change_theme_notifier.dart';
+import 'package:aurudu_nakath/features/ui/theme/dark_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:aurudu_nakath/features/ui/home/data/modals/modal.dart';
 import 'package:aurudu_nakath/features/ui/home/data/repostory/notice_repository.dart';
@@ -186,32 +187,34 @@ class _DashBoardState extends State<DashBoard> {
 
   @override
   Widget build(BuildContext context) {
-     final themeNotifier = Provider.of<ThemeNotifier>(context);
+    final themeNotifier = Provider.of<ThemeNotifier>(context);
+
+  
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.background,
       body: Stack(
         children: [
           // Background Image
           Opacity(
-            opacity: 0.1,
+            opacity: themeNotifier.getTheme() == darkTheme ? 0.5 : 0.2,
             child: Container(
-             
               decoration: BoxDecoration(
                 image: DecorationImage(
                   image: AssetImage(
-                    themeNotifier.getThemeMode() == ThemeMode.dark
-                        ? 'assets/app_background/dark_background.png' // Dark mode image
-                        : 'assets/app_background/background.png', // Light mode image
+                    themeNotifier.getTheme() == darkTheme
+                        ? 'assets/app_background/backimg.png' // Dark mode image
+                        : 'assets/app_background/backimg.png', // Light mode image
                   ),
                   fit: BoxFit.cover, // Adjust how the image fits the background
                 ),
               ),
             ),
           ),
+
           SafeArea(
-            
             child: Padding(
-              padding: const EdgeInsets.only(left: 30, right: 30, top: 50,bottom: 20),
+              padding: const EdgeInsets.only(
+                  left: 30, right: 30, top: 50, bottom: 20),
               child: SingleChildScrollView(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,

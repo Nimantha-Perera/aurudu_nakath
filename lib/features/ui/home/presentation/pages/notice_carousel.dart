@@ -263,7 +263,7 @@ Widget _buildCarousel(List<Notice> notices) {
             Container(
               padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
               decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.2),
+                color: Color.fromARGB(255, 110, 110, 110).withOpacity(0.2),
                 borderRadius: BorderRadius.circular(20),
               ),
               child: Text(
