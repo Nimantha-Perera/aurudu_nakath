@@ -75,7 +75,7 @@ class HelagptDrawer extends StatelessWidget {
                 children: [
                   Text(
                     displayName ?? 'ඔබ අන්‍යයකුනේ',
-                    style: GoogleFonts.notoSerifSinhala(
+                    style: GoogleFonts.roboto(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
                       color: Colors.black87,
@@ -176,7 +176,7 @@ class HelagptDrawer extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 16),
       child: Text(
-        '© 2024 LankaTeckInnovations. All rights reserved.',
+        '© 2024 LankaTechInnovations. All rights reserved.',
         textAlign: TextAlign.center,
         style: GoogleFonts.notoSerifSinhala(
           fontSize: 12,

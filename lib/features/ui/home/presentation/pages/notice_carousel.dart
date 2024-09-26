@@ -59,11 +59,11 @@ String _getCountdownText(DateTime noticeTime) {
 
   // Always show each part with two digits, even if zero
  
-  parts.add("මාස ${months.toString().padLeft(2, '0')}");
-  parts.add("දින ${(days % 30).toString().padLeft(2, '0')}");
-  parts.add("පැය ${hours.toString().padLeft(2, '0')}");
-  parts.add("මිනි ${minutes.toString().padLeft(2, '0')}");
-  parts.add("තත් ${seconds.toString().padLeft(2, '0')}");
+  parts.add("මා ${months.toString().padLeft(2, '0')}");
+  parts.add("දි ${(days % 30).toString().padLeft(2, '0')}");
+  parts.add("පැ ${hours.toString().padLeft(2, '0')}");
+  parts.add("මි ${minutes.toString().padLeft(2, '0')}");
+  parts.add("ත ${seconds.toString().padLeft(2, '0')}");
 
   return parts.join(' ').trim();
 }

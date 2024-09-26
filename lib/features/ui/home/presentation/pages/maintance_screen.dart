@@ -35,7 +35,7 @@ class MaintenanceScreenDialog extends StatelessWidget {
               ),
               SizedBox(height: 40),
               Text(
-                "නඩත්තු ක්‍රියාමාර්ගය\nසිදු වෙමින් පවතී",
+                "යෙදුම යාවත්කාලින\nවෙමින් පවතී",
                 style: GoogleFonts.notoSansSinhala(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
@@ -98,7 +98,7 @@ class MaintenanceScreenDialog extends StatelessWidget {
               ),
               SizedBox(height: 20),
               Text(
-                "අපගේ දැනුම්දීම සදහා ස්තූතියි!", // Thank you message
+                "ක්‍රියාවලිය අවසන් වන තුරු මදක් රැදී සිටින්න.", // Thank you message
                 style: GoogleFonts.notoSansSinhala(
                   fontSize: 18,
                   fontWeight: FontWeight.w500,

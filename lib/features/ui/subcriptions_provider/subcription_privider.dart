@@ -1,7 +1,10 @@
 import 'dart:async';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import 'usecase/saveuser_details_firstore.dart';
 
 class SubscriptionProvider extends ChangeNotifier {
   final InAppPurchase _iap = InAppPurchase.instance;
@@ -12,11 +15,13 @@ class SubscriptionProvider extends ChangeNotifier {
   ProductDetails? _product;
   bool _purchaseSuccess = false;
   bool _restoredPurchase = false;
+  Timestamp _subcribe_time = Timestamp.fromDate(DateTime.now());
 
   bool get isSubscribed => _isSubscribed;
   ProductDetails? get product => _product;
   bool get purchaseSuccess => _purchaseSuccess;
   bool get restoredPurchase => _restoredPurchase;
+  UserService userService = UserService();
 
   // Callbacks for dialog and navigation
   void Function()? onPurchaseSuccess;
@@ -95,18 +100,20 @@ class SubscriptionProvider extends ChangeNotifier {
     return '${_product!.title}\n${_product!.description}\n$formattedPrice/month';
   }
 
-  void _listenToPurchases(List<PurchaseDetails> purchaseDetailsList) {
+  Future<void> _listenToPurchases(List<PurchaseDetails> purchaseDetailsList) async {
     for (var purchase in purchaseDetailsList) {
       print('Purchase Status: ${purchase.status}'); // Check status
       if (purchase.status == PurchaseStatus.purchased ||
           purchase.status == PurchaseStatus.restored) {
         print('User is subscribed');
+        await userService.saveUserDetails(true, _subcribe_time); // Call with true if the user is subscribed
         _updateSubscriptionStatus(true);
         _restoredPurchase = purchase.status == PurchaseStatus.restored;
         onPurchaseSuccess?.call(); // Call the success callback if set
       } else if (purchase.status == PurchaseStatus.canceled) {
         print('User canceled the subscription');
-        _updateSubscriptionStatus(false);
+       
+        await userService.updateSubscriptionStatus(false);
       } else if (purchase.status == PurchaseStatus.error) {
         print('Error with purchase: ${purchase.error}');
         onPurchaseError?.call(); // Call the error callback if set
@@ -117,6 +124,7 @@ class SubscriptionProvider extends ChangeNotifier {
     if (purchaseDetailsList.isEmpty) {
       print('No purchase details available.');
       _updateSubscriptionStatus(false);
+      await userService.updateSubscriptionStatus(false); // Call with true if the user is subscribed
     }
   }
 
