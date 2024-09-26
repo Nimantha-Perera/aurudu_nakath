@@ -20,7 +20,7 @@ class AllPostsScreen extends StatelessWidget {
       
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('All Posts'),
+          title: const Text('හෙළ ලිපි'),
         ),
         body: Consumer<PostProvider>(
           builder: (context, postProvider, _) {

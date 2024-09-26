@@ -18,6 +18,7 @@ class FirebasePostDataSource implements PostDataSource {
       return snapshot.docs.map((doc) {
         return Post(
           id: doc.id,
+          likeCount: doc['likeCount'] ?? 0,
           title: doc['title'] ?? '',
           description: doc['description'] ?? '',
           imageUrl: doc['imageUrl'] ?? '',
@@ -35,12 +36,14 @@ class FirebasePostDataSource implements PostDataSource {
   @override
   Future<Post?> getPostById(String id) async {
     try {
-      final DocumentSnapshot doc = await firestore.collection('posts').doc(id).get();
+      final DocumentSnapshot doc =
+          await firestore.collection('posts').doc(id).get();
       if (doc.exists) {
         return Post(
           id: doc.id,
           title: doc['title'] ?? '',
           author: doc['auther'] ?? '',
+             likeCount: doc['likeCount'] ?? 0,
           // Convert Timestamp to DateTime
           createdTime: (doc['created_date'] as Timestamp?)?.toDate(),
           description: doc['description'] ?? '',
@@ -53,5 +56,22 @@ class FirebasePostDataSource implements PostDataSource {
     } catch (e) {
       throw Exception('Failed to fetch post by ID: $e');
     }
+  }
+
+  Future<Post> fetchPost(String postId) async {
+    DocumentSnapshot snapshot =
+        await FirebaseFirestore.instance.collection('posts').doc(postId).get();
+
+    // Assuming the document has the required fields
+    return Post(
+      id: snapshot.id,
+      title: snapshot['title'],
+      description: snapshot['description'],
+      imageUrl: snapshot['imageUrl'],
+      author: snapshot['author'],
+      auther_aveter: snapshot['auther_aveter'],
+      createdTime: (snapshot['createdTime'] as Timestamp).toDate(),
+      likeCount: snapshot['likeCount'] ?? 0,
+    );
   }
 }
