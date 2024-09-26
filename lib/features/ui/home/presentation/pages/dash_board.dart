@@ -1,7 +1,6 @@
 import 'package:aurudu_nakath/features/ui/Review/review_provider.dart';
-import 'package:aurudu_nakath/features/ui/home/domain/usecases/maintains_firebase.dart';
 import 'package:aurudu_nakath/features/ui/home/presentation/pages/jyothishya_sewa.dart';
-import 'package:aurudu_nakath/features/ui/home/presentation/pages/maintance_screen.dart';
+import 'package:aurudu_nakath/features/ui/maintance/maintance_screen.dart';
 import 'package:aurudu_nakath/features/ui/home/presentation/pages/tools_view.dart';
 import 'package:aurudu_nakath/features/ui/theme/change_theme_notifier.dart';
 import 'package:aurudu_nakath/features/ui/theme/dark_theme.dart';
@@ -32,7 +31,7 @@ class _DashBoardState extends State<DashBoard> {
   late final NoticeRepository _noticeRepository;
   late Stream<List<Notice>> _noticesStream;
   late SubscriptionProvider _subscriptionProvider;
-  late UseCaseMaintainsFirebase _maintenanceUseCase;
+ 
 
   // GlobalKeys for tutorial targets
   final GlobalKey _notificationIconKey = GlobalKey();
@@ -51,8 +50,8 @@ class _DashBoardState extends State<DashBoard> {
     super.initState();
     // Initialize Firestore instance
     final firestore = FirebaseFirestore.instance;
-    _maintenanceUseCase = UseCaseMaintainsFirebase(firestore: firestore);
-    _checkForMaintenanceMode(); // Check for maintenance on app start
+
+
     _checkNotificationPermission();
 
     // Initialize other repositories and providers
@@ -65,24 +64,7 @@ class _DashBoardState extends State<DashBoard> {
   }
 
   // Check if the app is in maintenance mode
-  Future<void> _checkForMaintenanceMode() async {
-    Map<String, dynamic> isMaintenanceActive =
-        await _maintenanceUseCase.getMaintenanceStatus();
-    if (isMaintenanceActive['is_active'] == true) {
-      // Show the full-screen maintenance dialog
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(
-          builder: (context) => MaintenanceScreenDialog(
-            endTime: isMaintenanceActive[
-                'end_time'], // You can replace this with the actual end time
-          ),
-        ),
-      );
-    } else {
-      // Show the full-screen maintenance dialog
-      print("App is not in maintenance mode");
-    }
-  }
+
 
   // Load tutorial state from SharedPreferences
   Future<void> _loadTutorialState() async {

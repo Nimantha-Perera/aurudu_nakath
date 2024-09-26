@@ -13,17 +13,7 @@ class MaintenanceScreenDialog extends StatelessWidget {
       body: Container(
         width: double.infinity,
         height: double.infinity,
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [
-              Color(0xFFFFE082), // Light yellow
-              Color(0xFFFFC107), // Yellow
-              Color(0xFFFFA000), // Dark yellow
-            ],
-          ),
-        ),
+       
         child: SafeArea(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -46,25 +36,15 @@ class MaintenanceScreenDialog extends StatelessWidget {
               SizedBox(height: 20),
               Container(
                 padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-                decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.9), // Light background for contrast
-                  borderRadius: BorderRadius.circular(20),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black26,
-                      blurRadius: 12,
-                      offset: Offset(0, 6),
-                    ),
-                  ],
-                ),
+                
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(
-                      "අවසන් කාලය:",
+                      "අවසන් කිරීමට නිශ්චිත කාලය:",
                       style: GoogleFonts.notoSansSinhala(
-                        fontSize: 22,
-                        fontWeight: FontWeight.bold,
+                        fontSize: 17,
+                        
                         color: Colors.brown,
                       ),
                     ),
@@ -97,12 +77,15 @@ class MaintenanceScreenDialog extends StatelessWidget {
                 ),
               ),
               SizedBox(height: 20),
-              Text(
-                "ක්‍රියාවලිය අවසන් වන තුරු මදක් රැදී සිටින්න.", // Thank you message
-                style: GoogleFonts.notoSansSinhala(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w500,
-                  color: const Color.fromARGB(255, 150, 150, 150),
+              Center(
+                child: Text(
+                  "ක්‍රියාවලිය අවසන් වන තුරු මදක් රැදී සිටින්න.",textAlign: TextAlign.center, // Thank you message
+                  style: GoogleFonts.notoSansSinhala(
+                    fontSize: 12,
+                    
+                    fontWeight: FontWeight.w500,
+                    color: const Color.fromARGB(255, 150, 150, 150),
+                  ),
                 ),
               ),
             ],

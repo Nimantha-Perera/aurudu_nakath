@@ -1,3 +1,5 @@
+import 'package:aurudu_nakath/features/ui/maintance/usecase.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -8,6 +10,26 @@ class LoadingScreen extends StatefulWidget {
 
 class _LoadingScreenState extends State<LoadingScreen>
     with SingleTickerProviderStateMixin {
+
+
+      late UseCaseMaintainsFirebase maintenanceUseCase;
+
+  @override
+  void initState() {
+    super.initState();
+
+    // Initialize UseCaseMaintainsFirebase with Firestore instance
+    maintenanceUseCase = UseCaseMaintainsFirebase(firestore: FirebaseFirestore.instance);
+
+    // Ensure the widget tree is built before navigating
+ 
+      _checkForMaintenance();
+   
+  }
+
+   void _checkForMaintenance() async {
+    await maintenanceUseCase.checkForMaintenanceMode(context);
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(

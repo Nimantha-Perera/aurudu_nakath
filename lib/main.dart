@@ -18,12 +18,14 @@ import 'package:aurudu_nakath/features/ui/helagpt_pro/domain/usecases/fetch_and%
 import 'package:aurudu_nakath/features/ui/helagpt_pro/domain/usecases/send_img.dart';
 import 'package:aurudu_nakath/features/ui/helagpt_pro/domain/usecases/send_text_message.dart';
 import 'package:aurudu_nakath/features/ui/help/presentation/pages/help_screen.dart';
+
 import 'package:aurudu_nakath/features/ui/home/presentation/pages/dash_board.dart';
 import 'package:aurudu_nakath/features/ui/in_app_update/in_app_update.dart';
 import 'package:aurudu_nakath/features/ui/litha/data/datasouces/firebase_data_source.dart';
 import 'package:aurudu_nakath/features/ui/litha/data/repo/aurudu_nakath_repository_impl.dart';
 import 'package:aurudu_nakath/features/ui/litha/domain/usecase/get_aurudu_nakath_data.dart';
 import 'package:aurudu_nakath/features/ui/litha/presentation/bloc/aurudu_nakath_bloc.dart';
+import 'package:aurudu_nakath/features/ui/maintance/usecase.dart';
 import 'package:aurudu_nakath/features/ui/routes/routes.dart';
 import 'package:aurudu_nakath/features/ui/settings/data/repostories/settings_repository.dart';
 import 'package:aurudu_nakath/features/ui/settings/data/repostories/settings_repository_impl.dart';
@@ -146,14 +148,22 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
+
+
+
   
   Future<Widget>? _appWidget;
   late Future<SharedPreferences> _sharedPreferencesFuture;
   //  ShakeNavigation? _shakeNavigation;
-
+ late UseCaseMaintainsFirebase maintenanceUseCase;
   @override
   void initState() {
     super.initState();
+
+
+    // Check maintenance mode when the widget is first built
+    
+
     //  _shakeNavigation = ShakeNavigation(context);
     Provider.of<SubscriptionProvider>(context, listen: false)
         .loadSubscriptionStatus();
@@ -168,6 +178,8 @@ class _MyAppState extends State<MyApp> {
       });
     });
   }
+  
+  
 
   Future<Widget> _checkConnectivityAndFirstTime() async {
     final connectivityResult = await (Connectivity().checkConnectivity());

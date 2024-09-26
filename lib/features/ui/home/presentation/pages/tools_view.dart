@@ -1,4 +1,5 @@
 import 'package:aurudu_nakath/features/ui/Login/presentation/pages/login_viewmodel.dart';
+import 'package:aurudu_nakath/features/ui/hela_post/presentation/pages/main.dart';
 import 'package:flutter/material.dart';
 import 'package:aurudu_nakath/features/ui/subcriptions_provider/subcription_privider.dart';
 import 'package:aurudu_nakath/features/ui/routes/routes.dart';
@@ -25,7 +26,6 @@ class Tools extends StatelessWidget {
             children: [
               Text(
                 "අමතර මෙවලම්",
-                
               ),
             ],
           ),
@@ -39,12 +39,16 @@ class Tools extends StatelessWidget {
                   Consumer<SubscriptionProvider>(
                     builder: (context, subscriptionProvider, child) {
                       return FutureBuilder<bool>(
-                        future: Provider.of<LoginViewModel>(context, listen: false).checkLoginStatus(),
+                        future:
+                            Provider.of<LoginViewModel>(context, listen: false)
+                                .checkLoginStatus(),
                         builder: (context, snapshot) {
-                          if (snapshot.connectionState == ConnectionState.waiting) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
                             return CircularProgressIndicator(); // Show a loading indicator while checking
                           } else if (snapshot.hasError) {
-                            return Text('Error: ${snapshot.error}'); // Handle errors
+                            return Text(
+                                'Error: ${snapshot.error}'); // Handle errors
                           }
 
                           final isLoggedIn = snapshot.data ?? false;
@@ -55,10 +59,12 @@ class Tools extends StatelessWidget {
                               if (isLoggedIn) {
                                 // User is logged in
                                 if (subscriptionProvider.isSubscribed) {
-                                  Navigator.pushNamed(context, AppRoutes.helagptPro);
+                                  Navigator.pushNamed(
+                                      context, AppRoutes.helagptPro);
                                 } else {
                                   //Please Change this helagptnormless
-                                  Navigator.pushNamed(context, AppRoutes.helagptnormless);
+                                  Navigator.pushNamed(
+                                      context, AppRoutes.helagptnormless);
                                 }
                               } else {
                                 // User is not logged in
@@ -67,7 +73,8 @@ class Tools extends StatelessWidget {
                             },
                             color: Color(0xFFA02334),
                             textColor: Colors.white,
-                            icon: Icon(FontAwesomeIcons.commentDots, color: Colors.white),
+                            icon: Icon(FontAwesomeIcons.commentDots,
+                                color: Colors.white),
                             width: buttonWidth,
                           );
                         },
@@ -83,6 +90,21 @@ class Tools extends StatelessWidget {
                     color: Color(0xFFA02334),
                     textColor: Colors.white,
                     icon: Icon(FontAwesomeIcons.safari, color: Colors.white),
+                    width: buttonWidth,
+                  ),
+                  SizedBox(width: 10),
+                  ButtonsCard(
+                    text: "හෙළ ලිපි",
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => AllPostsScreen()),
+                      );
+                    },
+                    color: Color(0xFFA02334),
+                    textColor: Colors.white,
+                    icon: Icon(FontAwesomeIcons.edit, color: Colors.white),
                     width: buttonWidth,
                   ),
                   SizedBox(width: 10),
