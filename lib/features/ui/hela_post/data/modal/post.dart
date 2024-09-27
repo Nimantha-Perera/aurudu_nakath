@@ -6,7 +6,7 @@ class Post {
   final String author;
   final String auther_aveter;
   final DateTime? createdTime;
-  final int likeCount; // Add this field
+  late final int likeCount; // Add this field
 
   Post({
     required this.id,

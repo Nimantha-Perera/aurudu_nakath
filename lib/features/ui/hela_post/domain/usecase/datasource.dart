@@ -21,7 +21,8 @@ class FirebasePostDataSource implements PostDataSource {
           likeCount: doc['likeCount'] ?? 0,
           title: doc['title'] ?? '',
           description: doc['description'] ?? '',
-          imageUrl: doc['imageUrl'] ?? '',
+          // Set a default value if imageUrl is missing
+          imageUrl: doc['imageUrl'] ?? '', // Default to an empty string
           auther_aveter: doc['auther_aveter'] ?? '',
           author: doc['auther'] ?? '',
           // Convert Timestamp to DateTime
@@ -43,12 +44,13 @@ class FirebasePostDataSource implements PostDataSource {
           id: doc.id,
           title: doc['title'] ?? '',
           author: doc['auther'] ?? '',
-             likeCount: doc['likeCount'] ?? 0,
+          likeCount: doc['likeCount'] ?? 0,
           // Convert Timestamp to DateTime
           createdTime: (doc['created_date'] as Timestamp?)?.toDate(),
           description: doc['description'] ?? '',
           auther_aveter: doc['auther_aveter'] ?? '',
-          imageUrl: doc['imageUrl'] ?? '',
+          // Set a default value if imageUrl is missing
+          imageUrl: doc['imageUrl'] ?? '', // Default to an empty string
         );
       } else {
         return null; // Post not found
@@ -67,10 +69,11 @@ class FirebasePostDataSource implements PostDataSource {
       id: snapshot.id,
       title: snapshot['title'],
       description: snapshot['description'],
-      imageUrl: snapshot['imageUrl'],
+      // Set a default value if imageUrl is missing
+      imageUrl: snapshot['imageUrl'] ?? '', // Default to an empty string
       author: snapshot['author'],
       auther_aveter: snapshot['auther_aveter'],
-      createdTime: (snapshot['createdTime'] as Timestamp).toDate(),
+      createdTime: (snapshot['created_date'] as Timestamp).toDate(),
       likeCount: snapshot['likeCount'] ?? 0,
     );
   }

@@ -1,7 +1,9 @@
 import 'package:aurudu_nakath/features/ui/hela_post/data/repo/post_repository_impl.dart';
+
 import 'package:aurudu_nakath/features/ui/hela_post/domain/prvider/post_provider.dart';
 import 'package:aurudu_nakath/features/ui/hela_post/domain/usecase/datasource.dart';
 import 'package:aurudu_nakath/features/ui/hela_post/domain/usecase/getallpost.dart';
+import 'package:aurudu_nakath/features/ui/hela_post/presentation/pages/new_post_add.dart';
 import 'package:aurudu_nakath/features/ui/hela_post/presentation/pages/post_widget.dart';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -17,10 +19,17 @@ class AllPostsScreen extends StatelessWidget {
       create: (context) => PostProvider(
         GetAllPosts(PostRepositoryImpl(FirebasePostDataSource(FirebaseFirestore.instance))))
           ..fetchAllPosts(),
-      
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('හෙළ ලිපි'),
+          centerTitle: true,
+          title: const Text(
+                'හෙළ ලිපි',
+                style: TextStyle(
+                  fontSize: 15,
+                  
+                  color: Colors.white, // Set the title color to white for contrast
+                ),
+              ),
         ),
         body: Consumer<PostProvider>(
           builder: (context, postProvider, _) {
@@ -45,6 +54,21 @@ class AllPostsScreen extends StatelessWidget {
               },
             );
           },
+        ),
+        floatingActionButton: FloatingActionButton(
+         backgroundColor: Colors.white,
+          shape: CircleBorder(
+            
+          ),
+          onPressed: () {
+            // Navigate to the create post screen
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) =>  CreatePostScreen()), // Replace with your CreatePostScreen widget
+            );
+          },
+          child: const Icon(Icons.edit, color: Colors.black),
+          tooltip: 'Create Post',
         ),
       ),
     );
