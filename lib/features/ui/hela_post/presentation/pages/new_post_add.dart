@@ -54,51 +54,53 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
   }
 
   Future<void> _createPost() async {
-    if (_formKey.currentState!.validate()) {
-      Post newPost = Post(
-        id: _generatePostId(),
-        title: _titleController.text,
-        description: _descriptionController.text,
-        imageUrl: _imageUrlController.text,
-        author: author,
-        auther_aveter: authorAvatar,
-        createdTime: createdTime,
-        likeCount: likeCount,
-        userId: userid,
+  if (_formKey.currentState!.validate()) {
+    Post newPost = Post(
+      id: _generatePostId(),
+      title: _titleController.text,
+      description: _descriptionController.text,
+      imageUrl: _imageUrlController.text,
+      author: author,
+      auther_aveter: authorAvatar,
+      createdTime: createdTime,
+      likeCount: likeCount,
+      userId: userid,
+    );
+
+    try {
+      // Use the post ID as the document ID
+      await firestore.collection('posts').doc(newPost.id).set({
+        'id': newPost.id,
+        'title': newPost.title,
+        'description': newPost.description,
+        'imageUrl': newPost.imageUrl,
+        'auther': newPost.author,
+        'auther_aveter': newPost.auther_aveter,
+        'created_date': newPost.createdTime,
+        'likeCount': newPost.likeCount,
+        'userId': newPost.userId,
+      });
+
+      Navigator.pop(context);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Post created successfully!'),
+          backgroundColor: Colors.green,
+          behavior: SnackBarBehavior.floating,
+        ),
       );
-
-      try {
-        await firestore.collection('posts').add({
-          'id': newPost.id,
-          'title': newPost.title,
-          'description': newPost.description,
-          'imageUrl': newPost.imageUrl,
-          'auther': newPost.author,
-          'auther_aveter': newPost.auther_aveter,
-          'created_date': newPost.createdTime,
-          'likeCount': newPost.likeCount,
-          'userId': newPost.userId,
-        });
-
-        Navigator.pop(context);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Post created successfully!'),
-            backgroundColor: Colors.green,
-            behavior: SnackBarBehavior.floating,
-          ),
-        );
-      } catch (e) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Failed to create post: $e'),
-            backgroundColor: Colors.red,
-            behavior: SnackBarBehavior.floating,
-          ),
-        );
-      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Failed to create post: $e'),
+          backgroundColor: Colors.red,
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
     }
   }
+}
+
 
   @override
   Widget build(BuildContext context) {

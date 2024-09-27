@@ -27,6 +27,7 @@ class FirebasePostDataSource implements PostDataSource {
           author: doc['auther'] ?? '',
           // Convert Timestamp to DateTime
           createdTime: (doc['created_date'] as Timestamp?)?.toDate(),
+          userId: doc['userId'] ?? '',
         );
       }).toList();
     } catch (e) {
@@ -51,6 +52,7 @@ class FirebasePostDataSource implements PostDataSource {
           auther_aveter: doc['auther_aveter'] ?? '',
           // Set a default value if imageUrl is missing
           imageUrl: doc['imageUrl'] ?? '', // Default to an empty string
+          userId: doc['userId'] ?? '',
         );
       } else {
         return null; // Post not found
