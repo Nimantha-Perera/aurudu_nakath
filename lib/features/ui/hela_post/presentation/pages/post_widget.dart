@@ -33,6 +33,7 @@ class _PostWidgetState extends State<PostWidget>
   late AnimationController _animationController;
   late Animation<double> _animation;
   String? currentUserId;
+  bool _isSubscribed = false;
 
   @override
   void initState() {
@@ -56,6 +57,14 @@ class _PostWidgetState extends State<PostWidget>
     setState(() {
       currentUserId =
           prefs.getString('userId'); // Assuming 'userId' is the key used
+    });
+  }
+
+  Future<void> _checkSubscribed() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _isSubscribed = prefs.getBool('isSubscribed') ??
+          false; // Assuming 'userId' is the key used
     });
   }
 
@@ -99,10 +108,23 @@ class _PostWidgetState extends State<PostWidget>
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  widget.post.author,
-                  style: const TextStyle(
-                      fontWeight: FontWeight.bold, fontSize: 16),
+                Row(
+                  children: [
+                    Text(
+                      widget.post.author,
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                      ),
+                    ),
+                    const SizedBox(width: 4),
+                    if (_isSubscribed) // Show the icon only if subscribed
+                      Icon(
+                        Icons.check_circle,
+                        color: Colors.blue[500],
+                        size: 16,
+                      ),
+                  ],
                 ),
                 Text(
                   widget.post.createdTime != null
@@ -206,7 +228,7 @@ class _PostWidgetState extends State<PostWidget>
       onTap: () {
         Navigator.of(context).push(
           MaterialPageRoute(
-            builder: (context) =>PostDetailScreen(post: widget.post),
+            builder: (context) => PostDetailScreen(post: widget.post),
           ),
         );
       },

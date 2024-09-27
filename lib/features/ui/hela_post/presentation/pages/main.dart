@@ -1,3 +1,4 @@
+import 'package:aurudu_nakath/features/ui/hela_post/domain/usecase/app_bar_img.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -20,11 +21,15 @@ class _AllPostsScreenState extends State<AllPostsScreen> {
   String authorAvatar = '';
   String author = 'Anonymous';
   String userid = '';
+  String appBarImageUrl = '';
+  final LoadAppBarImageUseCase _loadAppBarImageUseCase =
+      LoadAppBarImageUseCase();
 
   @override
   void initState() {
     super.initState();
     _getUserInfo();
+    _loadAppBarImage();
   }
 
   Future<void> _getUserInfo() async {
@@ -44,7 +49,8 @@ class _AllPostsScreenState extends State<AllPostsScreen> {
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
       create: (context) => PostProvider(
-        GetAllPosts(PostRepositoryImpl(FirebasePostDataSource(FirebaseFirestore.instance))),
+        GetAllPosts(PostRepositoryImpl(
+            FirebasePostDataSource(FirebaseFirestore.instance))),
       )..fetchAllPosts(),
       child: Scaffold(
         body: RefreshIndicator(
@@ -61,7 +67,14 @@ class _AllPostsScreenState extends State<AllPostsScreen> {
     );
   }
 
-  Widget _buildAppBar() {
+  Future<void> _loadAppBarImage() async {
+    String imageUrl = await _loadAppBarImageUseCase.loadAppBarImage();
+    setState(() {
+      appBarImageUrl = imageUrl;
+    });
+  }
+
+ Widget _buildAppBar() {
     return SliverAppBar(
       expandedHeight: 200.0,
       floating: false,
@@ -86,10 +99,15 @@ class _AllPostsScreenState extends State<AllPostsScreen> {
         background: Stack(
           fit: StackFit.expand,
           children: [
-            Image.asset(
-              'assets/icons/appbar.jpg',
-              fit: BoxFit.cover,
-            ),
+            appBarImageUrl.isNotEmpty
+                ? Image.network(
+                    appBarImageUrl,
+                    fit: BoxFit.cover,
+                  )
+                : Image.asset(
+                    'assets/icons/appbar.jpg',
+                    fit: BoxFit.cover,
+                  ),
             Container(
               decoration: BoxDecoration(
                 gradient: LinearGradient(
@@ -116,7 +134,7 @@ class _AllPostsScreenState extends State<AllPostsScreen> {
             child: CircleAvatar(
               backgroundImage: authorAvatar.isNotEmpty
                   ? NetworkImage(authorAvatar)
-                  : const NetworkImage('https://i.pravatar.cc/150?u=a042581f4e29026704d'),
+                  : const NetworkImage('https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png'),
             ),
           ),
         ),
@@ -163,7 +181,8 @@ class _AllPostsScreenState extends State<AllPostsScreen> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Icon(Icons.notes_outlined, size: 60, color: Colors.grey),
+                  const Icon(Icons.notes_outlined,
+                      size: 60, color: Colors.grey),
                   const SizedBox(height: 16),
                   Text(
                     'No posts available',
@@ -185,7 +204,8 @@ class _AllPostsScreenState extends State<AllPostsScreen> {
             (context, index) {
               final post = postProvider.posts[index];
               return Padding(
-                padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+                padding:
+                    const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
                 child: PostWidget(post: post),
               );
             },
