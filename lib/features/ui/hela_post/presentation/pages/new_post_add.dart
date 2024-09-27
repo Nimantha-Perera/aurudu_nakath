@@ -19,6 +19,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
   String authorAvatar = '';
   DateTime createdTime = DateTime.now();
   int likeCount = 0;
+  String userid = '';
 
   final FirebaseFirestore firestore = FirebaseFirestore.instance;
 
@@ -41,6 +42,8 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
     setState(() {
       authorAvatar = prefs.getString('photoURL') ?? '';
       author = prefs.getString('displayName') ?? 'Anonymous';
+      userid = prefs.getString('userId') ?? '';
+
     });
   }
 
@@ -61,6 +64,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
         auther_aveter: authorAvatar,
         createdTime: createdTime,
         likeCount: likeCount,
+        userId: userid,
       );
 
       try {
@@ -73,6 +77,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
           'auther_aveter': newPost.auther_aveter,
           'created_date': newPost.createdTime,
           'likeCount': newPost.likeCount,
+          'userId': newPost.userId,
         });
 
         Navigator.pop(context);

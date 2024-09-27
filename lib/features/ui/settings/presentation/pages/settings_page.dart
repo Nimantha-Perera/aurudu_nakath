@@ -5,29 +5,24 @@ import 'package:provider/provider.dart';
 import 'package:aurudu_nakath/features/ui/theme/change_theme_notifier.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
-
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SettingsPage extends StatefulWidget {
   @override
   State<SettingsPage> createState() => _SettingsPageState();
 }
 
-
-
-
 class _SettingsPageState extends State<SettingsPage> {
+  String _version = '';
+  String _profileName = '';
+  String _profileImage = '';
+
   @override
-
-    String _version = '';
-
-
-     @override
   void initState() {
     super.initState();
     _getAppVersion();
+    _getProfileInfo(); // Get profile info when the page is initialized
   }
-
-
 
   Future<void> _getAppVersion() async {
     PackageInfo packageInfo = await PackageInfo.fromPlatform();
@@ -35,11 +30,18 @@ class _SettingsPageState extends State<SettingsPage> {
       _version = packageInfo.version; // Get the app version
     });
   }
+
+  Future<void> _getProfileInfo() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _profileName = prefs.getString('displayName') ?? 'Anonymous';
+      _profileImage = prefs.getString('photoURL') ?? 'https://i.pravatar.cc/150?u=a042581f4e29026704d'; // Default image
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     final themeNotifier = Provider.of<ThemeNotifier>(context);
-
-
-
 
     return Scaffold(
       appBar: AppBar(
@@ -58,6 +60,9 @@ class _SettingsPageState extends State<SettingsPage> {
                   _buildSectionTitle('පෙනුම'),
                   _buildThemeSwitcher(context, themeNotifier),
                   Divider(height: 32, thickness: 0),
+                  _buildSectionTitle('පරිශීලක පැතිකඩ'), // User Profile Section
+                  _buildProfileViewSection(context), // Change this method to view-only
+                  Divider(height: 32, thickness: 0),
                   _buildSectionTitle('යෙදුම ගැන'),
                   _buildAppInfoSection(context),
                   Divider(height: 32, thickness: 0),
@@ -73,13 +78,41 @@ class _SettingsPageState extends State<SettingsPage> {
     );
   }
 
-   Future<void> _launchURL(String url) async {
-  if (await canLaunch(url)) {
-    await launch(url);
-  } else {
-    throw 'Could not launch $url';
+  Future<void> _launchURL(String url) async {
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
+    }
   }
-}
+
+  // Profile View Section
+  Widget _buildProfileViewSection(BuildContext context) {
+    return Card(
+      color: Theme.of(context).cardColor,
+      margin: const EdgeInsets.symmetric(vertical: 8.0),
+      elevation: 3,
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          children: [
+            CircleAvatar(
+              backgroundImage: _profileImage.isNotEmpty
+                          ? NetworkImage(_profileImage) // Use the loaded profile image URL
+                          : const NetworkImage('https://i.pravatar.cc/150?u=a042581f4e29026704d'), // Default image
+              radius: 40,
+            ),
+            SizedBox(height: 16),
+            // Displaying the profile name without editing
+            Text(
+              _profileName,
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 
   // Theme Switcher with light, dark, and system options
   Widget _buildThemeSwitcher(BuildContext context, ThemeNotifier themeNotifier) {
@@ -90,7 +123,7 @@ class _SettingsPageState extends State<SettingsPage> {
       child: Column(
         children: [
           RadioListTile<ThemeMode>(
-            title: Text('පද්ධති මුහුණත අනුව (System Defalt)', style: TextStyle(fontSize: 13)),
+            title: Text('පද්ධති මුහුණත අනුව (System Default)', style: TextStyle(fontSize: 13)),
             value: ThemeMode.system,
             groupValue: themeNotifier.getThemeMode(),
             onChanged: (value) {
@@ -173,7 +206,7 @@ class _SettingsPageState extends State<SettingsPage> {
   }
 
   // App Version Section (Centered at Bottom)
- Widget _buildAppVersionSection(BuildContext context) {
+  Widget _buildAppVersionSection(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 16.0),
       child: Column(

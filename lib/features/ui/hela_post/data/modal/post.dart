@@ -7,6 +7,7 @@ class Post {
   final String auther_aveter;
   final DateTime? createdTime;
   late final int likeCount; // Add this field
+  final String? userId;
 
   Post({
     required this.id,
@@ -17,5 +18,6 @@ class Post {
     required this.auther_aveter,
     required this.createdTime,
     this.likeCount = 0, // Initialize likeCount
+    this.userId,
   });
 }

@@ -11,4 +11,6 @@ class GetAllPosts {
   Future<List<Post>> call() async {
     return await repository.getAllPosts();
   }
+
+  fetchAllPosts() {}
 }

@@ -13,6 +13,9 @@ import 'package:aurudu_nakath/features/ui/hela_gpt/domain/usecases/clear_chat.da
 import 'package:aurudu_nakath/features/ui/hela_gpt/domain/usecases/fetch_and%20_manegemessage.dart';
 import 'package:aurudu_nakath/features/ui/hela_gpt/domain/usecases/send_img.dart';
 import 'package:aurudu_nakath/features/ui/hela_gpt/domain/usecases/send_text_message.dart';
+import 'package:aurudu_nakath/features/ui/hela_post/data/repo/post_repository_impl.dart';
+import 'package:aurudu_nakath/features/ui/hela_post/domain/prvider/post_provider.dart';
+import 'package:aurudu_nakath/features/ui/hela_post/domain/usecase/datasource.dart';
 import 'package:aurudu_nakath/features/ui/helagpt_pro/domain/usecases/clear_chat.dart';
 import 'package:aurudu_nakath/features/ui/helagpt_pro/domain/usecases/fetch_and%20_manegemessage.dart';
 import 'package:aurudu_nakath/features/ui/helagpt_pro/domain/usecases/send_img.dart';
@@ -56,6 +59,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:timezone/data/latest.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 
+import 'features/ui/hela_post/domain/usecase/getallpost.dart';
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await initializeDateFormatting('si_LK');
@@ -88,6 +93,12 @@ void main() async {
   runApp(
     MultiProvider(
       providers: [
+        // ChangeNotifierProvider(
+        //   create: (context) => PostProvider(
+        //     GetAllPosts(PostRepositoryImpl(FirebasePostDataSource(FirebaseFirestore.instance)))..fetchAllPosts(),
+        //   ),
+        // ),
+        ChangeNotifierProvider(create: (_) => PostProvider(GetAllPosts(PostRepositoryImpl(FirebasePostDataSource(FirebaseFirestore.instance))))),
         Provider<AuthRepositoryInterface>(create: (_) => AuthRepository()),
         Provider<SignInWithGoogle>(
             create: (context) => SignInWithGoogle(context.read<AuthRepositoryInterface>())),
