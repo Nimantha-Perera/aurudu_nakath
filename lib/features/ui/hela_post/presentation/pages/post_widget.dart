@@ -101,7 +101,7 @@ class _PostWidgetState extends State<PostWidget>
           CircleAvatar(
             backgroundImage:
                 CachedNetworkImageProvider(widget.post.auther_aveter),
-            radius: 24,
+            radius: 18,
           ),
           const SizedBox(width: 12),
           Expanded(
@@ -114,16 +114,16 @@ class _PostWidgetState extends State<PostWidget>
                       widget.post.author,
                       style: const TextStyle(
                         fontWeight: FontWeight.bold,
-                        fontSize: 16,
+                        fontSize: 13,
                       ),
                     ),
-                    const SizedBox(width: 4),
-                    if (_isSubscribed) // Show the icon only if subscribed
-                      Icon(
-                        Icons.check_circle,
-                        color: Colors.blue[500],
-                        size: 16,
-                      ),
+                    // const SizedBox(width: 4),
+                    // if (_isSubscribed) // Show the icon only if subscribed
+                    //   Icon(
+                    //     Icons.check_circle,
+                    //     color: Colors.blue[500],
+                    //     size: 13,
+                    //   ),
                   ],
                 ),
                 Text(
@@ -131,7 +131,7 @@ class _PostWidgetState extends State<PostWidget>
                       ? DateFormat('MMM d, yyyy • HH:mm')
                           .format(widget.post.createdTime!)
                       : 'Date not available',
-                  style: TextStyle(color: Colors.grey[600], fontSize: 12),
+                  style: TextStyle(color: Colors.grey[600], fontSize: 10),
                 ),
               ],
             ),

@@ -53,14 +53,26 @@ class _AllPostsScreenState extends State<AllPostsScreen> {
             FirebasePostDataSource(FirebaseFirestore.instance))),
       )..fetchAllPosts(),
       child: Scaffold(
-        body: RefreshIndicator(
-          onRefresh: _refreshPosts,
-          child: CustomScrollView(
-            slivers: [
-              _buildAppBar(),
-              _buildPostsList(),
-            ],
-          ),
+        body: Stack(
+          children: [
+            // Background Image
+            Positioned.fill(
+              child: Image.asset(
+                'assets/app_background/backimg.png',  // Replace with your image path
+                fit: BoxFit.cover,
+              ),
+            ),
+            // Main Content (ScrollView with AppBar and Posts)
+            RefreshIndicator(
+              onRefresh: _refreshPosts,
+              child: CustomScrollView(
+                slivers: [
+                  _buildAppBar(),
+                  _buildPostsList(),
+                ],
+              ),
+            ),
+          ],
         ),
         floatingActionButton: _buildFloatingActionButton(),
       ),
@@ -74,7 +86,7 @@ class _AllPostsScreenState extends State<AllPostsScreen> {
     });
   }
 
- Widget _buildAppBar() {
+  Widget _buildAppBar() {
     return SliverAppBar(
       expandedHeight: 200.0,
       floating: false,
@@ -231,3 +243,4 @@ class _AllPostsScreenState extends State<AllPostsScreen> {
     );
   }
 }
+
