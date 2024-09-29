@@ -44,6 +44,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:device_preview/device_preview.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -64,7 +65,6 @@ import 'features/ui/hela_post/domain/usecase/getallpost.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await initializeDateFormatting('si_LK');
-  
 
   try {
     await Firebase.initializeApp(
@@ -87,9 +87,6 @@ void main() async {
   final apiUrl =
       "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=$apiKey";
 
-
-      
-
   runApp(
     MultiProvider(
       providers: [
@@ -98,11 +95,16 @@ void main() async {
         //     GetAllPosts(PostRepositoryImpl(FirebasePostDataSource(FirebaseFirestore.instance)))..fetchAllPosts(),
         //   ),
         // ),
-        ChangeNotifierProvider(create: (_) => PostProvider(GetAllPosts(PostRepositoryImpl(FirebasePostDataSource(FirebaseFirestore.instance))))),
+        ChangeNotifierProvider(
+            create: (_) => PostProvider(GetAllPosts(PostRepositoryImpl(
+                FirebasePostDataSource(FirebaseFirestore.instance))))),
         Provider<AuthRepositoryInterface>(create: (_) => AuthRepository()),
         Provider<SignInWithGoogle>(
-            create: (context) => SignInWithGoogle(context.read<AuthRepositoryInterface>())),
-        ChangeNotifierProvider(create: (context) => LoginViewModel(context.read<SignInWithGoogle>())),
+            create: (context) =>
+                SignInWithGoogle(context.read<AuthRepositoryInterface>())),
+        ChangeNotifierProvider(
+            create: (context) =>
+                LoginViewModel(context.read<SignInWithGoogle>())),
         ChangeNotifierProvider<ReviewProvider>(
           create: (_) => ReviewProvider(),
         ),
@@ -159,21 +161,15 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-
-
-
-  
   Future<Widget>? _appWidget;
   late Future<SharedPreferences> _sharedPreferencesFuture;
   //  ShakeNavigation? _shakeNavigation;
- late UseCaseMaintainsFirebase maintenanceUseCase;
+  late UseCaseMaintainsFirebase maintenanceUseCase;
   @override
   void initState() {
     super.initState();
 
-
     // Check maintenance mode when the widget is first built
-    
 
     //  _shakeNavigation = ShakeNavigation(context);
     Provider.of<SubscriptionProvider>(context, listen: false)
@@ -189,8 +185,6 @@ class _MyAppState extends State<MyApp> {
       });
     });
   }
-  
-  
 
   Future<Widget> _checkConnectivityAndFirstTime() async {
     final connectivityResult = await (Connectivity().checkConnectivity());
@@ -211,6 +205,10 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
+    FirebaseAnalytics analytics =
+        FirebaseAnalytics.instance; // Use named constructor
+    FirebaseAnalyticsObserver observer =
+        FirebaseAnalyticsObserver(analytics: analytics);
     return Consumer<ThemeNotifier>(
       builder: (context, themeNotifier, child) {
         return FutureBuilder<Widget>(
@@ -223,6 +221,7 @@ class _MyAppState extends State<MyApp> {
                 darkTheme: darkTheme,
                 themeMode: themeNotifier.getThemeMode(), // Optimized theme mode
                 initialRoute: AppRoutes.home,
+                navigatorObservers: [observer],
                 onGenerateRoute: AppRoutes.generateRoute,
                 home: snapshot.data ??
                     DashBoard(), // Default to Dashboard if no data

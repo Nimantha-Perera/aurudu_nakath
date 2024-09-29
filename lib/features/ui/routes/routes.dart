@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:aurudu_nakath/features/ui/Login/presentation/pages/login_screen.dart';
 import 'package:aurudu_nakath/features/ui/aurudu_nakath/presentation/pages/main_screen.dart';
 import 'package:aurudu_nakath/features/ui/compass/compass.dart';
@@ -12,10 +13,11 @@ import 'package:aurudu_nakath/features/ui/lagna_palapala/presentation/pages/lagn
 import 'package:aurudu_nakath/features/ui/litha/presentation/pages/litha_main.dart';
 import 'package:aurudu_nakath/features/ui/rahu_kalaya/presentation/pages/raahu_kaalaya_page.dart';
 import 'package:aurudu_nakath/features/ui/settings/presentation/pages/settings_page.dart';
-import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 
 class AppRoutes {
+  static FirebaseAnalytics analytics = FirebaseAnalytics.instance; // Use named constructor
+
   static const String home = '/';
   static const String help = '/help';
   static const String onboarding = '/onboarding';
@@ -33,14 +35,19 @@ class AppRoutes {
   static const String login = '/login';
 
   static Route<dynamic> generateRoute(RouteSettings settings) {
+    // Log Firebase Analytics event for screen view
+    analytics.logEvent(
+      name: 'screen_view',
+      parameters: {'screen_name': settings.name.toString()},
+    );
+
     switch (settings.name) {
       case help:
         return _buildPageWithSlideTransition(HelpScreen(), Offset(1, 0));  // Slide from right
       case litha:
         return _buildPageWithSlideTransition(LithaMainScreen(), Offset(1, 0));  // Slide from right
-
       case login:
-        return _buildPageWithSlideTransition(LoginScreen(), Offset(1, 0));  // Slide from right  
+        return _buildPageWithSlideTransition(LoginScreen(), Offset(1, 0));  // Slide from right
       case other_tools:
         return _buildPageWithSlideTransition(OtherTools(), Offset(1, 0));  // Slide from right
       case helagptPro:
@@ -62,7 +69,7 @@ class AppRoutes {
       case dashboard:
         return _buildPageWithSlideTransition(DashBoard(), Offset(1, 0));  // Slide from right
       default:
-        return _buildPageWithSlideTransition(ErrorScreen(), Offset(1, 0));  // Slide from right (fallback)
+        return _buildPageWithSlideTransition(ErrorScreen(), Offset(1, 0));  // Fallback in case of undefined route
     }
   }
 
