@@ -47,6 +47,9 @@ class _AllPostsScreenState extends State<AllPostsScreen> {
 
   @override
   Widget build(BuildContext context) {
+
+
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
     return ChangeNotifierProvider(
       create: (context) => PostProvider(
         GetAllPosts(PostRepositoryImpl(
@@ -74,7 +77,7 @@ class _AllPostsScreenState extends State<AllPostsScreen> {
             ),
           ],
         ),
-        floatingActionButton: _buildFloatingActionButton(),
+        floatingActionButton: _buildFloatingActionButton(isDarkMode),
       ),
     );
   }
@@ -228,19 +231,23 @@ class _AllPostsScreenState extends State<AllPostsScreen> {
     );
   }
 
-  Widget _buildFloatingActionButton() {
-    return FloatingActionButton.extended(
-      onPressed: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => CreatePostScreen()),
-        );
-      },
-      icon: const Icon(Icons.edit, color: Colors.white),
-      label: const Text('Create Post', style: TextStyle(color: Colors.white)),
-      backgroundColor: Theme.of(context).primaryColor,
-      elevation: 4,
-    );
-  }
+  Widget _buildFloatingActionButton(bool isDarkMode) {
+  return FloatingActionButton(
+    shape: CircleBorder(),
+    onPressed: () {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => CreatePostScreen()),
+      );
+    },
+    child: Icon(
+      Icons.edit,
+      color: isDarkMode ? const Color.fromARGB(255, 0, 0, 0) : Colors.white,
+    ),
+    backgroundColor: Theme.of(context).primaryColor,
+    elevation: 4,
+  );
+}
+
 }
 

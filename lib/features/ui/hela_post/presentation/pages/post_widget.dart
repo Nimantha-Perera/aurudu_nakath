@@ -40,7 +40,7 @@ class _PostWidgetState extends State<PostWidget>
     super.initState();
     _fetchCommentCount();
     likeCount = widget.post.likeCount;
-    _getCurrentUserId(); // Get the current user ID from SharedPreferences
+    _getCurrentUserId();
 
     _animationController = AnimationController(
       duration: const Duration(milliseconds: 300),
@@ -55,16 +55,14 @@ class _PostWidgetState extends State<PostWidget>
   Future<void> _getCurrentUserId() async {
     final prefs = await SharedPreferences.getInstance();
     setState(() {
-      currentUserId =
-          prefs.getString('userId'); // Assuming 'userId' is the key used
+      currentUserId = prefs.getString('userId');
     });
   }
 
   Future<void> _checkSubscribed() async {
     final prefs = await SharedPreferences.getInstance();
     setState(() {
-      _isSubscribed = prefs.getBool('isSubscribed') ??
-          false; // Assuming 'userId' is the key used
+      _isSubscribed = prefs.getBool('isSubscribed') ?? false;
     });
   }
 
@@ -76,24 +74,30 @@ class _PostWidgetState extends State<PostWidget>
 
   @override
   Widget build(BuildContext context) {
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    final backgroundColor = isDarkMode ? Colors.grey[900] : Colors.white;
+    final textColor = isDarkMode ? Colors.white : Colors.black;
+    final subtleColor = isDarkMode ? Colors.grey[700] : Colors.grey[300];
+
     return Card(
       margin: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
       elevation: 4,
+      color: backgroundColor,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _buildHeader(),
+          _buildHeader(isDarkMode, textColor),
           _buildImage(),
-          _buildContent(),
-          _buildFooter(),
+          _buildContent(isDarkMode, textColor),
+          _buildFooter(isDarkMode, subtleColor!),
           if (showComments) CommentSection(postId: widget.post.id),
         ],
       ),
     );
   }
 
-  Widget _buildHeader() {
+  Widget _buildHeader(bool isDarkMode, Color textColor) {
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Row(
@@ -108,108 +112,47 @@ class _PostWidgetState extends State<PostWidget>
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Row(
-                  children: [
-                    Text(
-                      widget.post.author,
-                      style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 13,
-                      ),
-                    ),
-                    // const SizedBox(width: 4),
-                    // if (_isSubscribed) // Show the icon only if subscribed
-                    //   Icon(
-                    //     Icons.check_circle,
-                    //     color: Colors.blue[500],
-                    //     size: 13,
-                    //   ),
-                  ],
+                Text(
+                  widget.post.author,
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 13,
+                    color: textColor,
+                  ),
                 ),
                 Text(
                   widget.post.createdTime != null
                       ? DateFormat('MMM d, yyyy • HH:mm')
                           .format(widget.post.createdTime!)
                       : 'Date not available',
-                  style: TextStyle(color: Colors.grey[600], fontSize: 10),
+                  style: TextStyle(
+                    color: isDarkMode ? Colors.grey[400] : Colors.grey[600],
+                    fontSize: 10,
+                  ),
                 ),
               ],
             ),
           ),
           if (currentUserId == widget.post.userId)
-            _buildDeleteButton(), // Show delete button if the user is the author
-          _buildReportButton(),
+            _buildDeleteButton(isDarkMode),
+          _buildReportButton(isDarkMode),
         ],
       ),
     );
   }
 
-  Widget _buildDeleteButton() {
+  Widget _buildDeleteButton(bool isDarkMode) {
     return IconButton(
-      icon: const Icon(Icons.delete, color: Colors.red),
+      icon: Icon(Icons.delete, color: isDarkMode ? Colors.red[300] : Colors.red),
       onPressed: _handleDelete,
     );
   }
 
-  Future<void> _handleDelete() async {
-    // Implement delete functionality here, such as showing a confirmation dialog
-    // and deleting the post from Firestore
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Delete Post'),
-          content: const Text('Are you sure you want to delete this post?'),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop(); // Close the dialog
-              },
-              child: const Text('Cancel'),
-            ),
-            TextButton(
-              onPressed: () async {
-                final deletePostUseCase = DeletePostUseCase();
-
-                try {
-                  // Call the deletePost method first
-                  await deletePostUseCase.deletePost(widget.post.id);
-
-                  // Show a success message after the post is deleted
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text('Post deleted successfully!'),
-                      backgroundColor: Colors.green,
-                      behavior: SnackBarBehavior.floating,
-                    ),
-                  );
-
-                  // Close the dialog after the operation is complete
-                  Navigator.of(context).pop();
-                } catch (e) {
-                  // Handle any errors
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text('Error deleting post: $e'),
-                      backgroundColor: Colors.red,
-                      behavior: SnackBarBehavior.floating,
-                    ),
-                  );
-                }
-              },
-              child: const Text('Delete'),
-            )
-          ],
-        );
-      },
-    );
-  }
-
-  Widget _buildReportButton() {
+  Widget _buildReportButton(bool isDarkMode) {
     return PopupMenuButton<String>(
-      icon: Icon(Icons.flag_outlined, color: Colors.grey[700]),
+      icon: Icon(Icons.flag_outlined,
+          color: isDarkMode ? Colors.grey[400] : Colors.grey[700]),
       onSelected: (String result) {
-        // Handle report action
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Post reported')),
         );
@@ -255,7 +198,7 @@ class _PostWidgetState extends State<PostWidget>
     );
   }
 
-  Widget _buildContent() {
+  Widget _buildContent(bool isDarkMode, Color textColor) {
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Column(
@@ -263,7 +206,11 @@ class _PostWidgetState extends State<PostWidget>
         children: [
           Text(
             widget.post.title,
-            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 18,
+              color: textColor,
+            ),
           ),
           const SizedBox(height: 8),
           MarkdownBody(
@@ -271,7 +218,10 @@ class _PostWidgetState extends State<PostWidget>
                 ? widget.post.description
                 : _getTruncatedDescription(),
             styleSheet: MarkdownStyleSheet(
-              p: TextStyle(color: Colors.grey[800], fontSize: 14),
+              p: TextStyle(
+                color: isDarkMode ? Colors.grey[300] : Colors.grey[800],
+                fontSize: 14,
+              ),
             ),
           ),
           const SizedBox(height: 8),
@@ -290,8 +240,9 @@ class _PostWidgetState extends State<PostWidget>
                 Text(
                   isDescriptionExpanded ? 'Show Less' : 'Show More',
                   style: TextStyle(
-                      color: Theme.of(context).primaryColor,
-                      fontWeight: FontWeight.bold),
+                    color: Theme.of(context).primaryColor,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
                 RotationTransition(
                   turns: _animation,
@@ -306,18 +257,11 @@ class _PostWidgetState extends State<PostWidget>
     );
   }
 
-  String _formatCount(int count) {
-    if (count >= 1000) {
-      return '${(count / 1000).toStringAsFixed(1)}k';
-    }
-    return count.toString();
-  }
-
-  Widget _buildFooter() {
+  Widget _buildFooter(bool isDarkMode, Color subtleColor) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
       decoration: BoxDecoration(
-        color: Colors.grey[100],
+        color: subtleColor,
         borderRadius: const BorderRadius.only(
           bottomLeft: Radius.circular(20),
           bottomRight: Radius.circular(20),
@@ -330,12 +274,15 @@ class _PostWidgetState extends State<PostWidget>
             icon: isLiked ? Icons.favorite : Icons.favorite_border,
             label: _formatCount(likeCount),
             onPressed: _handleLike,
-            color: isLiked ? Colors.red : null,
+            color: isLiked
+                ? (isDarkMode ? Colors.red[300] : Colors.red)
+                : (isDarkMode ? Colors.white : Colors.black),
           ),
           _buildInteractionButton(
             icon: Icons.comment_outlined,
             label: '$commentCount',
             onPressed: _handleComment,
+            color: isDarkMode ? Colors.white : Colors.black,
           ),
         ],
       ),
@@ -395,5 +342,57 @@ class _PostWidgetState extends State<PostWidget>
     commentCount =
         await _fetchCommentCountUseCase.fetchCommentCount(widget.post.id);
     setState(() {});
+  }
+
+  String _formatCount(int count) {
+    if (count >= 1000) {
+      return '${(count / 1000).toStringAsFixed(1)}k';
+    }
+    return count.toString();
+  }
+
+  Future<void> _handleDelete() async {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Delete Post'),
+          content: const Text('Are you sure you want to delete this post?'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () async {
+                final deletePostUseCase = DeletePostUseCase();
+                try {
+                  await deletePostUseCase.deletePost(widget.post.id);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('Post deleted successfully!'),
+                      backgroundColor: Colors.green,
+                      behavior: SnackBarBehavior.floating,
+                    ),
+                  );
+                  Navigator.of(context).pop();
+                } catch (e) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('Error deleting post: $e'),
+                      backgroundColor: Colors.red,
+                      behavior: SnackBarBehavior.floating,
+                    ),
+                  );
+                }
+              },
+              child: const Text('Delete'),
+            )
+          ],
+        );
+      },
+    );
   }
 }

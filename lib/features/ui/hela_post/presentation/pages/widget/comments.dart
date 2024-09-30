@@ -30,46 +30,48 @@ class _CommentSectionState extends State<CommentSection> {
 
   @override
   Widget build(BuildContext context) {
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Comments', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+          Text('අදහස්', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
           const SizedBox(height: 8),
           isLoading
               ? Center(child: CircularProgressIndicator())
               : comments.isEmpty
-                  ? _buildEmptyState()
+                  ? _buildEmptyState(isDarkMode)
                   : ListView.builder(
                       shrinkWrap: true,
                       physics: NeverScrollableScrollPhysics(),
                       itemCount: comments.length,
                       itemBuilder: (context, index) {
-                        return _buildCommentItem(comments[index]);
+                        return _buildCommentItem(comments[index], isDarkMode);
                       },
                     ),
           const SizedBox(height: 8),
-          _buildCommentInput(),
+          _buildCommentInput(isDarkMode),
         ],
       ),
     );
   }
 
-  Widget _buildEmptyState() {
+  Widget _buildEmptyState(bool isDarkMode) {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.comment_outlined, color: Colors.grey, size: 50),
+          Icon(Icons.comment_outlined, color: isDarkMode ? Colors.grey[400] : Colors.grey[600], size: 50),
           const SizedBox(height: 8),
-          Text('No comments yet', style: TextStyle(color: Colors.grey[600])),
+          Text('අදහස් නොමැත', style: TextStyle(color: isDarkMode ? Colors.grey[400] : Colors.grey[600])),
         ],
       ),
     );
   }
 
-  Widget _buildCommentItem(Map<String, dynamic> commentData) {
+  Widget _buildCommentItem(Map<String, dynamic> commentData, bool isDarkMode) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: GestureDetector(
@@ -78,8 +80,8 @@ class _CommentSectionState extends State<CommentSection> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             CircleAvatar(
-              backgroundColor: Colors.grey[300],
-              child: Icon(Icons.person, color: Colors.grey[600]),
+              backgroundColor: isDarkMode ? Colors.grey[700] : Colors.grey[300],
+              child: Icon(Icons.person, color: isDarkMode ? Colors.grey[300] : Colors.grey[600]),
             ),
             const SizedBox(width: 8),
             Expanded(
@@ -88,12 +90,12 @@ class _CommentSectionState extends State<CommentSection> {
                 children: [
                   Text(
                     commentData['text'],
-                    style: TextStyle(color: Colors.grey[800]),
+                    style: TextStyle(color: isDarkMode ? Colors.grey[300] : Colors.grey[800]),
                   ),
                   const SizedBox(height: 4),
                   Text(
                     _formatTimestamp(commentData['timestamp']),
-                    style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+                    style: TextStyle(fontSize: 12, color: isDarkMode ? Colors.grey[500] : Colors.grey[600]),
                   ),
                 ],
               ),
@@ -104,21 +106,22 @@ class _CommentSectionState extends State<CommentSection> {
     );
   }
 
-  Widget _buildCommentInput() {
+  Widget _buildCommentInput(bool isDarkMode) {
     return Row(
       children: [
         Expanded(
           child: TextField(
             controller: commentController,
             decoration: InputDecoration(
-              hintText: editingCommentId == null ? 'Add a comment...' : 'Edit your comment...',
+              hintText: editingCommentId == null ? 'අදහස් පලකරන්න...' : 'ඔබේ අදහස සංස්කරණය කරන්න...',
               filled: true,
-              fillColor: Colors.grey[200],
+              fillColor: isDarkMode ? Colors.grey[800] : Colors.grey[200],
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(24),
                 borderSide: BorderSide.none,
               ),
             ),
+            style: TextStyle(color: isDarkMode ? Colors.white : Colors.black),
           ),
         ),
         const SizedBox(width: 8),
@@ -152,7 +155,7 @@ class _CommentSectionState extends State<CommentSection> {
       if (mounted) {
         setState(() {
           comments = snapshot.docs.map((doc) => {
-            'id': doc.id, // Include the document ID for editing/deleting
+            'id': doc.id,
             'text': doc['text'],
             'timestamp': doc['timestamp'],
           }).toList();
@@ -181,10 +184,10 @@ class _CommentSectionState extends State<CommentSection> {
 
         commentController.clear();
         _fetchComments(); // Refresh comments after adding
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Comment added')));
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('අදහස ඇතුළත් කළා')));
       } catch (e) {
         print('Error adding comment: $e');
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error adding comment')));
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('අදහස ඇතුළත් කිරීමේදී දෝෂයක් ඇතිවිය')));
       }
     }
   }
@@ -206,10 +209,10 @@ class _CommentSectionState extends State<CommentSection> {
           editingCommentId = null; // Reset editing state
         });
         _fetchComments(); // Refresh comments after updating
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Comment updated')));
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('අදහස යාවත්කාලීන කළා')));
       } catch (e) {
         print('Error updating comment: $e');
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error updating comment')));
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('අදහස යාවත්කාලීන කිරීමේදී දෝෂයක් ඇතිවිය')));
       }
     }
   }
@@ -224,43 +227,47 @@ class _CommentSectionState extends State<CommentSection> {
           .delete();
 
       _fetchComments(); // Refresh comments after deleting
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Comment deleted')));
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('අදහස මකා දමන ලදී')));
     } catch (e) {
       print('Error deleting comment: $e');
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error deleting comment')));
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('අදහස මකා දැමීමේදී දෝෂයක් ඇතිවිය')));
     }
   }
 
   void _showCommentOptions(String commentId, String commentText) {
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
     showDialog(
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: Text('Comment Options'),
+          title: Text('අදහස් විකල්ප'),
           content: Text(commentText),
+          backgroundColor: isDarkMode ? Colors.grey[800] : Colors.white,
+          titleTextStyle: TextStyle(color: isDarkMode ? Colors.white : Colors.black, fontWeight: FontWeight.bold),
+          contentTextStyle: TextStyle(color: isDarkMode ? Colors.grey[300] : Colors.grey[800]),
           actions: [
             TextButton(
               onPressed: () {
                 setState(() {
-                  editingCommentId = commentId; // Set the comment ID for editing
-                  commentController.text = commentText; // Populate the text field with existing comment
+                  editingCommentId = commentId;
+                  commentController.text = commentText;
                 });
                 Navigator.of(context).pop();
               },
-              child: Text('Edit'),
+              child: Text('සංස්කරණය කරන්න', style: TextStyle(color: Theme.of(context).primaryColor)),
             ),
             TextButton(
               onPressed: () {
                 _deleteComment(commentId);
                 Navigator.of(context).pop();
               },
-              child: Text('Delete'),
+              child: Text('මකන්න', style: TextStyle(color: Colors.red)),
             ),
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: Text('Cancel'),
+              child: Text('අවලංගු කරන්න', style: TextStyle(color: isDarkMode ? Colors.grey[300] : Colors.grey[600])),
             ),
           ],
         );
