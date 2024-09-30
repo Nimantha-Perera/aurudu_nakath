@@ -94,7 +94,7 @@ class Tools extends StatelessWidget {
                   ),
                   SizedBox(width: 10),
                   ButtonsCard(
-                    text: "හෙළ ලිපි",
+                    text: "කැටපත",
                     onTap: () {
                       Navigator.push(
                         context,

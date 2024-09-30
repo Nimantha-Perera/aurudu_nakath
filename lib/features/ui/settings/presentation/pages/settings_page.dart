@@ -1,3 +1,4 @@
+import 'package:aurudu_nakath/features/ui/Login/presentation/pages/login_viewmodel.dart';
 import 'package:aurudu_nakath/features/ui/routes/routes.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -34,8 +35,8 @@ class _SettingsPageState extends State<SettingsPage> {
   Future<void> _getProfileInfo() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
-      _profileName = prefs.getString('displayName') ?? 'Anonymous';
-      _profileImage = prefs.getString('photoURL') ?? 'https://i.pravatar.cc/150?u=a042581f4e29026704d'; // Default image
+      _profileName = prefs.getString('displayName') ?? '';
+      _profileImage = prefs.getString('photoURL') ?? ''; // If image is empty, we will show a button
     });
   }
 
@@ -61,7 +62,7 @@ class _SettingsPageState extends State<SettingsPage> {
                   _buildThemeSwitcher(context, themeNotifier),
                   Divider(height: 32, thickness: 0),
                   _buildSectionTitle('පරිශීලක පැතිකඩ'), // User Profile Section
-                  _buildProfileViewSection(context), // Change this method to view-only
+                  _buildProfileSection(context), // Conditionally show profile or Sign In button
                   Divider(height: 32, thickness: 0),
                   _buildSectionTitle('යෙදුම ගැන'),
                   _buildAppInfoSection(context),
@@ -86,6 +87,17 @@ class _SettingsPageState extends State<SettingsPage> {
     }
   }
 
+  // Profile Section (Shows either profile view or a Sign In button)
+  Widget _buildProfileSection(BuildContext context) {
+    if (_profileName.isEmpty || _profileImage.isEmpty) {
+      // Show "Sign In" button if profile info is missing
+      return _buildSignInButton(context);
+    } else {
+      // Show profile view if info is available
+      return _buildProfileViewSection(context);
+    }
+  }
+
   // Profile View Section
   Widget _buildProfileViewSection(BuildContext context) {
     return Card(
@@ -98,8 +110,8 @@ class _SettingsPageState extends State<SettingsPage> {
           children: [
             CircleAvatar(
               backgroundImage: _profileImage.isNotEmpty
-                          ? NetworkImage(_profileImage) // Use the loaded profile image URL
-                          : const NetworkImage('https://i.pravatar.cc/150?u=a042581f4e29026704d'), // Default image
+                  ? NetworkImage(_profileImage) // Use the loaded profile image URL
+                  : const NetworkImage('https://i.pravatar.cc/150?u=a042581f4e29026704d'), // Default image
               radius: 40,
             ),
             SizedBox(height: 16),
@@ -107,6 +119,44 @@ class _SettingsPageState extends State<SettingsPage> {
             Text(
               _profileName,
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            ),
+            SizedBox(height: 16),
+             ElevatedButton(
+              onPressed: () {
+                // Navigate to the Sign In screen
+                  final loginViewModel = Provider.of<LoginViewModel>(context,
+                  listen: false); // Add listen: false
+              loginViewModel.logout(context);
+              },
+              child: Text('ගිනුමෙන් ඉවත් වන්න.', style: TextStyle(fontSize: 14)),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // Sign In Button
+  Widget _buildSignInButton(BuildContext context) {
+    return Card(
+      color: Theme.of(context).cardColor,
+      margin: const EdgeInsets.symmetric(vertical: 8.0),
+      elevation: 3,
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          children: [
+            Text(
+              'ඔබ පුරනය වී නොමැත',
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            ),
+            SizedBox(height: 16),
+            ElevatedButton(
+              onPressed: () {
+                // Navigate to the Sign In screen
+                Navigator.pushNamed(context, AppRoutes.login);
+              },
+              child: Text('පුරනය වන්න', style: TextStyle(fontSize: 14)),
             ),
           ],
         ),
@@ -198,33 +248,20 @@ class _SettingsPageState extends State<SettingsPage> {
           subtitle: Text('අපගේ රහස්‍යතා ප්‍රතිපත්තිය සමාලෝචනය කරන්න.', style: TextStyle(fontSize: 11)),
           onTap: () {
             // Navigate to the Privacy Policy Page
-            _launchURL('https://www.termsfeed.com/live/79b4e42a-78ea-4d2f-a44a-273ab4006846');
+            _launchURL('https://www.termsfeed.com/live/79b4e42a-4f42-42ed-a50e-9d06b3bbf0d0');
           },
         ),
       ],
     );
   }
 
-  // App Version Section (Centered at Bottom)
+  // App Version Section
   Widget _buildAppVersionSection(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 16.0),
-      child: Column(
-        children: [
-          Text(
-            'App Version',
-            style: TextStyle(
-              fontSize: 12,
-              fontWeight: FontWeight.bold,
-              color: const Color.fromARGB(255, 109, 109, 109),
-            ),
-          ),
-          SizedBox(height: 4),
-          Text(
-            _version.isNotEmpty ? _version : 'Loading...', // Show version when loaded
-            style: TextStyle(fontSize: 11, color: Colors.grey),
-          ),
-        ],
+    return Text(
+      'සංස්කරණය: $_version',
+      style: TextStyle(
+        fontSize: 10,
+        color: Theme.of(context).textTheme.bodySmall?.color,
       ),
     );
   }

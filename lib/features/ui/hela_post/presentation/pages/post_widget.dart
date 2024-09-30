@@ -3,7 +3,9 @@ import 'package:aurudu_nakath/features/ui/hela_post/domain/usecase/delectpost.da
 import 'package:aurudu_nakath/features/ui/hela_post/domain/usecase/fetch_comment_count.dart';
 import 'package:aurudu_nakath/features/ui/hela_post/domain/usecase/like.dart';
 import 'package:aurudu_nakath/features/ui/hela_post/presentation/pages/widget/comments.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
@@ -12,8 +14,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class PostWidget extends StatefulWidget {
   final Post post;
-
-  const PostWidget({Key? key, required this.post}) : super(key: key);
+final VoidCallback refreshCallback;
+  const PostWidget({Key? key, required this.post, required this.refreshCallback}) : super(key: key);
 
   @override
   _PostWidgetState createState() => _PostWidgetState();
@@ -114,7 +116,7 @@ class _PostWidgetState extends State<PostWidget>
               children: [
                 Text(
                   widget.post.author,
-                  style: TextStyle(
+                  style: GoogleFonts.roboto(
                     fontWeight: FontWeight.bold,
                     fontSize: 13,
                     color: textColor,
@@ -125,7 +127,7 @@ class _PostWidgetState extends State<PostWidget>
                       ? DateFormat('MMM d, yyyy • HH:mm')
                           .format(widget.post.createdTime!)
                       : 'Date not available',
-                  style: TextStyle(
+                  style: GoogleFonts.roboto(
                     color: isDarkMode ? Colors.grey[400] : Colors.grey[600],
                     fontSize: 10,
                   ),
@@ -148,14 +150,18 @@ class _PostWidgetState extends State<PostWidget>
     );
   }
 
-  Widget _buildReportButton(bool isDarkMode) {
+ Widget _buildReportButton(bool isDarkMode) {
     return PopupMenuButton<String>(
       icon: Icon(Icons.flag_outlined,
           color: isDarkMode ? Colors.grey[400] : Colors.grey[700]),
-      onSelected: (String result) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Post reported')),
-        );
+      onSelected: (String result) async {
+        if (result == 'report') {
+          // Call the function to report the post
+          await _reportPost(widget.post.id);
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Post reported')),
+          );
+        }
       },
       itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
         const PopupMenuItem<String>(
@@ -165,6 +171,20 @@ class _PostWidgetState extends State<PostWidget>
       ],
     );
   }
+
+  Future<void> _reportPost(String postId) async {
+    try {
+      // Assuming you have a Firestore collection named 'reported_posts'
+      await FirebaseFirestore.instance.collection('reported_posts').add({
+        'post_id': postId,
+        'timestamp': FieldValue.serverTimestamp(), // Optionally add a timestamp
+      });
+    } catch (e) {
+      // Handle any errors
+      print('Error reporting post: $e');
+    }
+  }
+
 
   Widget _buildImage() {
     return GestureDetector(
@@ -239,7 +259,7 @@ class _PostWidgetState extends State<PostWidget>
               children: [
                 Text(
                   isDescriptionExpanded ? 'Show Less' : 'Show More',
-                  style: TextStyle(
+                  style: GoogleFonts.roboto(
                     color: Theme.of(context).primaryColor,
                     fontWeight: FontWeight.bold,
                   ),

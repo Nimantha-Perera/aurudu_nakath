@@ -1,10 +1,12 @@
+import 'package:aurudu_nakath/features/ui/hela_post/domain/prvider/post_provider.dart';
 import 'package:aurudu_nakath/features/ui/hela_post/domain/usecase/app_bar_img.dart';
+import 'package:aurudu_nakath/features/ui/hela_post/domain/usecase/getallpost.dart';
+import 'package:aurudu_nakath/features/ui/routes/routes.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:aurudu_nakath/features/ui/hela_post/domain/prvider/post_provider.dart';
-import 'package:aurudu_nakath/features/ui/hela_post/domain/usecase/getallpost.dart';
+
 import 'package:aurudu_nakath/features/ui/hela_post/data/repo/post_repository_impl.dart';
 import 'package:aurudu_nakath/features/ui/hela_post/domain/usecase/datasource.dart';
 import 'package:aurudu_nakath/features/ui/hela_post/presentation/pages/new_post_add.dart';
@@ -22,8 +24,7 @@ class _AllPostsScreenState extends State<AllPostsScreen> {
   String author = 'Anonymous';
   String userid = '';
   String appBarImageUrl = '';
-  final LoadAppBarImageUseCase _loadAppBarImageUseCase =
-      LoadAppBarImageUseCase();
+  final LoadAppBarImageUseCase _loadAppBarImageUseCase = LoadAppBarImageUseCase();
 
   @override
   void initState() {
@@ -47,13 +48,10 @@ class _AllPostsScreenState extends State<AllPostsScreen> {
 
   @override
   Widget build(BuildContext context) {
-
-
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
     return ChangeNotifierProvider(
       create: (context) => PostProvider(
-        GetAllPosts(PostRepositoryImpl(
-            FirebasePostDataSource(FirebaseFirestore.instance))),
+        GetAllPosts(PostRepositoryImpl(FirebasePostDataSource(FirebaseFirestore.instance))),
       )..fetchAllPosts(),
       child: Scaffold(
         body: Stack(
@@ -61,7 +59,7 @@ class _AllPostsScreenState extends State<AllPostsScreen> {
             // Background Image
             Positioned.fill(
               child: Image.asset(
-                'assets/app_background/backimg.png',  // Replace with your image path
+                'assets/app_background/backimg.png', // Replace with your image path
                 fit: BoxFit.cover,
               ),
             ),
@@ -97,7 +95,7 @@ class _AllPostsScreenState extends State<AllPostsScreen> {
       flexibleSpace: FlexibleSpaceBar(
         centerTitle: true,
         title: const Text(
-          'හෙළ ලිපි',
+          'කැටපත',
           style: TextStyle(
             fontSize: 17,
             fontWeight: FontWeight.bold,
@@ -196,8 +194,7 @@ class _AllPostsScreenState extends State<AllPostsScreen> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Icon(Icons.notes_outlined,
-                      size: 60, color: Colors.grey),
+                  const Icon(Icons.notes_outlined, size: 60, color: Colors.grey),
                   const SizedBox(height: 16),
                   Text(
                     'No posts available',
@@ -219,9 +216,10 @@ class _AllPostsScreenState extends State<AllPostsScreen> {
             (context, index) {
               final post = postProvider.posts[index];
               return Padding(
-                padding:
-                    const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-                child: PostWidget(post: post),
+                padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+                child: PostWidget(post: post ,refreshCallback: () {
+                  _refreshPosts();
+                },),
               );
             },
             childCount: postProvider.posts.length,
@@ -232,22 +230,28 @@ class _AllPostsScreenState extends State<AllPostsScreen> {
   }
 
   Widget _buildFloatingActionButton(bool isDarkMode) {
-  return FloatingActionButton(
-    shape: CircleBorder(),
-    onPressed: () {
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => CreatePostScreen()),
-      );
-    },
-    child: Icon(
-      Icons.edit,
-      color: isDarkMode ? const Color.fromARGB(255, 0, 0, 0) : Colors.white,
-    ),
-    backgroundColor: Theme.of(context).primaryColor,
-    elevation: 4,
-  );
+    return FloatingActionButton(
+      shape: CircleBorder(),
+      onPressed: () async {
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        String? userId = prefs.getString('displayName');
+        if (userId == null || userId.isEmpty) {
+          // User is not signed in, navigate to SignInScreen
+          Navigator.pushNamed(context, AppRoutes.login);
+        } else {
+          // User is signed in, navigate to CreatePostScreen
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => CreatePostScreen()),
+          );
+        }
+      },
+      child: Icon(
+        Icons.edit,
+        color: isDarkMode ? const Color.fromARGB(255, 0, 0, 0) : Colors.white,
+      ),
+      backgroundColor: Theme.of(context).primaryColor,
+      elevation: 4,
+    );
+  }
 }
-
-}
-

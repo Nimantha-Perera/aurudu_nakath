@@ -11,21 +11,29 @@ class FirebasePostDataSource implements PostDataSource {
 
   FirebasePostDataSource(this.firestore);
 
+
+  
   @override
+
+
+  
   Future<List<Post>> getAllPosts() async {
     try {
-      final QuerySnapshot snapshot = await firestore.collection('posts').get();
+      // Fetch posts and order by created_date in descending order
+      final QuerySnapshot snapshot = await firestore
+          .collection('posts')
+          .orderBy('created_date', descending: true) // Order by created_date
+          .get();
+      
       return snapshot.docs.map((doc) {
         return Post(
           id: doc.id,
           likeCount: doc['likeCount'] ?? 0,
           title: doc['title'] ?? '',
           description: doc['description'] ?? '',
-          // Set a default value if imageUrl is missing
           imageUrl: doc['imageUrl'] ?? '', // Default to an empty string
           auther_aveter: doc['auther_aveter'] ?? '',
           author: doc['auther'] ?? '',
-          // Convert Timestamp to DateTime
           createdTime: (doc['created_date'] as Timestamp?)?.toDate(),
           userId: doc['userId'] ?? '',
         );
@@ -46,11 +54,9 @@ class FirebasePostDataSource implements PostDataSource {
           title: doc['title'] ?? '',
           author: doc['auther'] ?? '',
           likeCount: doc['likeCount'] ?? 0,
-          // Convert Timestamp to DateTime
           createdTime: (doc['created_date'] as Timestamp?)?.toDate(),
           description: doc['description'] ?? '',
           auther_aveter: doc['auther_aveter'] ?? '',
-          // Set a default value if imageUrl is missing
           imageUrl: doc['imageUrl'] ?? '', // Default to an empty string
           userId: doc['userId'] ?? '',
         );
@@ -71,7 +77,6 @@ class FirebasePostDataSource implements PostDataSource {
       id: snapshot.id,
       title: snapshot['title'],
       description: snapshot['description'],
-      // Set a default value if imageUrl is missing
       imageUrl: snapshot['imageUrl'] ?? '', // Default to an empty string
       author: snapshot['author'],
       auther_aveter: snapshot['auther_aveter'],
@@ -79,4 +84,7 @@ class FirebasePostDataSource implements PostDataSource {
       likeCount: snapshot['likeCount'] ?? 0,
     );
   }
+
+
+  
 }

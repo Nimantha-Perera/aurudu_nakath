@@ -1,31 +1,32 @@
-import 'package:aurudu_nakath/features/ui/hela_post/data/modal/post.dart';
 import 'package:aurudu_nakath/features/ui/hela_post/domain/usecase/getallpost.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
+import 'package:aurudu_nakath/features/ui/hela_post/data/modal/post.dart';
 
 
-class PostProvider extends ChangeNotifier {
-  final GetAllPosts getAllPostsUseCase;
+class PostProvider with ChangeNotifier {
+  final GetAllPosts _getAllPosts;
+  List<Post> _posts = [];
+  bool _isLoading = false;
+  bool _hasError = false;
 
-  List<Post> posts = [];
-  bool isLoading = true;
-  bool hasError = false;
+  PostProvider(this._getAllPosts);
 
-  PostProvider(this.getAllPostsUseCase);
+  List<Post> get posts => _posts;
+  bool get isLoading => _isLoading;
+  bool get hasError => _hasError;
 
   Future<void> fetchAllPosts() async {
+    _isLoading = true;
+    _hasError = false;
+    notifyListeners();
+    
     try {
-      isLoading = true;
-      notifyListeners();
-
-      posts = await getAllPostsUseCase.call();
-
-      if (posts.isEmpty) {
-        hasError = true;
-      }
+      _posts = await _getAllPosts.call();
     } catch (e) {
-      hasError = true;
+      _hasError = true;
+      _posts = [];
     } finally {
-      isLoading = false;
+      _isLoading = false;
       notifyListeners();
     }
   }
