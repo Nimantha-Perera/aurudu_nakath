@@ -33,7 +33,6 @@ import 'package:aurudu_nakath/features/ui/routes/routes.dart';
 import 'package:aurudu_nakath/features/ui/settings/data/repostories/settings_repository.dart';
 import 'package:aurudu_nakath/features/ui/settings/data/repostories/settings_repository_impl.dart';
 import 'package:aurudu_nakath/features/ui/settings/presentation/bloc/settings_bloc.dart';
-import 'package:aurudu_nakath/features/ui/shake_and_navigate/shake_navigation.dart';
 import 'package:aurudu_nakath/features/ui/subcriptions_provider/subcription_privider.dart';
 import 'package:aurudu_nakath/features/ui/theme/change_theme_notifier.dart';
 import 'package:aurudu_nakath/features/ui/theme/dark_theme.dart';
