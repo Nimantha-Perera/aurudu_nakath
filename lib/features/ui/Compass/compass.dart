@@ -2,7 +2,7 @@ import 'package:aurudu_nakath/features/ui/compass/neu_circle.dart';
 import 'package:aurudu_nakath/features/ui/theme/change_theme_notifier.dart';
 import 'package:aurudu_nakath/features/ui/theme/dark_theme.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_compass_v2/flutter_compass_v2.dart';
+import 'package:flutter_compass/flutter_compass.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -35,47 +35,49 @@ class _CompassState extends State<Compass> {
     }
   }
 
-  Widget _buildCompass() {
-    return StreamBuilder<CompassEvent>(
-      stream: FlutterCompassV2.events,
-      builder: (context, snapshot) {
-        if (snapshot.hasError) {
-          return Center(child: Text('Error reading heading: ${snapshot.error}'));
-        }
-
-        if (!snapshot.hasData) {
-          return Center(child: CircularProgressIndicator());
-        }
-
-        double? heading = snapshot.data!.heading;
-
-        if (heading == null) {
-          return Center(child: Text('Compass data not available'));
-        }
-
+Widget _buildCompass() {
+  return StreamBuilder<CompassEvent>(
+    stream: FlutterCompass.events,
+    builder: (context, snapshot) {
+      if (snapshot.hasError) {
         return Center(
-          child: Tooltip(
-            message: 'මෙය ඔබගේ වර්තමාන දිශාව පෙන්වයි', // Tooltip text in Sinhala
-            child: SizedBox(
-              width: 280,
-              height: 280,
-              child: NeuCircle(
-                child: Transform.rotate(
-                  angle: (heading * (math.pi / 180) * -1),
-                  child: Image.asset(
-                    'assets/compass/sincom.png',
-                    color: Colors.black87,
-                    fit: BoxFit.fill,
-                  ),
-                  alignment: Alignment.center,
+            child: Text('Error reading heading: ${snapshot.error}'));
+      }
+
+      if (!snapshot.hasData) {
+        return Center(child: CircularProgressIndicator());
+      }
+
+      double? heading = snapshot.data!.heading;
+
+      if (heading == null) {
+        return Center(child: Text('Compass data not available'));
+      }
+
+      return Center(
+        child: Tooltip( // Add Tooltip here
+          message: 'මෙය ඔබගේ වර්තමාන දිශාව පෙන්වයි', // Tooltip text in Sinhala
+          child: SizedBox(
+            width: 280,
+            height: 280,
+            child: NeuCircle(
+              child: Transform.rotate(
+                angle: (heading * (math.pi / 180) * -1),
+                child: Image.asset(
+                  'assets/compass/sincom.png',
+                  color: Colors.black87,
+                  fit: BoxFit.fill,
                 ),
+                alignment: Alignment.center,
               ),
             ),
           ),
-        );
-      },
-    );
-  }
+        ),
+      );
+    },
+  );
+}
+
 
   Widget _buildPermissionSheet() {
     return Center(
@@ -112,6 +114,13 @@ class _CompassState extends State<Compass> {
       ),
       body: Stack(
         children: [
+          // Positioned.fill(
+          //   child: Image.asset(
+          //     'assets/background.jpg',
+          //     fit: BoxFit.cover,
+          //   ),
+          // ),
+
           Opacity(
             opacity: themeNotifier.getTheme() == darkTheme ? 0.8 : 0.2,
             child: Container(
@@ -122,11 +131,12 @@ class _CompassState extends State<Compass> {
                         ? 'assets/app_background/backimg.png' // Dark mode image
                         : 'assets/app_background/backimg.png', // Light mode image
                   ),
-                  fit: BoxFit.cover,
+                  fit: BoxFit.cover, // Adjust how the image fits the background
                 ),
               ),
             ),
           ),
+
           Container(
             width: double.infinity,
             padding: const EdgeInsets.all(16.0),
@@ -143,6 +153,12 @@ class _CompassState extends State<Compass> {
                     ),
                   ),
                 ),
+                // SizedBox(width: 12),
+                // Icon(
+                //   FontAwesomeIcons.arrowUp,
+                //   color: Colors.white70,
+                //   size: 20,
+                // ),
               ],
             ),
           ),

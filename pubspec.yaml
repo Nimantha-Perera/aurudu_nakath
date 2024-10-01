@@ -49,8 +49,7 @@ dependencies:
   flutter:
     sdk: flutter
   flutter_bloc: ^8.1.6
-
-  flutter_compass_v2: ^1.0.3
+  flutter_compass: ^0.8.0
   flutter_dotenv: ^5.1.0
   flutter_highlight: ^0.7.0
   flutter_html: ^3.0.0-beta.2
