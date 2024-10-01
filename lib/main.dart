@@ -5,6 +5,10 @@ import 'package:aurudu_nakath/features/ui/Login/domain/repo/auth_repository_inte
 import 'package:aurudu_nakath/features/ui/Login/domain/usecase/sign_in_with_google.dart';
 import 'package:aurudu_nakath/features/ui/Login/presentation/pages/login_screen.dart';
 import 'package:aurudu_nakath/features/ui/Login/presentation/pages/login_viewmodel.dart';
+import 'package:aurudu_nakath/features/ui/Login2/data/repostorys/auth_repository.dart';
+import 'package:aurudu_nakath/features/ui/Login2/domain/repo/auth_repository_interface.dart';
+import 'package:aurudu_nakath/features/ui/Login2/domain/usecase/sign_in_with_google.dart';
+import 'package:aurudu_nakath/features/ui/Login2/presentation/pages/login_viewmodel.dart';
 import 'package:aurudu_nakath/features/ui/Review/review_provider.dart';
 import 'package:aurudu_nakath/features/ui/compass/compass.dart';
 import 'package:aurudu_nakath/Tools/tools_menu.dart';
@@ -89,6 +93,15 @@ void main() async {
   runApp(
     MultiProvider(
       providers: [
+
+
+        Provider<AuthRepositoryInterface2>(create: (_) => AuthRepository2()),
+        Provider<SignInWithGoogle2>(
+            create: (context) =>
+                SignInWithGoogle2(context.read<AuthRepositoryInterface2>())),
+        ChangeNotifierProvider(
+            create: (context) =>
+                LoginViewModel2(context.read<SignInWithGoogle2>())),
         // ChangeNotifierProvider(
         //   create: (context) => PostProvider(
         //     GetAllPosts(PostRepositoryImpl(FirebasePostDataSource(FirebaseFirestore.instance)))..fetchAllPosts(),

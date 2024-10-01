@@ -1,0 +1,155 @@
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'login_viewmodel.dart';
+import 'package:aurudu_nakath/features/ui/routes/routes.dart';
+
+class LoginScreen2 extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final loginViewModel = Provider.of<LoginViewModel2>(context);
+
+    return Scaffold(
+      body: Container(
+        child: SafeArea(
+          child: Center(
+            child: SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 30.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    _buildLogo(),
+                    SizedBox(height: 40),
+                    _buildWelcomeText(),
+                    SizedBox(height: 50),
+                    _buildGoogleSignInButton(context, loginViewModel),
+                    SizedBox(height: 20),
+                    _buildSignUpLink(context),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildLogo() {
+    return Container(
+  width: 120,
+  height: 120,
+  decoration: BoxDecoration(
+    image: DecorationImage(image: AssetImage('assets/icons/katapatha.webp')),
+    color: Colors.white,
+    shape: BoxShape.circle,
+    boxShadow: [
+      BoxShadow(
+        color: Colors.black.withOpacity(0.1),
+        spreadRadius: 5,
+        blurRadius: 15,
+        offset: Offset(0, 5),
+      ),
+    ],
+  ),
+  // child: Center(
+  //   child: Image.asset(
+  //     'assets/icons/lion.webp', // Replace with your image path
+  //     width: 100, // Set the width of the image
+  //     height: 60, // Set the height of the image
+  //     fit: BoxFit.cover, // Adjust the image fit as necessary
+  //   ),
+  // ),
+);
+
+  }
+
+  Widget _buildWelcomeText() {
+    return Column(
+      children: [
+        Text(
+          'කැටපත',
+          style: GoogleFonts.notoSerifSinhala(
+            fontSize: 36,
+            fontWeight: FontWeight.bold,
+            color: const Color.fromARGB(255, 90, 90, 90),
+          ),
+        ),
+        SizedBox(height: 10),
+        Center(
+          child: Text(
+            'ඔබගේ නිර්මාණශීලීත්වය අගය කිරීම සඳහා',
+            textAlign: TextAlign.center,
+            style: GoogleFonts.notoSerifSinhala(
+              fontSize: 15,
+              color: const Color.fromARGB(255, 90, 90, 90),
+            ),
+          ),
+        ),
+
+        Center(
+          child: Text(
+            'කැටපත භාවිතාකිරීම සඳහා පූර්නය වන්න',
+            textAlign: TextAlign.center,
+            style: GoogleFonts.notoSerifSinhala(
+              fontSize: 12,
+              color: const Color.fromARGB(255, 90, 90, 90),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildGoogleSignInButton(BuildContext context, LoginViewModel2 loginViewModel) {
+    return ElevatedButton.icon(
+      label: loginViewModel.isLoading
+          ? SizedBox(
+              width: 16,
+              height: 16,
+              child: CircularProgressIndicator(color: Colors.indigo.shade800, strokeWidth: 2),
+            )
+          : Text(
+              'Google සමගින් පූර්ණය වන්න',
+              style: TextStyle(fontSize: 16, color: Colors.indigo.shade800),
+            ),
+      style: ElevatedButton.styleFrom(
+        backgroundColor: Colors.white,
+        foregroundColor: Colors.indigo.shade800,
+        padding: EdgeInsets.symmetric(vertical: 15, horizontal: 30),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(30),
+        ),
+        elevation: 5,
+      ),
+      onPressed: loginViewModel.isLoading ? null : () => _handleSignIn(context, loginViewModel),
+    );
+  }
+
+  Widget _buildSignUpLink(BuildContext context) {
+    return TextButton(
+      onPressed: () {
+        // Navigate to sign-up screen if needed
+        // Navigator.pushNamed(context, AppRoutes.signup);
+        showDialog(context: context, builder: (context) => AlertDialog(content: Text('කරුනාකර Google සමඟින් පූර්ණය වන්න'),));
+      },
+      child: Text(
+        'ඔයාට ගිනුමක් නැද්ද? Sign Up',
+        style: TextStyle(color: const Color.fromARGB(255, 90, 90, 90), fontSize: 16),
+      ),
+    );
+  }
+
+  void _handleSignIn(BuildContext context, LoginViewModel2 loginViewModel) async {
+    try {
+      await loginViewModel.login();
+      Navigator.pushReplacementNamed(context, AppRoutes.katapatha);
+    } catch (e) {
+      // Show error message if login fails
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Sign in failed. Please try again.')),
+      );
+    }
+  }
+}

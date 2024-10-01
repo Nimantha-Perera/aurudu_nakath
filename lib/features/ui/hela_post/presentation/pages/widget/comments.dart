@@ -3,7 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:timeago/timeago.dart' as timeago; // Importing the package
+import 'package:timeago/timeago.dart' as timeago;
 
 class CommentSection extends StatefulWidget {
   final String postId;
@@ -54,8 +54,15 @@ class _CommentSectionState extends State<CommentSection> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('අදහස්', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
-          const SizedBox(height: 8),
+          Text(
+            'අදහස්',
+            style: GoogleFonts.poppins(
+              fontWeight: FontWeight.bold,
+              fontSize: 22,
+              color: isDarkMode ? Colors.white : Colors.black87,
+            ),
+          ),
+          const SizedBox(height: 16),
           isLoading
               ? Center(child: CircularProgressIndicator())
               : comments.isEmpty
@@ -68,7 +75,7 @@ class _CommentSectionState extends State<CommentSection> {
                         return _buildCommentItem(comments[index], isDarkMode);
                       },
                     ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 16),
           _buildCommentInput(isDarkMode),
         ],
       ),
@@ -80,13 +87,17 @@ class _CommentSectionState extends State<CommentSection> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.comment_outlined,
+          Icon(Icons.chat_bubble_outline,
               color: isDarkMode ? Colors.grey[400] : Colors.grey[600],
-              size: 50),
-          const SizedBox(height: 8),
-          Text('අදහස් නොමැත',
-              style: TextStyle(
-                  color: isDarkMode ? Colors.grey[400] : Colors.grey[600])),
+              size: 60),
+          const SizedBox(height: 16),
+          Text(
+            'අදහස් නොමැත',
+            style: GoogleFonts.poppins(
+              fontSize: 18,
+              color: isDarkMode ? Colors.grey[400] : Colors.grey[600],
+            ),
+          ),
         ],
       ),
     );
@@ -97,41 +108,59 @@ class _CommentSectionState extends State<CommentSection> {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: GestureDetector(
-        onLongPress: isAuthor ? () => _showCommentOptions(commentData['id'], commentData['text']) : null,
+        onLongPress: isAuthor
+            ? () => _showCommentOptions(commentData['id'], commentData['text'])
+            : null,
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             CircleAvatar(
-              radius: 13,
+              radius: 20,
               backgroundColor: isDarkMode ? Colors.grey[700] : Colors.grey[300],
-              backgroundImage: NetworkImage(commentData['userPhotoUrl'] ?? 'https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png'),
+              backgroundImage: NetworkImage(commentData['userPhotoUrl'] ??
+                  'https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png'),
               child: commentData['userPhotoUrl'] == null
-                  ? Icon(Icons.person, color: isDarkMode ? Colors.grey[300] : Colors.grey[600])
+                  ? Icon(Icons.person,
+                      color: isDarkMode ? Colors.grey[300] : Colors.grey[600])
                   : null,
             ),
-            const SizedBox(width: 8),
+            const SizedBox(width: 12),
             Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    commentData['userName'] ?? 'Unknown User',
-                    style: GoogleFonts.roboto(
+              child: Container(
+                padding: EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: isDarkMode ? Colors.grey[800] : Colors.grey[200],
+                  borderRadius: BorderRadius.circular(18),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      commentData['userName'] ?? 'Unknown User',
+                      style: GoogleFonts.poppins(
                         fontWeight: FontWeight.bold,
-                        color: isDarkMode ? Colors.grey[300] : Colors.grey[800]),
-                  ),
-                  Text(
-                    commentData['text'],
-                    style: TextStyle(color: isDarkMode ? Colors.grey[300] : Colors.grey[800]),
-                  ),
-                  // Format timestamp using timeago
-                  Text(
-                    _formatTimestamp(commentData['timestamp']),
-                    style: GoogleFonts.roboto(
+                        fontSize: 14,
+                        color: isDarkMode ? Colors.white : Colors.black87,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      commentData['text'],
+                      style: GoogleFonts.poppins(
+                        fontSize: 14,
+                        color: isDarkMode ? Colors.grey[300] : Colors.grey[800],
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      _formatTimestamp(commentData['timestamp']),
+                      style: GoogleFonts.poppins(
                         fontSize: 12,
-                        color: isDarkMode ? Colors.grey[500] : Colors.grey[600]),
-                  ),
-                ],
+                        color: isDarkMode ? Colors.grey[500] : Colors.grey[600],
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           ],
@@ -141,37 +170,49 @@ class _CommentSectionState extends State<CommentSection> {
   }
 
   Widget _buildCommentInput(bool isDarkMode) {
-    return Row(
-      children: [
-        Expanded(
-          child: TextField(
-            controller: commentController,
-            decoration: InputDecoration(
-              hintText: editingCommentId == null ? 'අදහස් පලකරන්න...' : 'ඔබේ අදහස සංස්කරණය කරන්න...',
-              filled: true,
-              fillColor: isDarkMode ? Colors.grey[800] : Colors.grey[200],
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(24),
-                borderSide: BorderSide.none,
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      decoration: BoxDecoration(
+        color: isDarkMode ? Colors.grey[800] : Colors.grey[200],
+        borderRadius: BorderRadius.circular(30),
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: TextField(
+              controller: commentController,
+              decoration: InputDecoration(
+                hintText: editingCommentId == null
+                    ? 'අදහස් පලකරන්න...'
+                    : 'ඔබේ අදහස සංස්කරණය කරන්න...',
+                border: InputBorder.none,
+                hintStyle: GoogleFonts.poppins(
+                  color: isDarkMode ? Colors.grey[400] : Colors.grey[600],
+                ),
+              ),
+              style: GoogleFonts.poppins(
+                color: isDarkMode ? Colors.white : Colors.black,
               ),
             ),
-            style: TextStyle(color: isDarkMode ? Colors.white : Colors.black),
           ),
-        ),
-        const SizedBox(width: 8),
-        GestureDetector(
-          onTap: editingCommentId == null ? _addComment : _updateComment,
-          child: Container(
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: Theme.of(context).primaryColor,
-              shape: BoxShape.circle,
+          const SizedBox(width: 8),
+          GestureDetector(
+            onTap: editingCommentId == null ? _addComment : _updateComment,
+            child: Container(
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: Theme.of(context).primaryColor,
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                Icons.send,
+                color: isDarkMode ? Colors.black : Colors.white,
+                size: 20,
+              ),
             ),
-            child: Icon(Icons.send,
-                color: isDarkMode ? const Color.fromARGB(255, 0, 0, 0) : const Color.fromARGB(255, 255, 255, 255)),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
@@ -189,14 +230,16 @@ class _CommentSectionState extends State<CommentSection> {
 
       if (mounted) {
         setState(() {
-          comments = snapshot.docs.map((doc) => {
-                'id': doc.id,
-                'text': doc['text'],
-                'timestamp': doc['timestamp'],
-                'authorId': doc['authorId'],
-                'userName': doc['userName'],
-                'userPhotoUrl': doc['userPhotoUrl'],
-              }).toList();
+          comments = snapshot.docs
+              .map((doc) => {
+                    'id': doc.id,
+                    'text': doc['text'],
+                    'timestamp': doc['timestamp'],
+                    'authorId': doc['authorId'],
+                    'userName': doc['userName'],
+                    'userPhotoUrl': doc['userPhotoUrl'],
+                  })
+              .toList();
           isLoading = false;
         });
       }
@@ -209,8 +252,11 @@ class _CommentSectionState extends State<CommentSection> {
   }
 
   Future<void> _addComment() async {
-    if (currentUserId == null || currentUserId!.isEmpty || currentUserName == null || currentUserName!.isEmpty) {
-      Navigator.pushNamed(context, AppRoutes.login);
+    if (currentUserId == null ||
+        currentUserId!.isEmpty ||
+        currentUserName == null ||
+        currentUserName!.isEmpty) {
+      Navigator.pushNamed(context, AppRoutes.login2);
       return;
     }
 
@@ -230,10 +276,12 @@ class _CommentSectionState extends State<CommentSection> {
 
         commentController.clear();
         _fetchComments();
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('අදහස ඇතුළත් කළා')));
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text('අදහස ඇතුළත් කළා')));
       } catch (e) {
         print('Error adding comment: $e');
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('අදහස ඇතුළත් කිරීමේදී දෝෂයක් ඇතිවිය')));
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('අදහස ඇතුළත් කිරීමේදී දෝෂයක් ඇතිවිය')));
       }
     }
   }
@@ -251,17 +299,19 @@ class _CommentSectionState extends State<CommentSection> {
       commentController.clear();
       editingCommentId = null;
       _fetchComments();
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('අදහස යාවත්කාලීන කරන ලදි')));
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text('අදහස යාවත්කාලීන කරන ලදි')));
     } catch (e) {
       print('Error updating comment: $e');
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('අදහස යාවත්කාලීන කිරීමේදී දෝෂයක් ඇතිවිය')));
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('අදහස යාවත්කාලීන කිරීමේදී දෝෂයක් ඇතිවිය')));
     }
   }
 
   String _formatTimestamp(Timestamp timestamp) {
-    if (timestamp == null) return ''; // Ensure timestamp is valid
+    if (timestamp == null) return '';
     DateTime dateTime = timestamp.toDate();
-    return timeago.format(dateTime, locale: 'si'); // 'si' for Sinhala language
+    return timeago.format(dateTime, locale: 'si');
   }
 
   void _showCommentOptions(String commentId, String commentText) {
@@ -269,7 +319,10 @@ class _CommentSectionState extends State<CommentSection> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: Text('Comment Options'),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          title: Text('Comment Options',
+              style: GoogleFonts.poppins(fontWeight: FontWeight.bold)),
           actions: [
             TextButton(
               onPressed: () {
@@ -279,14 +332,15 @@ class _CommentSectionState extends State<CommentSection> {
                 });
                 Navigator.pop(context);
               },
-              child: Text('Edit'),
+              child: Text('Edit', style: GoogleFonts.poppins()),
             ),
             TextButton(
               onPressed: () {
                 _deleteComment(commentId);
                 Navigator.pop(context);
               },
-              child: Text('Delete'),
+              child:
+                  Text('Delete', style: GoogleFonts.poppins(color: Colors.red)),
             ),
           ],
         );
@@ -302,11 +356,13 @@ class _CommentSectionState extends State<CommentSection> {
           .collection('comments')
           .doc(commentId)
           .delete();
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('අදහස මකන ලදි')));
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text('අදහස මකන ලදි')));
       _fetchComments();
     } catch (e) {
       print('Error deleting comment: $e');
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('අදහස මකන ආකාරය පිළිබඳ දෝෂයක් ඇතිවිය')));
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('අදහස මකන ආකාරය පිළිබඳ දෝෂයක් ඇතිවිය')));
     }
   }
 }

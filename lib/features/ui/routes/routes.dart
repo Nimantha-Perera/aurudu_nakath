@@ -1,4 +1,6 @@
 import 'package:aurudu_nakath/features/ui/Compass/compass.dart';
+import 'package:aurudu_nakath/features/ui/Login2/presentation/pages/login_screen.dart';
+import 'package:aurudu_nakath/features/ui/hela_post/presentation/pages/main.dart';
 import 'package:flutter/material.dart';
 import 'package:aurudu_nakath/features/ui/Login/presentation/pages/login_screen.dart';
 import 'package:aurudu_nakath/features/ui/aurudu_nakath/presentation/pages/main_screen.dart';
@@ -35,6 +37,9 @@ class AppRoutes {
   static const String helagptnormless = '/helagptnormless';
   static const String login = '/login';
 
+  static const String katapatha = '/katapatha';
+  static const String login2 = '/login2';
+
   static Route<dynamic> generateRoute(RouteSettings settings) {
     // Log Firebase Analytics event for screen view
     analytics.logEvent(
@@ -43,12 +48,20 @@ class AppRoutes {
     );
 
     switch (settings.name) {
+      case katapatha:
+        return _buildPageWithSlideTransition(
+            AllPostsScreen(), Offset(1, 0)); // Slide from right
       case help:
         return _buildPageWithSlideTransition(
             HelpScreen(), Offset(1, 0)); // Slide from right
       case litha:
         return _buildPageWithSlideTransition(
             LithaMainScreen(), Offset(1, 0)); // Slide from right
+
+      case login2:
+        return _buildPageWithSlideTransition(
+            LoginScreen2(), Offset(1, 0)); // Slide from right
+
       case login:
         return _buildPageWithSlideTransition(
             LoginScreen(), Offset(1, 0)); // Slide from right

@@ -237,7 +237,7 @@ class _AllPostsScreenState extends State<AllPostsScreen> {
         String? userId = prefs.getString('displayName');
         if (userId == null || userId.isEmpty) {
           // User is not signed in, navigate to SignInScreen
-          Navigator.pushNamed(context, AppRoutes.login);
+          Navigator.pushNamed(context, AppRoutes.login2);
         } else {
           // User is signed in, navigate to CreatePostScreen
           Navigator.push(

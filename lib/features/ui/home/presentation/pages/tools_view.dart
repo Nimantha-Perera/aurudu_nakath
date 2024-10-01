@@ -96,11 +96,7 @@ class Tools extends StatelessWidget {
                   ButtonsCard(
                     text: "කැටපත",
                     onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => AllPostsScreen()),
-                      );
+                      Navigator.pushNamed(context, AppRoutes.katapatha);
                     },
                     color: Color(0xFFA02334),
                     textColor: Colors.white,
