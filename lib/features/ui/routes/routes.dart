@@ -60,7 +60,7 @@ class AppRoutes {
 
       case login2:
         return _buildPageWithSlideTransition(
-            LoginScreen2(), Offset(1, 0)); // Slide from right
+            LoginRegisterScreen(), Offset(1, 0)); // Slide from right
 
       case login:
         return _buildPageWithSlideTransition(
