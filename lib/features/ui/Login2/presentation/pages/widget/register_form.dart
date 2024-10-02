@@ -194,7 +194,7 @@ class _RegisterFormState extends State<RegisterForm> {
 
       if (usernameQuery.docs.isNotEmpty) {
         _showErrorDialog(context, 'දෝෂයක් සිදුවී ඇත',
-            'පරිශීලක නාමය පෙරමුණුව ඇත.'); // Username already exists
+            'පරිශීලක නාමය දැනටමත් කෙනෙකු භාවිතා කරයි.'); // Username already exists
         return;
       }
 
@@ -240,7 +240,7 @@ class _RegisterFormState extends State<RegisterForm> {
         switch (e.code) {
           case 'email-already-in-use':
             errorMessage =
-                'මෙම විද්‍යුත් තැපෑල සම්පූර්ණයෙන්ම පවත්වාගෙන යනු ලබයි. (This email address is already in use.)';
+                'මෙම විද්‍යුත් තැපෑල සම්පූර්ණයෙන්ම වෙන පරිශීලකයෙකු පවත්වාගෙන යනු ලබයි.';
             break;
           case 'weak-password':
             errorMessage = 'මුරපදය දුර්වලයි. (Weak password)';
@@ -259,7 +259,7 @@ class _RegisterFormState extends State<RegisterForm> {
       } catch (e) {
         // Handle other authentication errors
         _showErrorDialog(context, 'දෝෂයක් සිදුවී ඇත',
-            'Firebase සත්‍යාපන දෝෂයක් සිදුවී ඇත. (Firebase authentication error)');
+            'Firebase සත්‍යාපන දෝෂයක් සිදුවී ඇත.');
         return;
       }
 

@@ -1,7 +1,13 @@
+import 'dart:io';
+import 'dart:typed_data';
+
 import 'package:aurudu_nakath/features/ui/Login/presentation/pages/login_viewmodel.dart';
 import 'package:aurudu_nakath/features/ui/routes/routes.dart';
+import 'package:feedback/feedback.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_email_sender/flutter_email_sender.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:aurudu_nakath/features/ui/theme/change_theme_notifier.dart';
 import 'package:package_info_plus/package_info_plus.dart';
@@ -251,8 +257,40 @@ class _SettingsPageState extends State<SettingsPage> {
             _launchURL('https://www.termsfeed.com/live/79b4e42a-4f42-42ed-a50e-9d06b3bbf0d0');
           },
         ),
+
+        ListTile(
+          leading: Icon(Icons.privacy_tip_outlined, color: Theme.of(context).primaryColor),
+          title: Text('දෝශ වාර්තා කරන්න', style: TextStyle(fontSize: 12)),
+          subtitle: Text('ඇප් එක පිලිබඳ දෝශ ඇත්නම් වාර්තා කරන්න.', style: TextStyle(fontSize: 11)),
+          onTap: () {
+            // Navigate to the Privacy Policy Page
+            BetterFeedback.of(context).show((feedback) async {
+              final screenshotFilePath = await writeImageToStorage(feedback.screenshot);
+
+              final Email email =Email(
+                body: 'අපගේ රහස්‍යතා ප්‍රතිපත්තිය සමාලෝචනය කරන්න.',
+                subject: 'අපගේ රහස්‍යතා ප්‍රතිපත්තිය සමාලෝචනය කරන්න.',
+                recipients: ['nmadushanka867@gmail.com'],
+                attachmentPaths: [screenshotFilePath],
+                isHTML: false
+              );
+
+              await FlutterEmailSender.send(email);
+              
+
+            });
+          },
+        ),
       ],
     );
+  }
+
+  Future<String> writeImageToStorage(Uint8List _image) async {
+    final directory = await getTemporaryDirectory();
+    final imagePath = '${directory.path}/image.jpg';
+    final file = File(imagePath);
+    await file.writeAsBytes(_image);
+    return imagePath;
   }
 
   // App Version Section

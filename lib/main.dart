@@ -47,6 +47,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:device_preview/device_preview.dart';
+import 'package:feedback/feedback.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -96,76 +97,78 @@ void main() async {
       "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=$apiKey";
 
   runApp(
-    MultiProvider(
-      providers: [
-        Provider<AuthRepositoryInterface2>(create: (_) => AuthRepository2()),
-        Provider<SignInWithGoogle2>(
-            create: (context) =>
-                SignInWithGoogle2(context.read<AuthRepositoryInterface2>())),
-        ChangeNotifierProvider(
-            create: (context) =>
-                LoginViewModel2(context.read<SignInWithGoogle2>())),
-        // ChangeNotifierProvider(
-        //   create: (context) => PostProvider(
-        //     GetAllPosts(PostRepositoryImpl(FirebasePostDataSource(FirebaseFirestore.instance)))..fetchAllPosts(),
-        //   ),
-        // ),
-        ChangeNotifierProvider(
-            create: (_) => PostProvider(GetAllPosts(PostRepositoryImpl(
-                FirebasePostDataSource(FirebaseFirestore.instance))))),
-        Provider<AuthRepositoryInterface>(create: (_) => AuthRepository()),
-        Provider<SignInWithGoogle>(
-            create: (context) =>
-                SignInWithGoogle(context.read<AuthRepositoryInterface>())),
-        ChangeNotifierProvider(
-            create: (context) =>
-                LoginViewModel(context.read<SignInWithGoogle>())),
-        ChangeNotifierProvider<ReviewProvider>(
-          create: (_) => ReviewProvider(),
-        ),
-        ChangeNotifierProvider<SubscriptionProvider>(
-          create: (_) => SubscriptionProvider(),
-        ),
-        Provider<FirebaseDataSource>(
-          create: (_) => FirebaseDataSource(),
-        ),
-        ProxyProvider<FirebaseDataSource, AuruduNakathRepositoryImpl>(
-          update: (_, dataSource, __) =>
-              AuruduNakathRepositoryImpl(dataSource: dataSource),
-        ),
-        ProxyProvider<AuruduNakathRepositoryImpl, GetAuruduNakathData>(
-          update: (_, repository, __) =>
-              GetAuruduNakathData(repository: repository),
-        ),
-        ProxyProvider<GetAuruduNakathData, AuruduNakathBloc>(
-          update: (_, getAuruduNakathData, __) =>
-              AuruduNakathBloc(getAuruduNakathData: getAuruduNakathData),
-          dispose: (_, bloc) => bloc.close(),
-        ),
-        Provider<SharedPreferences>.value(value: sharedPreferences),
-        ChangeNotifierProvider(create: (_) => themeNotifier),
-        Provider<SettingsRepository>(create: (_) => SettingsRepositoryImpl()),
-        Provider<SettingsBloc>(
-            create: (context) =>
-                SettingsBloc(context.read<SettingsRepository>())),
-        Provider<FetchManageMessagesUseCase>(
-            create: (_) => FetchManageMessagesUseCase(sharedPreferences)),
-        Provider<SendTextMessageUseCase>(
-            create: (_) => SendTextMessageUseCase(apiKey, apiUrl)),
-        Provider<SendImageMessageUseCase>(
-            create: (_) => SendImageMessageUseCase(apiKey)),
-        Provider<ClearChatHistoryUseCase>(
-            create: (_) => ClearChatHistoryUseCase(sharedPreferences)),
-        Provider<FetchManageMessagesUseCase2>(
-            create: (_) => FetchManageMessagesUseCase2(sharedPreferences)),
-        Provider<SendTextMessageUseCase2>(
-            create: (_) => SendTextMessageUseCase2(apiKey, apiUrl)),
-        Provider<SendImageMessageUseCase2>(
-            create: (_) => SendImageMessageUseCase2(apiKey)),
-        Provider<ClearChatHistoryUseCase2>(
-            create: (_) => ClearChatHistoryUseCase2(sharedPreferences)),
-      ],
-      child: MyApp(),
+    BetterFeedback(
+      child: MultiProvider(
+        providers: [
+          Provider<AuthRepositoryInterface2>(create: (_) => AuthRepository2()),
+          Provider<SignInWithGoogle2>(
+              create: (context) =>
+                  SignInWithGoogle2(context.read<AuthRepositoryInterface2>())),
+          ChangeNotifierProvider(
+              create: (context) =>
+                  LoginViewModel2(context.read<SignInWithGoogle2>())),
+          // ChangeNotifierProvider(
+          //   create: (context) => PostProvider(
+          //     GetAllPosts(PostRepositoryImpl(FirebasePostDataSource(FirebaseFirestore.instance)))..fetchAllPosts(),
+          //   ),
+          // ),
+          ChangeNotifierProvider(
+              create: (_) => PostProvider(GetAllPosts(PostRepositoryImpl(
+                  FirebasePostDataSource(FirebaseFirestore.instance))))),
+          Provider<AuthRepositoryInterface>(create: (_) => AuthRepository()),
+          Provider<SignInWithGoogle>(
+              create: (context) =>
+                  SignInWithGoogle(context.read<AuthRepositoryInterface>())),
+          ChangeNotifierProvider(
+              create: (context) =>
+                  LoginViewModel(context.read<SignInWithGoogle>())),
+          ChangeNotifierProvider<ReviewProvider>(
+            create: (_) => ReviewProvider(),
+          ),
+          ChangeNotifierProvider<SubscriptionProvider>(
+            create: (_) => SubscriptionProvider(),
+          ),
+          Provider<FirebaseDataSource>(
+            create: (_) => FirebaseDataSource(),
+          ),
+          ProxyProvider<FirebaseDataSource, AuruduNakathRepositoryImpl>(
+            update: (_, dataSource, __) =>
+                AuruduNakathRepositoryImpl(dataSource: dataSource),
+          ),
+          ProxyProvider<AuruduNakathRepositoryImpl, GetAuruduNakathData>(
+            update: (_, repository, __) =>
+                GetAuruduNakathData(repository: repository),
+          ),
+          ProxyProvider<GetAuruduNakathData, AuruduNakathBloc>(
+            update: (_, getAuruduNakathData, __) =>
+                AuruduNakathBloc(getAuruduNakathData: getAuruduNakathData),
+            dispose: (_, bloc) => bloc.close(),
+          ),
+          Provider<SharedPreferences>.value(value: sharedPreferences),
+          ChangeNotifierProvider(create: (_) => themeNotifier),
+          Provider<SettingsRepository>(create: (_) => SettingsRepositoryImpl()),
+          Provider<SettingsBloc>(
+              create: (context) =>
+                  SettingsBloc(context.read<SettingsRepository>())),
+          Provider<FetchManageMessagesUseCase>(
+              create: (_) => FetchManageMessagesUseCase(sharedPreferences)),
+          Provider<SendTextMessageUseCase>(
+              create: (_) => SendTextMessageUseCase(apiKey, apiUrl)),
+          Provider<SendImageMessageUseCase>(
+              create: (_) => SendImageMessageUseCase(apiKey)),
+          Provider<ClearChatHistoryUseCase>(
+              create: (_) => ClearChatHistoryUseCase(sharedPreferences)),
+          Provider<FetchManageMessagesUseCase2>(
+              create: (_) => FetchManageMessagesUseCase2(sharedPreferences)),
+          Provider<SendTextMessageUseCase2>(
+              create: (_) => SendTextMessageUseCase2(apiKey, apiUrl)),
+          Provider<SendImageMessageUseCase2>(
+              create: (_) => SendImageMessageUseCase2(apiKey)),
+          Provider<ClearChatHistoryUseCase2>(
+              create: (_) => ClearChatHistoryUseCase2(sharedPreferences)),
+        ],
+        child: MyApp(),
+      ),
     ),
   );
 }

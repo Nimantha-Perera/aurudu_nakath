@@ -63,7 +63,8 @@ class _LoginFormState extends State<LoginForm> {
         width: 120,
         height: 120,
         decoration: BoxDecoration(
-          image: DecorationImage(image: AssetImage('assets/icons/katapatha.webp')),
+          image:
+              DecorationImage(image: AssetImage('assets/icons/katapatha.webp')),
           color: Colors.white,
           shape: BoxShape.circle,
           boxShadow: [
@@ -151,11 +152,14 @@ class _LoginFormState extends State<LoginForm> {
     );
   }
 
-  InputDecoration _inputDecoration(String label, IconData icon, bool isDarkMode) {
+  InputDecoration _inputDecoration(
+      String label, IconData icon, bool isDarkMode) {
     return InputDecoration(
       labelText: label,
-      labelStyle: TextStyle(color: isDarkMode ? Colors.white70 : Colors.grey[700]),
-      prefixIcon: Icon(icon, color: isDarkMode ? Colors.white70 : Colors.grey[600]),
+      labelStyle:
+          TextStyle(color: isDarkMode ? Colors.white70 : Colors.grey[700]),
+      prefixIcon:
+          Icon(icon, color: isDarkMode ? Colors.white70 : Colors.grey[600]),
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(30),
         borderSide: BorderSide.none,
@@ -185,16 +189,22 @@ class _LoginFormState extends State<LoginForm> {
     return SizedBox(
       width: double.infinity,
       child: ElevatedButton(
-        onPressed: widget.loginViewModel.isLoading ? null : () => _handleLogin(context),
+        onPressed: widget.loginViewModel.isLoading
+            ? null
+            : () => _handleLogin(context),
         child: widget.loginViewModel.isLoading
             ? SizedBox(
                 width: 20,
                 height: 20,
-                child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
+                child: CircularProgressIndicator(
+                    color: Colors.white, strokeWidth: 2),
               )
             : Text(
                 'පිවිසෙන්න',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: const Color.fromARGB(255, 102, 102, 102)),
+                style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: const Color.fromARGB(255, 102, 102, 102)),
               ),
         style: ElevatedButton.styleFrom(
           foregroundColor: Colors.white,
@@ -217,77 +227,76 @@ class _LoginFormState extends State<LoginForm> {
           padding: const EdgeInsets.symmetric(horizontal: 16),
           child: Text(
             'හෝ',
-            style: TextStyle(color: Colors.grey[600], fontWeight: FontWeight.bold),
+            style:
+                TextStyle(color: Colors.grey[600], fontWeight: FontWeight.bold),
           ),
         ),
         Expanded(child: Divider(color: Colors.grey[400], thickness: 1)),
       ],
     );
   }
-  Future<void> _saveUserDetails() async {
-  
 
-  }
-void _handleLogin(BuildContext context) async {
-  if (_formKey.currentState!.validate()) {
-    try {
-      // Attempt to sign in the user
-      UserCredential userCredential = await _auth.signInWithEmailAndPassword(
-        email: _emailController.text.trim(),
-        password: _passwordController.text.trim(),
-      );
+  Future<void> _saveUserDetails() async {}
+  void _handleLogin(BuildContext context) async {
+    if (_formKey.currentState!.validate()) {
+      try {
+        // Attempt to sign in the user
+        UserCredential userCredential = await _auth.signInWithEmailAndPassword(
+          email: _emailController.text.trim(),
+          password: _passwordController.text.trim(),
+        );
 
-      // Store email and UID in SharedPreferences
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      await prefs.setString('email', userCredential.user!.email!);
-      await prefs.setString('userId', userCredential.user!.uid);
-      await prefs.setString('photoURL', 'https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png');
+        // Store email and UID in SharedPreferences
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        await prefs.setString('email', userCredential.user!.email!);
+        await prefs.setString('userId', userCredential.user!.uid);
+        await prefs.setString('photoURL',
+            'https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png');
 
-      // Fetch the username from Firestore
-      DocumentSnapshot userDoc = await FirebaseFirestore.instance
-          .collection('normle_users')
-          .doc(userCredential.user!.uid)
-          .get();
+        // Fetch the username from Firestore
+        DocumentSnapshot userDoc = await FirebaseFirestore.instance
+            .collection('normle_users')
+            .doc(userCredential.user!.uid)
+            .get();
 
-      if (userDoc.exists) {
-        // Get the username from the document and store it in SharedPreferences
-        String username = userDoc.get('username');
-        await prefs.setString('displayName', username);
-      } else {
-        print('No user document found for UID: ${userCredential.user!.uid}');
+        if (userDoc.exists) {
+          // Get the username from the document and store it in SharedPreferences
+          String username = userDoc.get('username');
+          await prefs.setString('displayName', username);
+        } else {
+          print('No user document found for UID: ${userCredential.user!.uid}');
+        }
+
+        // Navigate to the next screen
+        Navigator.pushReplacementNamed(context, AppRoutes.katapatha);
+      } on FirebaseAuthException catch (e) {
+        String message =
+            'පිවිසීම අසාර්ථක විය. කරුණාකර ඔබගේ තොරතුරු පරීක්ෂා කර නැවත උත්සාහ කරන්න.';
+        if (e.code == 'user-not-found') {
+          message = 'මෙම ඊමේල් ලිපිනයට අදාළ පරිශීලකයෙක් සොයා ගත නොහැක.';
+        } else if (e.code == 'wrong-password') {
+          message = 'රහස්‍ය අංකය වැරදිය.';
+        }
+        // Log the error for debugging
+        print('Login error: ${e.message}');
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(message),
+            backgroundColor: Colors.red,
+          ),
+        );
+      } catch (e) {
+        // Handle any other exceptions
+        print('Unexpected error: $e');
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('අසාර්ථකතාවක් සිදු විය. නැවත උත්සාහ කරන්න.'),
+            backgroundColor: Colors.red,
+          ),
+        );
       }
-
-      // Navigate to the next screen
-      Navigator.pushReplacementNamed(context, AppRoutes.katapatha);
-    } on FirebaseAuthException catch (e) {
-      String message = 'පිවිසීම අසාර්ථක විය. කරුණාකර ඔබගේ තොරතුරු පරීක්ෂා කර නැවත උත්සාහ කරන්න.';
-      if (e.code == 'user-not-found') {
-        message = 'මෙම ඊමේල් ලිපිනයට අදාළ පරිශීලකයෙක් සොයා ගත නොහැක.';
-      } else if (e.code == 'wrong-password') {
-        message = 'රහස්‍ය අංකය වැරදිය.';
-      }
-      // Log the error for debugging
-      print('Login error: ${e.message}');
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(message),
-          backgroundColor: Colors.red,
-        ),
-      );
-    } catch (e) {
-      // Handle any other exceptions
-      print('Unexpected error: $e');
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('අසාර්ථකතාවක් සිදු විය. නැවත උත්සාහ කරන්න.'),
-          backgroundColor: Colors.red,
-        ),
-      );
     }
   }
-}
-
-
 
   void _showForgotPasswordDialog(BuildContext context) {
     showDialog(
@@ -304,14 +313,19 @@ void _handleLogin(BuildContext context) async {
             TextButton(
               onPressed: () async {
                 try {
-                  await _auth.sendPasswordResetEmail(email: emailController.text.trim());
+                  await _auth.sendPasswordResetEmail(
+                      email: emailController.text.trim());
                   Navigator.of(context).pop();
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('රහස්‍ය අංකය යළි සකස් කිරීමේ ලිපිය එවා ඇත.')),
+                    SnackBar(
+                        content:
+                            Text('රහස්‍ය අංකය යළි සකස් කිරීමේ ලිපිය එවා ඇත.')),
                   );
                 } catch (e) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('රහස්‍ය අංකය යළි සකස් කිරීමේ ලිපිය එවීමට අසාර්ථක විය.')),
+                    SnackBar(
+                        content: Text(
+                            'රහස්‍ය අංකය යළි සකස් කිරීමේ ලිපිය එවීමට අසාර්ථක විය.')),
                   );
                 }
               },

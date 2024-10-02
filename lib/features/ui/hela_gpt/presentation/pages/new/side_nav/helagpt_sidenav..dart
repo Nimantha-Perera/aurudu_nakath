@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -13,18 +12,22 @@ class HelagptDrawer extends StatelessWidget {
   Widget build(BuildContext context) {
     final loginViewModel = Provider.of<LoginViewModel>(context);
     final user = loginViewModel.user;
-
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    
     return Drawer(
+       shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.zero,
+      ),
       child: Container(
-        color: Colors.white,
+        color: isDarkMode ? Colors.grey[900] : Colors.white,
         child: SafeArea(
           child: Column(
             children: [
-              _buildHeader(user, context),
+              _buildHeader(user, context, isDarkMode),
               Expanded(
-                child: _buildDrawerItems(context),
+                child: _buildDrawerItems(context, isDarkMode),
               ),
-              _buildCopyright(),
+              _buildCopyright(isDarkMode),
             ],
           ),
         ),
@@ -32,7 +35,7 @@ class HelagptDrawer extends StatelessWidget {
     );
   }
 
-  Widget _buildHeader(dynamic user, BuildContext context) {
+  Widget _buildHeader(dynamic user, BuildContext context, bool isDarkMode) {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 16),
       child: FutureBuilder<Map<String, String?>>(
@@ -64,8 +67,7 @@ class HelagptDrawer extends StatelessWidget {
                     radius: 47,
                     backgroundImage: photoURL != null
                         ? NetworkImage(photoURL)
-                        : null
-                            ,
+                        : null,
                   ),
                 ),
               ),
@@ -78,11 +80,10 @@ class HelagptDrawer extends StatelessWidget {
                     style: GoogleFonts.roboto(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
-                      color: Colors.black87,
+                      color: isDarkMode ? Colors.white : Colors.black87,
                     ),
                   ),
                   const SizedBox(width: 8),
-                  
                 ],
               ),
               const SizedBox(height: 8),
@@ -90,7 +91,7 @@ class HelagptDrawer extends StatelessWidget {
                 'හෙළ GPT ඔබගේ තාක්ශනික සහයක',
                 style: GoogleFonts.notoSerifSinhala(
                   fontSize: 12,
-                  color: Colors.black54,
+                  color: isDarkMode ? Colors.grey[400] : Colors.black54,
                 ),
               ),
             ],
@@ -100,7 +101,7 @@ class HelagptDrawer extends StatelessWidget {
     );
   }
 
-  Widget _buildDrawerItems(BuildContext context) {
+  Widget _buildDrawerItems(BuildContext context, bool isDarkMode) {
     return Container(
       margin: EdgeInsets.only(top: 40),
       child: ListView(
@@ -111,26 +112,29 @@ class HelagptDrawer extends StatelessWidget {
             icon: Icons.home,
             title: 'මුල් පිටුව',
             routeName: AppRoutes.home,
+            isDarkMode: isDarkMode,
           ),
           _buildDrawerItem(
             context,
             icon: Icons.settings,
             title: 'සැකසුම්',
             routeName: AppRoutes.setting,
+            isDarkMode: isDarkMode,
           ),
           _buildDrawerItem(
             context,
             icon: Icons.info,
             title: 'අපි ගැන',
             routeName: AppRoutes.help,
+            isDarkMode: isDarkMode,
           ),
           ListTile(
             leading: Icon(Icons.logout,
-                color: const Color.fromARGB(255, 126, 126, 126)),
+                color: isDarkMode ? Colors.grey[400] : Color.fromARGB(255, 126, 126, 126)),
             title: Text(
               "සංවිධානය ඉවත් කරන්න",
               style: GoogleFonts.notoSerifSinhala(
-                color: Colors.black87,
+                color: isDarkMode ? Colors.white : Colors.black87,
                 fontSize: 13,
               ),
             ),
@@ -139,9 +143,11 @@ class HelagptDrawer extends StatelessWidget {
                   listen: false); // Add listen: false
               loginViewModel.logout(context);
             },
-            hoverColor: const Color.fromARGB(255, 194, 194, 194),
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+            hoverColor: isDarkMode
+                ? Colors.grey[800]
+                : const Color.fromARGB(255, 194, 194, 194),
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8)),
           ),
         ],
       ),
@@ -153,13 +159,14 @@ class HelagptDrawer extends StatelessWidget {
     required IconData icon,
     required String title,
     required String routeName,
+    required bool isDarkMode,
   }) {
     return ListTile(
-      leading: Icon(icon, color: const Color.fromARGB(255, 126, 126, 126)),
+      leading: Icon(icon, color: isDarkMode ? Colors.grey[400] : const Color.fromARGB(255, 126, 126, 126)),
       title: Text(
         title,
         style: GoogleFonts.notoSerifSinhala(
-          color: Colors.black87,
+          color: isDarkMode ? Colors.white : Colors.black87,
           fontSize: 13,
         ),
       ),
@@ -167,12 +174,14 @@ class HelagptDrawer extends StatelessWidget {
         Navigator.of(context).pop(); // Close the drawer
         Navigator.pushNamed(context, routeName);
       },
-      hoverColor: const Color.fromARGB(255, 189, 189, 189),
+      hoverColor: isDarkMode
+          ? Colors.grey[800]
+          : const Color.fromARGB(255, 189, 189, 189),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
     );
   }
 
-  Widget _buildCopyright() {
+  Widget _buildCopyright(bool isDarkMode) {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 16),
       child: Text(
@@ -180,7 +189,7 @@ class HelagptDrawer extends StatelessWidget {
         textAlign: TextAlign.center,
         style: GoogleFonts.notoSerifSinhala(
           fontSize: 12,
-          color: Colors.grey[600],
+          color: isDarkMode ? Colors.grey[400] : Colors.grey[600],
         ),
       ),
     );

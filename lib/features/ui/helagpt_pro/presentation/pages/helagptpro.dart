@@ -64,7 +64,7 @@ class _ChatViewState extends State<HelaGPT_PRO> {
                 'හෙළ GPT Pro',
                 style: TextStyle(
                   fontSize: 15,
-                  color: Colors.white, // Set the title color to white for contrast
+                  color: Colors.white,
                 ),
               ),
               SizedBox(width: 8),
@@ -72,40 +72,37 @@ class _ChatViewState extends State<HelaGPT_PRO> {
                   size: 18, color: Color.fromARGB(255, 255, 255, 255)),
             ],
           ),
-          centerTitle: true, // Center the title
-          backgroundColor: Theme.of(context)
-              .appBarTheme
-              .backgroundColor, // Set a vibrant background color
-          elevation: 4.0, // Add a slight shadow for depth
+          centerTitle: true,
+          backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
+          elevation: 4.0,
           actions: [
             IconButton(
               icon: Icon(
                 Icons.help_outlined,
-                color: Colors.white, // Change the icon color to match the theme
-                size: 28, // Slightly increase the icon size
+                color: Colors.white,
+                size: 28,
               ),
               onPressed: () => showHelpDialog(context),
-              tooltip: 'උදව්', // Add a tooltip in Sinhala for better UX
+              tooltip: 'උදව්',
             ),
           ],
-          leading: Builder( // Wrap the IconButton in a Builder to provide a context under the Scaffold
+          leading: Builder(
             builder: (context) {
               return IconButton(
                 icon: Icon(
                   Icons.menu,
-                  color: Colors.white, // Icon color
-                  size: 28, // Increase the size of the leading menu icon
+                  color: Colors.white,
+                  size: 28,
                 ),
                 onPressed: () {
-                  Scaffold.of(context).openDrawer(); // Access Scaffold from the new context
+                  Scaffold.of(context).openDrawer();
                 },
-                tooltip: 'මෙනු', // Tooltip for menu button in Sinhala
+                tooltip: 'මෙනු',
               );
             },
           ),
         ),
         body: SafeArea(
-          // SafeArea added here
           child: Consumer<ChatViewModel>(
             builder: (context, viewModel, child) {
               bool isChatEmpty = viewModel.messages.isEmpty;
@@ -117,7 +114,29 @@ class _ChatViewState extends State<HelaGPT_PRO> {
                       if (_showPlaceholderMessage)
                         PlaceholderMessage(onClose: _hidePlaceholderMessage),
                       Expanded(
-                        child: ChatList(viewModel: viewModel),
+                        child: isChatEmpty && !_showPlaceholderMessage
+                            ? Center(
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Text(
+                                      'හෙළ GPT Pro',
+                                      style: TextStyle(
+                                        fontSize: 32,
+                                        fontWeight: FontWeight.bold,
+                                        color: Theme.of(context).primaryColor,
+                                      ),
+                                    ),
+                                    SizedBox(width: 8),
+                                    Icon(
+                                      Icons.auto_awesome,
+                                      size: 32,
+                                      color: Theme.of(context).primaryColor,
+                                    ),
+                                  ],
+                                ),
+                              )
+                            : ChatList(viewModel: viewModel),
                       ),
                       MessageInput(),
                     ],
@@ -137,4 +156,3 @@ class _ChatViewState extends State<HelaGPT_PRO> {
     );
   }
 }
-

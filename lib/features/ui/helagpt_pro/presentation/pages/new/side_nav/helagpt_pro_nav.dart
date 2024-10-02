@@ -13,18 +13,22 @@ class HelagptProDrawer extends StatelessWidget {
   Widget build(BuildContext context) {
     final loginViewModel = Provider.of<LoginViewModel>(context);
     final user = loginViewModel.user;
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
 
     return Drawer(
+       shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.zero,
+      ),
       child: Container(
-        color: Colors.white,
+        color: isDarkMode ? Colors.grey[900] : Colors.white,
         child: SafeArea(
           child: Column(
             children: [
-              _buildHeader(user, context),
+              _buildHeader(user, context, isDarkMode),
               Expanded(
-                child: _buildDrawerItems(context),
+                child: _buildDrawerItems(context, isDarkMode),
               ),
-              _buildCopyright(),
+              _buildCopyright(isDarkMode),
             ],
           ),
         ),
@@ -32,7 +36,7 @@ class HelagptProDrawer extends StatelessWidget {
     );
   }
 
-  Widget _buildHeader(dynamic user, BuildContext context) {
+  Widget _buildHeader(dynamic user, BuildContext context, bool isDarkMode) {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 16),
       child: FutureBuilder<Map<String, String?>>(
@@ -76,7 +80,7 @@ class HelagptProDrawer extends StatelessWidget {
                     style: GoogleFonts.roboto(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
-                      color: Colors.black87,
+                      color: isDarkMode ? Colors.white : Colors.black87,
                     ),
                   ),
                   const SizedBox(width: 8),
@@ -85,7 +89,7 @@ class HelagptProDrawer extends StatelessWidget {
                         'Pro User', // The text shown when hovering over the icon
                     child: Icon(
                       FontAwesomeIcons.checkCircle,
-                      color: const Color.fromARGB(255, 87, 87, 87),
+                      color: isDarkMode ? Colors.white70 : Colors.black54,
                       size: 17,
                     ),
                   ),
@@ -96,7 +100,7 @@ class HelagptProDrawer extends StatelessWidget {
                 'හෙළ GPT PRO ඔබගේ තාක්ශනික සහයක',
                 style: GoogleFonts.notoSerifSinhala(
                   fontSize: 12,
-                  color: Colors.black54,
+                  color: isDarkMode ? Colors.white70 : Colors.black54,
                 ),
               ),
             ],
@@ -106,7 +110,7 @@ class HelagptProDrawer extends StatelessWidget {
     );
   }
 
-  Widget _buildDrawerItems(BuildContext context) {
+  Widget _buildDrawerItems(BuildContext context, bool isDarkMode) {
     return Container(
       margin: EdgeInsets.only(top: 40),
       child: ListView(
@@ -117,26 +121,31 @@ class HelagptProDrawer extends StatelessWidget {
             icon: Icons.home,
             title: 'මුල් පිටුව',
             routeName: AppRoutes.home,
+            isDarkMode: isDarkMode,
           ),
           _buildDrawerItem(
             context,
             icon: Icons.settings,
             title: 'සැකසුම්',
             routeName: AppRoutes.setting,
+            isDarkMode: isDarkMode,
           ),
           _buildDrawerItem(
             context,
             icon: Icons.info,
             title: 'අපි ගැන',
             routeName: AppRoutes.help,
+            isDarkMode: isDarkMode,
           ),
           ListTile(
             leading: Icon(Icons.logout,
-                color: const Color.fromARGB(255, 126, 126, 126)),
+                color: isDarkMode
+                    ? const Color.fromARGB(255, 220, 220, 220)
+                    : const Color.fromARGB(255, 126, 126, 126)),
             title: Text(
               "සංවිධානය ඉවත් කරන්න",
               style: GoogleFonts.notoSerifSinhala(
-                color: Colors.black87,
+                color: isDarkMode ? Colors.white : Colors.black87,
                 fontSize: 13,
               ),
             ),
@@ -145,7 +154,9 @@ class HelagptProDrawer extends StatelessWidget {
                   listen: false); // Add listen: false
               loginViewModel.logout(context);
             },
-            hoverColor: const Color.fromARGB(255, 194, 194, 194),
+            hoverColor: isDarkMode
+                ? const Color.fromARGB(255, 80, 80, 80)
+                : const Color.fromARGB(255, 194, 194, 194),
             shape:
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
           ),
@@ -159,13 +170,19 @@ class HelagptProDrawer extends StatelessWidget {
     required IconData icon,
     required String title,
     required String routeName,
+    required bool isDarkMode,
   }) {
     return ListTile(
-      leading: Icon(icon, color: const Color.fromARGB(255, 126, 126, 126)),
+      leading: Icon(
+        icon,
+        color: isDarkMode
+            ? const Color.fromARGB(255, 220, 220, 220)
+            : const Color.fromARGB(255, 126, 126, 126),
+      ),
       title: Text(
         title,
         style: GoogleFonts.notoSerifSinhala(
-          color: Colors.black87,
+          color: isDarkMode ? Colors.white : Colors.black87,
           fontSize: 13,
         ),
       ),
@@ -173,12 +190,14 @@ class HelagptProDrawer extends StatelessWidget {
         Navigator.of(context).pop(); // Close the drawer
         Navigator.pushNamed(context, routeName);
       },
-      hoverColor: const Color.fromARGB(255, 189, 189, 189),
+      hoverColor: isDarkMode
+          ? const Color.fromARGB(255, 80, 80, 80)
+          : const Color.fromARGB(255, 189, 189, 189),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
     );
   }
 
-  Widget _buildCopyright() {
+  Widget _buildCopyright(bool isDarkMode) {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 16),
       child: Text(
@@ -186,7 +205,7 @@ class HelagptProDrawer extends StatelessWidget {
         textAlign: TextAlign.center,
         style: GoogleFonts.notoSerifSinhala(
           fontSize: 12,
-          color: Colors.grey[600],
+          color: isDarkMode ? Colors.grey[400] : Colors.grey[600],
         ),
       ),
     );

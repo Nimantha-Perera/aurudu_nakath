@@ -86,7 +86,7 @@ class _ChatViewState extends State<ChatView> {
             builder: (context) => IconButton(
               icon: icon,
               onPressed: () {
-                Scaffold.of(context).openDrawer(); // Using Builder context
+                Scaffold.of(context).openDrawer();
               },
             ),
           ),
@@ -109,7 +109,18 @@ class _ChatViewState extends State<ChatView> {
                       if (_showPlaceholderMessage)
                         PlaceholderMessage(onClose: _hidePlaceholderMessage),
                       Expanded(
-                        child: ChatList(viewModel: viewModel),
+                        child: isChatEmpty && !_showPlaceholderMessage
+                            ? Center(
+                                child: Text(
+                                  'හෙළ සහකරු',
+                                  style: TextStyle(
+                                    fontSize: 32,
+                                    fontWeight: FontWeight.bold,
+                                    color: Theme.of(context).primaryColor,
+                                  ),
+                                ),
+                              )
+                            : ChatList(viewModel: viewModel),
                       ),
                       MessageInput(),
                     ],

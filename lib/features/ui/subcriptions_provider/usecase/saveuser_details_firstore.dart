@@ -10,6 +10,7 @@ Future<void> saveUserDetails(bool subscribed, Timestamp subscribeTime) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? email = prefs.getString('email');
     String? displayName = prefs.getString('displayName');
+    String? userId = prefs.getString('userId');
 
     // Check if email and displayName are not null
     if (email == null || displayName == null) {
@@ -34,6 +35,7 @@ Future<void> saveUserDetails(bool subscribed, Timestamp subscribeTime) async {
           'displayName': displayName,
           'subscribed': subscribed,
           'subscribe_time': subscribeTime,
+          'userId': userId,
         });
         print("User details saved to Firestore.");
       }

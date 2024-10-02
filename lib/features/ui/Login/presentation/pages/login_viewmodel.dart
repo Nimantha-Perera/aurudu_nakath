@@ -52,7 +52,10 @@ class LoginViewModel extends ChangeNotifier {
     await prefs.setString('email', _user!.email);
     await prefs.setString('displayName', _user!.displayName);
     await prefs.setString('photoURL', _user!.photoURL ?? '');
-    await prefs.setString('userId', _user!.id ?? '', );
+    await prefs.setString(
+      'userId',
+      _user!.id ?? '',
+    );
   }
 
   /// Checks the login status of the user and returns a bool indicating if logged in
