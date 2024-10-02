@@ -48,6 +48,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:device_preview/device_preview.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -77,6 +78,10 @@ void main() async {
     return;
   }
 
+  await FirebaseAppCheck.instance.activate(
+    androidProvider: AndroidProvider.debug,
+  );
+
   NotificationService notificationService =
       NotificationService(); // Create instance of NotificationService
   await notificationService.initialize(); // Initialize notifications
@@ -93,8 +98,6 @@ void main() async {
   runApp(
     MultiProvider(
       providers: [
-
-
         Provider<AuthRepositoryInterface2>(create: (_) => AuthRepository2()),
         Provider<SignInWithGoogle2>(
             create: (context) =>

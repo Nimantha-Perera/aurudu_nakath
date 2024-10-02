@@ -184,35 +184,35 @@ class _RegisterFormState extends State<RegisterForm> {
   }
 
   Future<void> _handleRegister(BuildContext context) async {
-    if (_formKey.currentState!.validate()) {
+  if (_formKey.currentState!.validate()) {
+    try {
+      // Check if username already exists in Firestore
+      final usernameQuery = await FirebaseFirestore.instance
+          .collection('normle_users')
+          .where('username', isEqualTo: _usernameController.text.trim())
+          .get();
+
+      if (usernameQuery.docs.isNotEmpty) {
+        _showErrorDialog(context, 'දෝෂයක් සිදුවී ඇත',
+            'පරිශීලක නාමය පෙරමුණුව ඇත.'); // Username already exists
+        return;
+      }
+
+      // Authentication process in a separate try-catch
       try {
-        // Check if username already exists in Firestore
-        final usernameQuery = await FirebaseFirestore.instance
-            .collection('normle_users')
-            .where('username', isEqualTo: _usernameController.text.trim())
-            .get();
-
-        if (usernameQuery.docs.isNotEmpty) {
-          _showErrorDialog(context, 'දෝෂයක් සිදුවී ඇත',
-              'පරිශීලක නාමය පෙරමුණුව ඇත.'); // Username already exists
-          return;
-        }
-
         // Create the user with Firebase Authentication
-   
-          final UserCredential userCredential = await FirebaseAuth.instance
-              .createUserWithEmailAndPassword(
-                  email: _emailController.text.trim(),
-                  password: _passwordController.text.trim());
-          final User? user = userCredential.user;
-         
+        final UserCredential userCredential = await FirebaseAuth.instance
+            .createUserWithEmailAndPassword(
+                email: _emailController.text.trim(),
+                password: _passwordController.text.trim());
+        final User? user = userCredential.user;
 
         // Store user details in Firestore
         await FirebaseFirestore.instance
             .collection('normle_users')
             .doc(user!.uid)
             .set({
-          'username': _usernameController.text.trim(),
+          'displayName': _usernameController.text.trim(),
           'email': _emailController.text.trim(),
           'mobile': _mobileController.text.trim(),
           'reg_date': DateTime.now().toString(),
@@ -233,23 +233,19 @@ class _RegisterFormState extends State<RegisterForm> {
         _confirmPasswordController.clear();
 
         // Show success message
-        _showErrorDialog(context, 'ලියාපදිංචිය සාර්ථකයි',
-            'ඔබ ලියාපදිංචි විය.'); // Registration successful
+        _showErrorDialog(context, 'ලියාපදිංචිය සාර්ථකයි', 'ඔබ ලියාපදිංචි විය.');
       } on FirebaseAuthException catch (e) {
-        // Handle registration error
+        // Handle authentication-specific errors
         String errorMessage;
-
         switch (e.code) {
-          case 'ERROR_EMAIL_ALREADY_IN_USE':
+          case 'email-already-in-use':
             errorMessage =
                 'මෙම විද්‍යුත් තැපෑල සම්පූර්ණයෙන්ම පවත්වාගෙන යනු ලබයි. (This email address is already in use.)';
-            // Show alert for email already in use
-            _showAlertDialog(context, 'දෝෂයක් සිදුවී ඇත', errorMessage);
-            return; // Exit the method
+            break;
           case 'weak-password':
             errorMessage = 'මුරපදය දුර්වලයි. (Weak password)';
             break;
-          case 'ERROR_INVALID_EMAIL':
+          case 'invalid-email':
             errorMessage =
                 'වලංගු විද්‍යුත් තැපෑලක් ඇතුළත් කරන්න. (Please enter a valid email address.)';
             break;
@@ -259,13 +255,22 @@ class _RegisterFormState extends State<RegisterForm> {
             break;
         }
         _showErrorDialog(context, 'දෝෂයක් සිදුවී ඇත', errorMessage);
+        return; // Exit method on error
       } catch (e) {
-        // Handle other errors
+        // Handle other authentication errors
         _showErrorDialog(context, 'දෝෂයක් සිදුවී ඇත',
-            'ලියාපදිංචි කිරීමේ දෝෂයක් සිදුවී ඇත. (Registration error)');
+            'Firebase සත්‍යාපන දෝෂයක් සිදුවී ඇත. (Firebase authentication error)');
+        return;
       }
+
+    } catch (e) {
+      // Handle other registration errors
+      _showErrorDialog(context, 'දෝෂයක් සිදුවී ඇත',
+          'ලියාපදිංචි කිරීමේ දෝෂයක් සිදුවී ඇත. (Registration error)');
     }
   }
+}
+
 
 // Function to show an alert dialog
   void _showAlertDialog(BuildContext context, String title, String message) {

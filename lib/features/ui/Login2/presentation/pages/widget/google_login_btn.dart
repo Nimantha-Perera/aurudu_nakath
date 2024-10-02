@@ -21,7 +21,7 @@ class GoogleLoginButton extends StatelessWidget {
             )
           : Text(
               'Google සමගින් පූර්ණය වන්න',
-              style: TextStyle(fontSize: 16, color: const Color.fromARGB(255, 109, 109, 109)),
+              style: TextStyle(fontSize: 13, color: const Color.fromARGB(255, 109, 109, 109)),
             ),
       style: ElevatedButton.styleFrom(
       
