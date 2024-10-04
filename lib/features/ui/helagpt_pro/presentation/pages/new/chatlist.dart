@@ -109,6 +109,7 @@ class _ChatListState extends State<ChatList> {
                           bottomRight: Radius.circular(18.0),
                           topRight: Radius.circular(18.0),
                         ),
+                   imagePath: message.imagePath,     
                 ),
               ),
             ],

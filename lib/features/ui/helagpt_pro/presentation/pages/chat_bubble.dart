@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:flutter/services.dart';
 import 'package:markdown/markdown.dart' as md;
+import 'dart:io';
 
 class ChatBubble extends StatefulWidget {
   final String message;
@@ -10,6 +11,7 @@ class ChatBubble extends StatefulWidget {
   final Color backgroundColor;
   final Color textColor;
   final BorderRadius borderRadius;
+  final String? imagePath;
 
   ChatBubble({
     Key? key,
@@ -18,6 +20,7 @@ class ChatBubble extends StatefulWidget {
     required this.backgroundColor,
     required this.textColor,
     required this.borderRadius,
+    this.imagePath,
   }) : super(key: key);
 
   @override
@@ -27,6 +30,7 @@ class ChatBubble extends StatefulWidget {
 class _ChatBubbleState extends State<ChatBubble> with SingleTickerProviderStateMixin {
   late AnimationController _animationController;
   late Animation<double> _scaleAnimation;
+  String? _localImagePath;
 
   @override
   void initState() {
@@ -40,20 +44,45 @@ class _ChatBubbleState extends State<ChatBubble> with SingleTickerProviderStateM
       curve: Curves.easeOutBack,
     );
     _animationController.forward();
+    
+    if (widget.imagePath != null) {
+      _saveImageLocally();
+    }
   }
+
+Future<void> _saveImageLocally() async {
+  if (widget.imagePath == null) return;
+
+  try {
+    final directory = await getTemporaryDirectory();
+    final fileName = '${DateTime.now().millisecondsSinceEpoch}.jpg';
+    final localPath = '${directory.path}/$fileName';
+
+    // Copy the image to temporary directory
+    await File(widget.imagePath!).copy(localPath);
+
+    // Only call setState if the widget is still mounted
+    if (mounted) {
+      setState(() {
+        _localImagePath = localPath;
+      });
+    }
+  } catch (error) {
+    print('Error saving image locally: $error');
+  }
+}
+
 
   @override
   void dispose() {
     _animationController.dispose();
-    super.dispose();
-  }
-
-  Future<void> _launchURL(String url) async {
-    if (await canLaunch(url)) {
-      await launch(url);
-    } else {
-      throw 'Could not launch $url';
+    // Clean up temporary image file
+    if (_localImagePath != null) {
+      File(_localImagePath!).delete().catchError((error) {
+        print('Error deleting temporary image: $error');
+      });
     }
+    super.dispose();
   }
 
   void _copyToClipboard(BuildContext context) {
@@ -103,45 +132,52 @@ class _ChatBubbleState extends State<ChatBubble> with SingleTickerProviderStateM
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      MarkdownBody(
-                        data: widget.message,
-                        styleSheet: MarkdownStyleSheet(
-                          p: TextStyle(
-                            color: widget.textColor,
-                            fontSize: 16.0,
-                            fontWeight: FontWeight.w400,
-                            height: 1.4,
-                          ),
-                          h1: TextStyle(
-                            color: widget.textColor,
-                            fontSize: 24.0,
-                            fontWeight: FontWeight.bold,
-                          ),
-                          h2: TextStyle(
-                            color: widget.textColor,
-                            fontSize: 22.0,
-                            fontWeight: FontWeight.bold,
-                          ),
-                          code: TextStyle(
-                            backgroundColor: Colors.grey.withOpacity(0.2),
-                            fontFamily: 'monospace',
-                            color: widget.textColor.withOpacity(0.9),
-                          ),
-                          codeblockPadding: EdgeInsets.all(8),
-                          codeblockDecoration: BoxDecoration(
-                            color: Colors.grey.withOpacity(0.1),
-                            borderRadius: BorderRadius.circular(8),
+                      if (_localImagePath != null)
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(8),
+                          child: Image.file(
+                            File(_localImagePath!),
+                            fit: BoxFit.cover,
+                            width: double.infinity,
                           ),
                         ),
-                        onTapLink: (text, url, title) {
-                          if (url != null) {
-                            _launchURL(url);
-                          }
-                        },
-                        builders: {
-                          'code': CustomCodeBlockBuilder(),
-                        },
-                      ),
+                      if (_localImagePath != null && widget.message.isNotEmpty)
+                        SizedBox(height: 8),
+                      if (widget.message.isNotEmpty)
+                        MarkdownBody(
+                          data: widget.message,
+                          styleSheet: MarkdownStyleSheet(
+                            p: TextStyle(
+                              color: widget.textColor,
+                              fontSize: 16.0,
+                              fontWeight: FontWeight.w400,
+                              height: 1.4,
+                            ),
+                            h1: TextStyle(
+                              color: widget.textColor,
+                              fontSize: 24.0,
+                              fontWeight: FontWeight.bold,
+                            ),
+                            h2: TextStyle(
+                              color: widget.textColor,
+                              fontSize: 22.0,
+                              fontWeight: FontWeight.bold,
+                            ),
+                            code: TextStyle(
+                              backgroundColor: Colors.grey.withOpacity(0.2),
+                              fontFamily: 'monospace',
+                              color: widget.textColor.withOpacity(0.9),
+                            ),
+                            codeblockPadding: EdgeInsets.all(8),
+                            codeblockDecoration: BoxDecoration(
+                              color: Colors.grey.withOpacity(0.1),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                          ),
+                          builders: {
+                            'code': CustomCodeBlockBuilder(),
+                          },
+                        ),
                       SizedBox(height: 6),
                       Align(
                         alignment: Alignment.bottomRight,
@@ -172,8 +208,6 @@ class CustomCodeBlockBuilder extends MarkdownElementBuilder {
     if (element.tag != 'code') return null;
 
     String language = '';
-
-    // Check if the element has any classes
     if (element.attributes['class'] != null) {
       final classes = element.attributes['class']!.split(' ');
       for (final className in classes) {
