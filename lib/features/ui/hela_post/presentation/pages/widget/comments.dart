@@ -15,19 +15,17 @@ class CommentSection extends StatefulWidget {
 }
 
 class _CommentSectionState extends State<CommentSection> {
-  List<Map<String, dynamic>> comments = [];
   final TextEditingController commentController = TextEditingController();
   String? editingCommentId;
-  bool isLoading = false;
   String? currentUserId;
   String? currentUserName;
   String? currentPhotoUrl;
+  int commentsToShow = 3; // Start with showing 3 comments initially
 
   @override
   void initState() {
     super.initState();
     _fetchCurrentUserId();
-    _fetchComments();
   }
 
   Future<void> _fetchCurrentUserId() async {
@@ -63,18 +61,57 @@ class _CommentSectionState extends State<CommentSection> {
             ),
           ),
           const SizedBox(height: 16),
-          isLoading
-              ? Center(child: CircularProgressIndicator())
-              : comments.isEmpty
-                  ? _buildEmptyState(isDarkMode)
-                  : ListView.builder(
-                      shrinkWrap: true,
-                      physics: NeverScrollableScrollPhysics(),
-                      itemCount: comments.length,
-                      itemBuilder: (context, index) {
-                        return _buildCommentItem(comments[index], isDarkMode);
+          StreamBuilder<QuerySnapshot>(
+            stream: FirebaseFirestore.instance
+                .collection('posts')
+                .doc(widget.postId)
+                .collection('comments')
+                .orderBy('timestamp', descending: true)
+                .snapshots(),  // Listening to real-time changes
+            builder: (context, snapshot) {
+              if (!snapshot.hasData) {
+                return Center(child: CircularProgressIndicator());
+              }
+
+              final comments = snapshot.data!.docs;
+
+              if (comments.isEmpty) {
+                return _buildEmptyState(isDarkMode);
+              }
+
+              // Display only `commentsToShow` comments, and allow showing more
+              return Column(
+                children: [
+                  ListView.builder(
+                    shrinkWrap: true,
+                    physics: NeverScrollableScrollPhysics(),
+                    itemCount: comments.length < commentsToShow
+                        ? comments.length
+                        : commentsToShow, // Show only up to the current limit
+                    itemBuilder: (context, index) {
+                      final commentData = comments[index].data() as Map<String, dynamic>;
+                      return _buildCommentItem(commentData, comments[index].id, isDarkMode);
+                    },
+                  ),
+                  if (comments.length > commentsToShow)
+                    TextButton(
+                      onPressed: () {
+                        setState(() {
+                          commentsToShow += 3; // Increase commentsToShow by 3
+                        });
                       },
+                      child: Text(
+                        'වැඩි අදහස් පෙන්වන්න',
+                        style: GoogleFonts.poppins(
+                          color: isDarkMode ? Colors.blue[300] : Colors.blue,
+                          fontSize: 14,
+                        ),
+                      ),
                     ),
+                ],
+              );
+            },
+          ),
           const SizedBox(height: 16),
           _buildCommentInput(isDarkMode),
         ],
@@ -103,13 +140,13 @@ class _CommentSectionState extends State<CommentSection> {
     );
   }
 
-  Widget _buildCommentItem(Map<String, dynamic> commentData, bool isDarkMode) {
+  Widget _buildCommentItem(Map<String, dynamic> commentData, String commentId, bool isDarkMode) {
     bool isAuthor = commentData['authorId'] == currentUserId;
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: GestureDetector(
         onLongPress: isAuthor
-            ? () => _showCommentOptions(commentData['id'], commentData['text'])
+            ? () => _showCommentOptions(commentId, commentData['text'])
             : null,
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -117,11 +154,10 @@ class _CommentSectionState extends State<CommentSection> {
             CircleAvatar(
               radius: 20,
               backgroundColor: isDarkMode ? Colors.grey[700] : Colors.grey[300],
-              backgroundImage: NetworkImage(commentData['userPhotoUrl'] ??
+              backgroundImage: NetworkImage(commentData['userPhotoUrl'] ?? 
                   'https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png'),
               child: commentData['userPhotoUrl'] == null
-                  ? Icon(Icons.person,
-                      color: isDarkMode ? Colors.grey[300] : Colors.grey[600])
+                  ? Icon(Icons.person, color: isDarkMode ? Colors.grey[300] : Colors.grey[600])
                   : null,
             ),
             const SizedBox(width: 12),
@@ -216,153 +252,83 @@ class _CommentSectionState extends State<CommentSection> {
     );
   }
 
-  Future<void> _fetchComments() async {
-    setState(() {
-      isLoading = true;
-    });
-    try {
-      final snapshot = await FirebaseFirestore.instance
-          .collection('posts')
-          .doc(widget.postId)
-          .collection('comments')
-          .orderBy('timestamp', descending: true)
-          .get();
-
-      if (mounted) {
-        setState(() {
-          comments = snapshot.docs
-              .map((doc) => {
-                    'id': doc.id,
-                    'text': doc['text'],
-                    'timestamp': doc['timestamp'],
-                    'authorId': doc['authorId'],
-                    'userName': doc['userName'],
-                    'userPhotoUrl': doc['userPhotoUrl'],
-                  })
-              .toList();
-          isLoading = false;
-        });
-      }
-    } catch (e) {
-      print('Error fetching comments: $e');
-      setState(() {
-        isLoading = false;
-      });
-    }
+  String _formatTimestamp(Timestamp timestamp) {
+    return timeago.format(timestamp.toDate(), locale: 'si');
   }
 
   Future<void> _addComment() async {
-    if (currentUserId == null ||
-        currentUserId!.isEmpty ||
-        currentUserName == null ||
-        currentUserName!.isEmpty) {
-      Navigator.pushNamed(context, AppRoutes.login2);
-      return;
-    }
+    if (commentController.text.trim().isEmpty) return;
 
-    if (commentController.text.isNotEmpty) {
-      try {
-        await FirebaseFirestore.instance
-            .collection('posts')
-            .doc(widget.postId)
-            .collection('comments')
-            .add({
-          'text': commentController.text,
-          'timestamp': FieldValue.serverTimestamp(),
-          'authorId': currentUserId,
-          'userName': currentUserName,
-          'userPhotoUrl': currentPhotoUrl,
-        });
+    final newComment = {
+      'text': commentController.text,
+      'authorId': currentUserId,
+      'userName': currentUserName,
+      'userPhotoUrl': currentPhotoUrl,
+      'timestamp': Timestamp.now(),
+    };
 
-        commentController.clear();
-        _fetchComments();
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text('අදහස ඇතුළත් කළා')));
-      } catch (e) {
-        print('Error adding comment: $e');
-        ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('අදහස ඇතුළත් කිරීමේදී දෝෂයක් ඇතිවිය')));
-      }
-    }
+    await FirebaseFirestore.instance
+        .collection('posts')
+        .doc(widget.postId)
+        .collection('comments')
+        .add(newComment);
+
+    commentController.clear();
   }
 
   Future<void> _updateComment() async {
-    if (editingCommentId == null || commentController.text.isEmpty) return;
+    if (editingCommentId == null || commentController.text.trim().isEmpty) return;
 
-    try {
-      await FirebaseFirestore.instance
-          .collection('posts')
-          .doc(widget.postId)
-          .collection('comments')
-          .doc(editingCommentId)
-          .update({'text': commentController.text});
-      commentController.clear();
+    await FirebaseFirestore.instance
+        .collection('posts')
+        .doc(widget.postId)
+        .collection('comments')
+        .doc(editingCommentId)
+        .update({
+      'text': commentController.text,
+    });
+
+    setState(() {
       editingCommentId = null;
-      _fetchComments();
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text('අදහස යාවත්කාලීන කරන ලදි')));
-    } catch (e) {
-      print('Error updating comment: $e');
-      ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('අදහස යාවත්කාලීන කිරීමේදී දෝෂයක් ඇතිවිය')));
-    }
+    });
+
+    commentController.clear();
   }
 
-  String _formatTimestamp(Timestamp timestamp) {
-    if (timestamp == null) return '';
-    DateTime dateTime = timestamp.toDate();
-    return timeago.format(dateTime, locale: 'si');
-  }
-
-  void _showCommentOptions(String commentId, String commentText) {
-    showDialog(
+  void _showCommentOptions(String commentId, String currentText) {
+    showModalBottomSheet(
       context: context,
       builder: (context) {
-        return AlertDialog(
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-          title: Text('Comment Options',
-              style: GoogleFonts.poppins(fontWeight: FontWeight.bold)),
-          actions: [
-            TextButton(
-              onPressed: () {
+        return Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              leading: Icon(Icons.edit),
+              title: Text('සංස්කරණය කරන්න'),
+              onTap: () {
                 setState(() {
                   editingCommentId = commentId;
-                  commentController.text = commentText;
+                  commentController.text = currentText;
                 });
                 Navigator.pop(context);
               },
-              child: Text('Edit', style: GoogleFonts.poppins()),
             ),
-            TextButton(
-              onPressed: () {
-                _deleteComment(commentId);
+            ListTile(
+              leading: Icon(Icons.delete),
+              title: Text('මකන්න'),
+              onTap: () {
+                FirebaseFirestore.instance
+                    .collection('posts')
+                    .doc(widget.postId)
+                    .collection('comments')
+                    .doc(commentId)
+                    .delete();
                 Navigator.pop(context);
               },
-              child:
-                  Text('Delete', style: GoogleFonts.poppins(color: Colors.red)),
             ),
           ],
         );
       },
     );
-  }
-
-  Future<void> _deleteComment(String commentId) async {
-    try {
-      await FirebaseFirestore.instance
-          .collection('posts')
-          .doc(widget.postId)
-          .collection('comments')
-          .doc(commentId)
-          .delete();
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text('අදහස මකන ලදි')));
-      _fetchComments();
-    } catch (e) {
-      print('Error deleting comment: $e');
-      ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('අදහස මකන ආකාරය පිළිබඳ දෝෂයක් ඇතිවිය')));
-    }
   }
 }

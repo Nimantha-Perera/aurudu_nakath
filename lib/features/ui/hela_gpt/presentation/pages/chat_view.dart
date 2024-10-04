@@ -127,7 +127,8 @@ class _ChatViewState extends State<ChatView> {
                   ),
                   if (!isChatEmpty)
                     Positioned(
-                      bottom: 76.0,
+                      
+                      bottom: 100.0,
                       right: 16.0,
                       child: ShareButton(),
                     ),

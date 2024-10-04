@@ -1,9 +1,11 @@
+import 'package:aurudu_nakath/FirebaeInappMessaging/firebase_in_app_message.dart';
 import 'package:aurudu_nakath/features/ui/Review/review_provider.dart';
 import 'package:aurudu_nakath/features/ui/home/presentation/pages/jyothishya_sewa.dart';
 import 'package:aurudu_nakath/features/ui/maintance/maintance_screen.dart';
 import 'package:aurudu_nakath/features/ui/home/presentation/pages/tools_view.dart';
 import 'package:aurudu_nakath/features/ui/theme/change_theme_notifier.dart';
 import 'package:aurudu_nakath/features/ui/theme/dark_theme.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:aurudu_nakath/features/ui/home/data/modals/modal.dart';
 import 'package:aurudu_nakath/features/ui/home/data/repostory/notice_repository.dart';
@@ -31,7 +33,6 @@ class _DashBoardState extends State<DashBoard> {
   late final NoticeRepository _noticeRepository;
   late Stream<List<Notice>> _noticesStream;
   late SubscriptionProvider _subscriptionProvider;
- 
 
   // GlobalKeys for tutorial targets
   final GlobalKey _notificationIconKey = GlobalKey();
@@ -41,16 +42,30 @@ class _DashBoardState extends State<DashBoard> {
 
   List<TargetFocus> targets = [];
   bool _tutorialShown = false;
+  String? _token;
+  final FirebaseInAppMessage _firebaseInAppMessage = FirebaseInAppMessage();
+  FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
+  @override
+  @override
+ Future<void> _getToken() async {
+    try {
+      final token = await _firebaseMessaging.getToken();
+      setState(() {
+        _token = token; // Store the token
+      });
+      print("FCM Token: $_token"); // Log the token
+    } catch (e) {
+      print("Error getting FCM token: $e");
+    }
 
-  @override
-  @override
+ }
   void initState() {
-   
+    _firebaseInAppMessage.showInAppMessage();
+    _getToken();
     Provider.of<ReviewProvider>(context, listen: false).requestReview();
     super.initState();
     // Initialize Firestore instance
     final firestore = FirebaseFirestore.instance;
-
 
     _checkNotificationPermission();
 
@@ -64,7 +79,6 @@ class _DashBoardState extends State<DashBoard> {
   }
 
   // Check if the app is in maintenance mode
-
 
   // Load tutorial state from SharedPreferences
   Future<void> _loadTutorialState() async {
@@ -168,13 +182,10 @@ class _DashBoardState extends State<DashBoard> {
     });
   }
 
- 
-
   @override
   Widget build(BuildContext context) {
     final themeNotifier = Provider.of<ThemeNotifier>(context);
 
-  
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.background,
       body: Stack(

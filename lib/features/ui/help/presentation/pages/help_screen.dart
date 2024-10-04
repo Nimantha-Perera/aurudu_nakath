@@ -86,7 +86,7 @@ class HelpTopicCard extends StatelessWidget {
               style: GoogleFonts.notoSerifSinhala(
                 fontSize: 20.0,
                 fontWeight: FontWeight.bold,
-                color: isDarkMode ? Colors.pinkAccent[100] : Color(0xFF6D003B),
+                color: isDarkMode ? const Color.fromARGB(255, 255, 238, 0) : Color.fromARGB(255, 255, 230, 0),
               ),
             ),
             const SizedBox(height: 12.0),

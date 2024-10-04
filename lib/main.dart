@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:aurudu_nakath/FirebaeInappMessaging/firebase_in_app_message.dart';
 import 'package:aurudu_nakath/Notifications/notification_service.dart';
 import 'package:aurudu_nakath/features/ui/Login/data/repostorys/auth_repository.dart';
 import 'package:aurudu_nakath/features/ui/Login/domain/repo/auth_repository_interface.dart';
@@ -52,6 +53,7 @@ import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_in_app_messaging/firebase_in_app_messaging.dart';
 import 'package:flutter/material.dart';
 
 import 'package:aurudu_nakath/features/ui/intro_screens/onboarding_screen/onboarding_screen.dart';
@@ -78,7 +80,7 @@ void main() async {
     runApp(MaterialApp(home: ErrorScreen())); // Error handling
     return;
   }
-
+ FirebaseInAppMessaging.instance.setAutomaticDataCollectionEnabled(true);
   await FirebaseAppCheck.instance.activate(
     androidProvider: AndroidProvider.debug,
   );
@@ -92,6 +94,7 @@ void main() async {
   await dotenv.load(fileName: "assets/.env");
 
   final sharedPreferences = await SharedPreferences.getInstance();
+
   final apiKey = dotenv.env['API_KEY'] ?? "";
   final apiUrl =
       "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=$apiKey";

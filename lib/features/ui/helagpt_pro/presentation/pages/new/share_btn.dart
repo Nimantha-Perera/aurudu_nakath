@@ -26,6 +26,7 @@ class ShareButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FloatingActionButton(
+      shape: CircleBorder(),
       heroTag: "lokn",
       onPressed: () => _shareChatHistory(context),
       child: Icon(

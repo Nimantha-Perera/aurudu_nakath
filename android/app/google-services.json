@@ -13,7 +13,28 @@
           "package_name": "com.nakath.aurudu_nakath"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "91523853816-mjdgnhou70rospit855cjp654qkm3825.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.nakath.aurudu_nakath",
+            "certificate_hash": "824e2a7c232cb3b365058d03e4a79fbe0a2c848b"
+          }
+        },
+        {
+          "client_id": "91523853816-od5j0q6teph1a0kmk7mu6cad08di1044.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.nakath.aurudu_nakath",
+            "certificate_hash": "8adcaaa8e93bd08302b191039d71c9e6f2dc6e98"
+          }
+        },
+        {
+          "client_id": "91523853816-r526u10jscedil4ink8ofetcega7bu3f.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyA96Wqd5LcJtbRx14YvQpUWCyg77IugjOs"
@@ -21,7 +42,19 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "91523853816-r526u10jscedil4ink8ofetcega7bu3f.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "91523853816-qldgvgjqsmj243b9k4ocjg26td6cab2q.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.nakath.auruduNakath"
+              }
+            }
+          ]
         }
       },
       "admob_app_id": "ca-app-pub-7834397003941676~9303624810"
