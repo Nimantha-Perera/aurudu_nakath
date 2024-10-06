@@ -79,7 +79,7 @@ class LoginScreen extends StatelessWidget {
         ),
         SizedBox(height: 10),
         Text(
-          'ඔබගේ තාක්ශනික සහායක',
+          'ඔබගේ තාක්ශණික සහායක',
           style: GoogleFonts.notoSerifSinhala(
             fontSize: 18,
             color: const Color.fromARGB(255, 90, 90, 90),

@@ -5,22 +5,31 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
-class CommentSection extends StatefulWidget {
+class CommentBottomSheet extends StatefulWidget {
   final String postId;
 
-  const CommentSection({Key? key, required this.postId}) : super(key: key);
+  const CommentBottomSheet({Key? key, required this.postId}) : super(key: key);
+
+  static void show(BuildContext context, String postId) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => CommentBottomSheet(postId: postId),
+    );
+  }
 
   @override
-  _CommentSectionState createState() => _CommentSectionState();
+  _CommentBottomSheetState createState() => _CommentBottomSheetState();
 }
 
-class _CommentSectionState extends State<CommentSection> {
+class _CommentBottomSheetState extends State<CommentBottomSheet> {
   final TextEditingController commentController = TextEditingController();
   String? editingCommentId;
   String? currentUserId;
   String? currentUserName;
   String? currentPhotoUrl;
-  int commentsToShow = 3; // Start with showing 3 comments initially
+  int commentsToShow = 10;
 
   @override
   void initState() {
@@ -46,76 +55,97 @@ class _CommentSectionState extends State<CommentSection> {
   @override
   Widget build(BuildContext context) {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    final mediaQuery = MediaQuery.of(context);
+    final bottomPadding = mediaQuery.viewInsets.bottom;
 
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
+    return Container(
+      height: mediaQuery.size.height * 0.75,
+      decoration: BoxDecoration(
+        color: isDarkMode ? Colors.grey[900] : Colors.white,
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+      ),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildHeader(isDarkMode),
+          Expanded(
+            child: _buildCommentsList(isDarkMode),
+          ),
+          Padding(
+            padding: EdgeInsets.only(
+              bottom: bottomPadding + 8,
+              left: 16,
+              right: 16,
+              top: 8,
+            ),
+            child: _buildCommentInput(isDarkMode),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildHeader(bool isDarkMode) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      decoration: BoxDecoration(
+        border: Border(
+          bottom: BorderSide(
+            color: isDarkMode ? Colors.grey[800]! : Colors.grey[200]!,
+          ),
+        ),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(
             'අදහස්',
             style: GoogleFonts.poppins(
               fontWeight: FontWeight.bold,
-              fontSize: 22,
+              fontSize: 20,
               color: isDarkMode ? Colors.white : Colors.black87,
             ),
           ),
-          const SizedBox(height: 16),
-          StreamBuilder<QuerySnapshot>(
-            stream: FirebaseFirestore.instance
-                .collection('posts')
-                .doc(widget.postId)
-                .collection('comments')
-                .orderBy('timestamp', descending: true)
-                .snapshots(),  // Listening to real-time changes
-            builder: (context, snapshot) {
-              if (!snapshot.hasData) {
-                return Center(child: CircularProgressIndicator());
-              }
-
-              final comments = snapshot.data!.docs;
-
-              if (comments.isEmpty) {
-                return _buildEmptyState(isDarkMode);
-              }
-
-              // Display only `commentsToShow` comments, and allow showing more
-              return Column(
-                children: [
-                  ListView.builder(
-                    shrinkWrap: true,
-                    physics: NeverScrollableScrollPhysics(),
-                    itemCount: comments.length < commentsToShow
-                        ? comments.length
-                        : commentsToShow, // Show only up to the current limit
-                    itemBuilder: (context, index) {
-                      final commentData = comments[index].data() as Map<String, dynamic>;
-                      return _buildCommentItem(commentData, comments[index].id, isDarkMode);
-                    },
-                  ),
-                  if (comments.length > commentsToShow)
-                    TextButton(
-                      onPressed: () {
-                        setState(() {
-                          commentsToShow += 3; // Increase commentsToShow by 3
-                        });
-                      },
-                      child: Text(
-                        'වැඩි අදහස් පෙන්වන්න',
-                        style: GoogleFonts.poppins(
-                          color: isDarkMode ? Colors.blue[300] : Colors.blue,
-                          fontSize: 14,
-                        ),
-                      ),
-                    ),
-                ],
-              );
-            },
+          IconButton(
+            icon: Icon(
+              Icons.close,
+              color: isDarkMode ? Colors.white : Colors.black87,
+            ),
+            onPressed: () => Navigator.pop(context),
           ),
-          const SizedBox(height: 16),
-          _buildCommentInput(isDarkMode),
         ],
       ),
+    );
+  }
+
+  Widget _buildCommentsList(bool isDarkMode) {
+    return StreamBuilder<QuerySnapshot>(
+      stream: FirebaseFirestore.instance
+          .collection('posts')
+          .doc(widget.postId)
+          .collection('comments')
+          .orderBy('timestamp', descending: true)
+          .snapshots(),
+      builder: (context, snapshot) {
+        if (!snapshot.hasData) {
+          return const Center(child: CircularProgressIndicator());
+        }
+
+        final comments = snapshot.data!.docs;
+
+        if (comments.isEmpty) {
+          return _buildEmptyState(isDarkMode);
+        }
+
+        return ListView.builder(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          itemCount: comments.length,
+          itemBuilder: (context, index) {
+            final commentData = comments[index].data() as Map<String, dynamic>;
+            return _buildCommentItem(
+                commentData, comments[index].id, isDarkMode);
+          },
+        );
+      },
     );
   }
 
@@ -124,9 +154,11 @@ class _CommentSectionState extends State<CommentSection> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.chat_bubble_outline,
-              color: isDarkMode ? Colors.grey[400] : Colors.grey[600],
-              size: 60),
+          Icon(
+            Icons.chat_bubble_outline,
+            color: isDarkMode ? Colors.grey[400] : Colors.grey[600],
+            size: 60,
+          ),
           const SizedBox(height: 16),
           Text(
             'අදහස් නොමැත',
@@ -140,8 +172,10 @@ class _CommentSectionState extends State<CommentSection> {
     );
   }
 
-  Widget _buildCommentItem(Map<String, dynamic> commentData, String commentId, bool isDarkMode) {
+  Widget _buildCommentItem(
+      Map<String, dynamic> commentData, String commentId, bool isDarkMode) {
     bool isAuthor = commentData['authorId'] == currentUserId;
+
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: GestureDetector(
@@ -154,16 +188,17 @@ class _CommentSectionState extends State<CommentSection> {
             CircleAvatar(
               radius: 20,
               backgroundColor: isDarkMode ? Colors.grey[700] : Colors.grey[300],
-              backgroundImage: NetworkImage(commentData['userPhotoUrl'] ?? 
+              backgroundImage: NetworkImage(commentData['userPhotoUrl'] ??
                   'https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png'),
               child: commentData['userPhotoUrl'] == null
-                  ? Icon(Icons.person, color: isDarkMode ? Colors.grey[300] : Colors.grey[600])
+                  ? Icon(Icons.person,
+                      color: isDarkMode ? Colors.grey[300] : Colors.grey[600])
                   : null,
             ),
             const SizedBox(width: 12),
             Expanded(
               child: Container(
-                padding: EdgeInsets.all(12),
+                padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
                   color: isDarkMode ? Colors.grey[800] : Colors.grey[200],
                   borderRadius: BorderRadius.circular(18),
@@ -207,7 +242,7 @@ class _CommentSectionState extends State<CommentSection> {
 
   Widget _buildCommentInput(bool isDarkMode) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       decoration: BoxDecoration(
         color: isDarkMode ? Colors.grey[800] : Colors.grey[200],
         borderRadius: BorderRadius.circular(30),
@@ -233,7 +268,27 @@ class _CommentSectionState extends State<CommentSection> {
           ),
           const SizedBox(width: 8),
           GestureDetector(
-            onTap: editingCommentId == null ? _addComment : _updateComment,
+            onTap: () async {
+              // Get the user ID from SharedPreferences
+              final prefs = await SharedPreferences.getInstance();
+              final userId = prefs
+                  .getString('userId'); // Replace 'userId' with your actual key
+
+              // Check if the userId is empty
+              if (userId == null || userId.isEmpty) {
+                // Navigate to the login screen
+               Navigator.pushNamed(context, AppRoutes.login2);
+              } else {
+                // Proceed to add or update comment based on editingCommentId
+                if (editingCommentId == null) {
+                  // Call _addComment function if not in editing mode
+                  _addComment();
+                } else {
+                  // Call _updateComment function if in editing mode
+                  _updateComment();
+                }
+              }
+            },
             child: Container(
               padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
@@ -277,7 +332,8 @@ class _CommentSectionState extends State<CommentSection> {
   }
 
   Future<void> _updateComment() async {
-    if (editingCommentId == null || commentController.text.trim().isEmpty) return;
+    if (editingCommentId == null || commentController.text.trim().isEmpty)
+      return;
 
     await FirebaseFirestore.instance
         .collection('posts')
@@ -303,8 +359,11 @@ class _CommentSectionState extends State<CommentSection> {
           mainAxisSize: MainAxisSize.min,
           children: [
             ListTile(
-              leading: Icon(Icons.edit),
-              title: Text('සංස්කරණය කරන්න'),
+              leading: const Icon(Icons.edit),
+              title: Text(
+                'සංස්කරණය කරන්න',
+                style: GoogleFonts.poppins(),
+              ),
               onTap: () {
                 setState(() {
                   editingCommentId = commentId;
@@ -314,8 +373,11 @@ class _CommentSectionState extends State<CommentSection> {
               },
             ),
             ListTile(
-              leading: Icon(Icons.delete),
-              title: Text('මකන්න'),
+              leading: const Icon(Icons.delete),
+              title: Text(
+                'මකන්න',
+                style: GoogleFonts.poppins(),
+              ),
               onTap: () {
                 FirebaseFirestore.instance
                     .collection('posts')

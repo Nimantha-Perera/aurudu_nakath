@@ -93,7 +93,7 @@ class _PostWidgetState extends State<PostWidget>
           _buildImage(),
           _buildContent(isDarkMode, textColor),
           _buildFooter(isDarkMode, subtleColor!),
-          if (showComments) CommentSection(postId: widget.post.id),
+          if (showComments) CommentBottomSheet(postId: widget.post.id),
         ],
       ),
     );
