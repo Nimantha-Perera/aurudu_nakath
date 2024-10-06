@@ -53,6 +53,7 @@ import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_in_app_messaging/firebase_in_app_messaging.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 
 import 'package:aurudu_nakath/features/ui/intro_screens/onboarding_screen/onboarding_screen.dart';
@@ -175,6 +176,11 @@ void main() async {
     ),
   );
 }
+Future<void> getFcmToken() async {
+  final fcmToken = await FirebaseMessaging.instance.getToken();
+  print("FCM Token: $fcmToken");
+  await FirebaseMessaging.instance.subscribeToTopic('all');
+}
 
 class MyApp extends StatefulWidget {
   @override
@@ -189,6 +195,7 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
+     getFcmToken();
 
     // Check maintenance mode when the widget is first built
 
