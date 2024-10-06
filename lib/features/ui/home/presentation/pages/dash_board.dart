@@ -42,26 +42,14 @@ class _DashBoardState extends State<DashBoard> {
 
   List<TargetFocus> targets = [];
   bool _tutorialShown = false;
-  String? _token;
-  final FirebaseInAppMessage _firebaseInAppMessage = FirebaseInAppMessage();
-  FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
-  @override
-  @override
- Future<void> _getToken() async {
-    try {
-      final token = await _firebaseMessaging.getToken();
-      setState(() {
-        _token = token; // Store the token
-      });
-      print("FCM Token: $_token"); // Log the token
-    } catch (e) {
-      print("Error getting FCM token: $e");
-    }
 
- }
+  final FirebaseInAppMessage _firebaseInAppMessage = FirebaseInAppMessage();
+  @override
+  @override
+
   void initState() {
     _firebaseInAppMessage.showInAppMessage();
-    _getToken();
+  
     Provider.of<ReviewProvider>(context, listen: false).requestReview();
     super.initState();
     // Initialize Firestore instance

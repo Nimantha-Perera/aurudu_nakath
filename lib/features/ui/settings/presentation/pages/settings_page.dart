@@ -6,6 +6,7 @@ import 'package:aurudu_nakath/features/ui/routes/routes.dart';
 import 'package:feedback/feedback.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_email_sender/flutter_email_sender.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
@@ -42,7 +43,8 @@ class _SettingsPageState extends State<SettingsPage> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
       _profileName = prefs.getString('displayName') ?? '';
-      _profileImage = prefs.getString('photoURL') ?? ''; // If image is empty, we will show a button
+      _profileImage = prefs.getString('photoURL') ??
+          ''; // If image is empty, we will show a button
     });
   }
 
@@ -52,7 +54,9 @@ class _SettingsPageState extends State<SettingsPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('සැකසුම්', style: GoogleFonts.notoSerifSinhala(fontSize: 14.0, color: Colors.white)),
+        title: Text('සැකසුම්',
+            style: GoogleFonts.notoSerifSinhala(
+                fontSize: 14.0, color: Colors.white)),
         centerTitle: true,
         backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
       ),
@@ -68,7 +72,8 @@ class _SettingsPageState extends State<SettingsPage> {
                   _buildThemeSwitcher(context, themeNotifier),
                   Divider(height: 32, thickness: 0),
                   _buildSectionTitle('පරිශීලක පැතිකඩ'), // User Profile Section
-                  _buildProfileSection(context), // Conditionally show profile or Sign In button
+                  _buildProfileSection(
+                      context), // Conditionally show profile or Sign In button
                   Divider(height: 32, thickness: 0),
                   _buildSectionTitle('යෙදුම ගැන'),
                   _buildAppInfoSection(context),
@@ -116,8 +121,10 @@ class _SettingsPageState extends State<SettingsPage> {
           children: [
             CircleAvatar(
               backgroundImage: _profileImage.isNotEmpty
-                  ? NetworkImage(_profileImage) // Use the loaded profile image URL
-                  : const NetworkImage('https://i.pravatar.cc/150?u=a042581f4e29026704d'), // Default image
+                  ? NetworkImage(
+                      _profileImage) // Use the loaded profile image URL
+                  : const NetworkImage(
+                      'https://i.pravatar.cc/150?u=a042581f4e29026704d'), // Default image
               radius: 40,
             ),
             SizedBox(height: 16),
@@ -127,14 +134,15 @@ class _SettingsPageState extends State<SettingsPage> {
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
             SizedBox(height: 16),
-             ElevatedButton(
+            ElevatedButton(
               onPressed: () {
                 // Navigate to the Sign In screen
-                  final loginViewModel = Provider.of<LoginViewModel>(context,
-                  listen: false); // Add listen: false
-              loginViewModel.logout(context);
+                final loginViewModel = Provider.of<LoginViewModel>(context,
+                    listen: false); // Add listen: false
+                loginViewModel.logout(context);
               },
-              child: Text('ගිනුමෙන් ඉවත් වන්න.', style: TextStyle(fontSize: 14)),
+              child:
+                  Text('ගිනුමෙන් ඉවත් වන්න.', style: TextStyle(fontSize: 14)),
             ),
           ],
         ),
@@ -171,7 +179,8 @@ class _SettingsPageState extends State<SettingsPage> {
   }
 
   // Theme Switcher with light, dark, and system options
-  Widget _buildThemeSwitcher(BuildContext context, ThemeNotifier themeNotifier) {
+  Widget _buildThemeSwitcher(
+      BuildContext context, ThemeNotifier themeNotifier) {
     return Card(
       color: Theme.of(context).cardColor,
       margin: const EdgeInsets.symmetric(vertical: 8.0),
@@ -179,7 +188,8 @@ class _SettingsPageState extends State<SettingsPage> {
       child: Column(
         children: [
           RadioListTile<ThemeMode>(
-            title: Text('පද්ධති මුහුණත අනුව (System Default)', style: TextStyle(fontSize: 13)),
+            title: Text('පද්ධති මුහුණත අනුව (System Default)',
+                style: TextStyle(fontSize: 13)),
             value: ThemeMode.system,
             groupValue: themeNotifier.getThemeMode(),
             onChanged: (value) {
@@ -187,7 +197,8 @@ class _SettingsPageState extends State<SettingsPage> {
             },
           ),
           RadioListTile<ThemeMode>(
-            title: Text('ආලෝක මුහුණත (Light Mode)', style: TextStyle(fontSize: 13)),
+            title: Text('ආලෝක මුහුණත (Light Mode)',
+                style: TextStyle(fontSize: 13)),
             value: ThemeMode.light,
             groupValue: themeNotifier.getThemeMode(),
             onChanged: (value) {
@@ -195,7 +206,8 @@ class _SettingsPageState extends State<SettingsPage> {
             },
           ),
           RadioListTile<ThemeMode>(
-            title: Text('අඳුරු මුහුණත (Dark Mode)', style: TextStyle(fontSize: 13)),
+            title: Text('අඳුරු මුහුණත (Dark Mode)',
+                style: TextStyle(fontSize: 13)),
             value: ThemeMode.dark,
             groupValue: themeNotifier.getThemeMode(),
             onChanged: (value) {
@@ -224,9 +236,11 @@ class _SettingsPageState extends State<SettingsPage> {
     return Column(
       children: [
         ListTile(
-          leading: Icon(Icons.info_outline, color: Theme.of(context).primaryColor),
+          leading:
+              Icon(Icons.info_outline, color: Theme.of(context).primaryColor),
           title: Text('මෙම යෙදුම ගැන', style: TextStyle(fontSize: 12)),
-          subtitle: Text('මෙම යෙදුමේ විශේෂාංග ගැන තව දැනගන්න.', style: TextStyle(fontSize: 10)),
+          subtitle: Text('මෙම යෙදුමේ විශේෂාංග ගැන තව දැනගන්න.',
+              style: TextStyle(fontSize: 10)),
           onTap: () {
             // Navigate to the About Page
           },
@@ -240,49 +254,75 @@ class _SettingsPageState extends State<SettingsPage> {
     return Column(
       children: [
         ListTile(
-          leading: Icon(Icons.help_outline, color: Theme.of(context).primaryColor),
+          leading:
+              Icon(Icons.help_outline, color: Theme.of(context).primaryColor),
           title: Text('උදව් සහ සහාය', style: TextStyle(fontSize: 12)),
-          subtitle: Text('යෙදුම භාවිතයෙන් සහාය ලබා ගන්න.', style: TextStyle(fontSize: 11)),
+          subtitle: Text('යෙදුම භාවිතයෙන් සහාය ලබා ගන්න.',
+              style: TextStyle(fontSize: 11)),
           onTap: () {
             // Navigate to the Help & Support Page
             Navigator.pushNamed(context, AppRoutes.help);
           },
         ),
         ListTile(
-          leading: Icon(Icons.privacy_tip_outlined, color: Theme.of(context).primaryColor),
+          leading: Icon(Icons.privacy_tip_outlined,
+              color: Theme.of(context).primaryColor),
           title: Text('රහස්‍යතා ප්‍රතිපත්තිය', style: TextStyle(fontSize: 12)),
-          subtitle: Text('අපගේ රහස්‍යතා ප්‍රතිපත්තිය සමාලෝචනය කරන්න.', style: TextStyle(fontSize: 11)),
+          subtitle: Text('අපගේ රහස්‍යතා ප්‍රතිපත්තිය සමාලෝචනය කරන්න.',
+              style: TextStyle(fontSize: 11)),
           onTap: () {
             // Navigate to the Privacy Policy Page
-            _launchURL('https://www.termsfeed.com/live/79b4e42a-4f42-42ed-a50e-9d06b3bbf0d0');
+            _launchURL(
+                'https://www.termsfeed.com/live/79b4e42a-4f42-42ed-a50e-9d06b3bbf0d0');
           },
         ),
-
         ListTile(
-          leading: Icon(Icons.privacy_tip_outlined, color: Theme.of(context).primaryColor),
+          leading: Icon(Icons.privacy_tip_outlined,
+              color: Theme.of(context).primaryColor),
           title: Text('දෝශ වාර්තා කරන්න', style: TextStyle(fontSize: 12)),
-          subtitle: Text('ඇප් එක පිලිබඳ දෝශ ඇත්නම් වාර්තා කරන්න.', style: TextStyle(fontSize: 11)),
+          subtitle: Text('ඇප් එක පිලිබඳ දෝශ ඇත්නම් වාර්තා කරන්න.',
+              style: TextStyle(fontSize: 11)),
           onTap: () {
-            // Navigate to the Privacy Policy Page
-            BetterFeedback.of(context).show((feedback) async {
-              final screenshotFilePath = await writeImageToStorage(feedback.screenshot);
+           BetterFeedback.of(context).show((feedback) async {
+          // Save the screenshot to storage
+          final screenshotFilePath = await writeImageToStorage(feedback.screenshot);
 
-              final Email email =Email(
-                body: 'අපගේ රහස්‍යතා ප්‍රතිපත්තිය සමාලෝචනය කරන්න.',
-                subject: 'අපගේ රහස්‍යතා ප්‍රතිපත්තිය සමාලෝචනය කරන්න.',
-                recipients: ['nmadushanka867@gmail.com'],
-                attachmentPaths: [screenshotFilePath],
-                isHTML: false
-              );
-
-              await FlutterEmailSender.send(email);
-              
-
-            });
+          // Attempt to send the email
+          await sendEmail(context, screenshotFilePath);
+        });
           },
-        ),
+        )
       ],
     );
+  }
+
+
+   Future<void> sendEmail(BuildContext context, String screenshotFilePath) async {
+    // Prepare the email
+    final Email email = Email(
+      body: 'දෝශ වාර්තාව - ඇප් එක පිලිබඳ දෝෂයක් සිදු විය',
+      subject: 'දෝශ වාර්තාව - ඇප් එක පිලිබඳ',
+      recipients: ['nmadushanka867@gmail.com'],
+      attachmentPaths: [screenshotFilePath],
+      isHTML: false,
+    );
+
+    try {
+      await FlutterEmailSender.send(email);
+      // Optionally, show a toast on success
+      Fluttertoast.showToast(msg: "ඊමේල් යැවීම සාර්ථක විය!");
+    } catch (error) {
+      // Check for no available email client error
+      if (error.toString().contains('not_available')) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('ඊමේල් යැවීම සඳහා ඊමේල් යැවීමේ යෙදුමක් නොමැත.')),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('ඊමේල් යැවීමේ දෝෂයක් සිදු විය: $error')),
+        );
+      }
+    }
   }
 
   Future<String> writeImageToStorage(Uint8List _image) async {

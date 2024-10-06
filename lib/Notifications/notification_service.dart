@@ -32,7 +32,7 @@ class NotificationService {
 
     // Initialize Firebase Messaging
     _firebaseInit();
-    getFcmToken();
+    // getFcmToken();
   }
 
   Future<void> _requestPermissions() async {
@@ -154,13 +154,13 @@ class NotificationService {
     FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
   }
 
-  Future<String?> getFcmToken() async {
-    return await _messaging.getToken();
-  }
+  // Future<String?> getFcmToken() async {
+  //   return await _messaging.getToken();
+  // }
 
-  void onTokenRefresh() {
-    _messaging.onTokenRefresh.listen((newToken) {
-      print("Refreshed Token: $newToken");
-    });
-  }
+  // void onTokenRefresh() {
+  //   _messaging.onTokenRefresh.listen((newToken) {
+  //     print("Refreshed Token: $newToken");
+  //   });
+  // }
 }

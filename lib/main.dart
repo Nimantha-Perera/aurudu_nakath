@@ -12,7 +12,6 @@ import 'package:aurudu_nakath/features/ui/Login2/domain/usecase/sign_in_with_goo
 import 'package:aurudu_nakath/features/ui/Login2/presentation/pages/login_viewmodel.dart';
 import 'package:aurudu_nakath/features/ui/Review/review_provider.dart';
 import 'package:aurudu_nakath/features/ui/compass/compass.dart';
-import 'package:aurudu_nakath/Tools/tools_menu.dart';
 import 'package:aurudu_nakath/features/ui/errors/error_screen.dart';
 import 'package:aurudu_nakath/features/ui/hela_gpt/domain/usecases/clear_chat.dart';
 import 'package:aurudu_nakath/features/ui/hela_gpt/domain/usecases/fetch_and%20_manegemessage.dart';
@@ -101,6 +100,7 @@ void main() async {
 
   runApp(
     BetterFeedback(
+      localeOverride: Locale('si', 'LK'),
       child: MultiProvider(
         providers: [
           Provider<AuthRepositoryInterface2>(create: (_) => AuthRepository2()),

@@ -141,10 +141,10 @@ class _AllPostsScreenState extends State<AllPostsScreen> {
         GestureDetector(
           onTap: () {
             // Navigate to profile page
-            Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => CreatePostScreen()),
-          );
+            // Navigator.push(
+            // context,
+            // MaterialPageRoute(builder: (context) => CreatePostScreen()),
+          // );
           },
           child: Padding(
             padding: const EdgeInsets.all(8.0),
