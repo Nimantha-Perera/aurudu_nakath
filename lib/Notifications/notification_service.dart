@@ -45,7 +45,7 @@ class NotificationService {
     Map<Permission, PermissionStatus> statuses = await [
       Permission.notification,
       Permission.manageExternalStorage, // For Android 10+ storage access
-      Permission.scheduleExactAlarm,    // For scheduling alarms in Android 12+
+      Permission.scheduleExactAlarm, // For scheduling alarms in Android 12+
     ].request();
 
     bool grantedNotificationPermission =
@@ -99,7 +99,7 @@ class NotificationService {
 
   void _initializeLocalNotifications() {
     const AndroidInitializationSettings initializationSettingsAndroid =
-        AndroidInitializationSettings('@mipmap/ic_launcher');
+        AndroidInitializationSettings('@drawable/notification');
     const InitializationSettings initializationSettings =
         InitializationSettings(android: initializationSettingsAndroid);
 
