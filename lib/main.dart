@@ -179,10 +179,10 @@ void main() async {
   );
 }
 
-Future<void> getFcmToken() async {
-  final fcmToken = await FirebaseMessaging.instance.getToken();
-  print(fcmToken);
-}
+// Future<void> getFcmToken() async {
+//   final fcmToken = await FirebaseMessaging.instance.getToken();
+//   print(fcmToken);
+// }
 
 class MyApp extends StatefulWidget {
   @override
@@ -197,11 +197,13 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
-    getFcmToken();
+    // getFcmToken();
 
     
 
     // Check maintenance mode when the widget is first built
+    // maintenanceUseCase = UseCaseMaintainsFirebase(firestore: FirebaseFirestore.instance);
+    // maintenanceUseCase.checkForMaintenanceMode(context);
 
     //  _shakeNavigation = ShakeNavigation(context);
     Provider.of<SubscriptionProvider>(context, listen: false)

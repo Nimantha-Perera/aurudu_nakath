@@ -68,14 +68,14 @@ class _AllPostsScreenState extends State<AllPostsScreen> {
               onRefresh: _refreshPosts,
               child: CustomScrollView(
                 slivers: [
-                  _buildAppBar(),
+                  _buildAppBar(context, appBarImageUrl, authorAvatar),
                   _buildPostsList(),
                 ],
               ),
             ),
           ],
         ),
-        floatingActionButton: _buildFloatingActionButton(isDarkMode),
+        // floatingActionButton: _buildFloatingActionButton(isDarkMode),
       ),
     );
   }
@@ -87,78 +87,126 @@ class _AllPostsScreenState extends State<AllPostsScreen> {
     });
   }
 
-  Widget _buildAppBar() {
-    return SliverAppBar(
-      expandedHeight: 200.0,
-      floating: false,
-      pinned: true,
-      flexibleSpace: FlexibleSpaceBar(
-        centerTitle: true,
-        title: const Text(
-          'කැටපත',
-          style: TextStyle(
-            fontSize: 17,
-            fontWeight: FontWeight.bold,
-            color: Colors.white,
-            shadows: [
-              Shadow(
-                blurRadius: 10.0,
-                color: Colors.black45,
-                offset: Offset(2.0, 2.0),
-              ),
-            ],
-          ),
-        ),
-        background: Stack(
-          fit: StackFit.expand,
-          children: [
-            appBarImageUrl.isNotEmpty
-                ? Image.network(
-                    appBarImageUrl,
-                    fit: BoxFit.cover,
-                  )
-                : Image.asset(
-                    'assets/icons/appbar.jpg',
-                    fit: BoxFit.cover,
-                  ),
-            Container(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [Colors.transparent, Colors.black.withOpacity(0.7)],
-                ),
-              ),
+Widget _buildAppBar(BuildContext context, String appBarImageUrl, String authorAvatar) {
+  return SliverAppBar(
+    expandedHeight: 200.0,
+    floating: false,
+    pinned: true,
+    flexibleSpace: FlexibleSpaceBar(
+      collapseMode: CollapseMode.parallax,
+      centerTitle: true, // Center the title
+      titlePadding: const EdgeInsets.only(bottom: 16.0), // Adjust title position
+      title: const Text(
+        'කැටපත',
+        style: TextStyle(
+          fontSize: 17,
+          fontWeight: FontWeight.bold,
+          color: Colors.white,
+          shadows: [
+            Shadow(
+              blurRadius: 10.0,
+              color: Colors.black45,
+              offset: Offset(2.0, 2.0),
             ),
           ],
         ),
       ),
-      leading: IconButton(
-        icon: const Icon(Icons.arrow_back, color: Colors.white),
-        onPressed: () => Navigator.pop(context),
+      background: Stack(
+        fit: StackFit.expand,
+        children: [
+          appBarImageUrl.isNotEmpty
+              ? Image.network(
+                  appBarImageUrl,
+                  fit: BoxFit.cover,
+                )
+              : Image.asset(
+                  'assets/icons/appbar.jpg',
+                  fit: BoxFit.cover,
+                ),
+          Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [Colors.transparent, Colors.black.withOpacity(0.7)],
+              ),
+            ),
+          ),
+        ],
       ),
-      actions: [
-        GestureDetector(
-          onTap: () {
-            // Navigate to profile page
-            // Navigator.push(
-            // context,
-            // MaterialPageRoute(builder: (context) => CreatePostScreen()),
-          // );
-          },
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
+    ),
+    leading: IconButton(
+      icon: const Icon(Icons.arrow_back, color: Colors.white),
+      onPressed: () {
+        Navigator.pop(context); // Go back to the previous screen
+      },
+    ),
+    actions: [
+      // Beautiful Create Post Button
+      Tooltip(
+        message: "කැටපතක් ලියන්න", // Tooltip text in Sinhala
+        child: Container(
+          margin: const EdgeInsets.only(right: 8.0), // Adjust spacing
+          decoration: BoxDecoration(
+            color: const Color.fromARGB(255, 255, 255, 255), // Button background
+            borderRadius: BorderRadius.circular(30.0),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.1), // Subtle shadow
+                spreadRadius: 1,
+                blurRadius: 8,
+                offset: const Offset(2, 4), // Shadow position
+              ),
+            ],
+          ),
+          child: IconButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => CreatePostScreen()),
+              );
+            },
+            icon: const Icon(
+              Icons.edit,
+              color: Color.fromARGB(255, 0, 0, 0),
+              size: 20.0, // Slightly larger icon
+            ),
+            padding: const EdgeInsets.all(1.0), // Adjust padding for a better touch target
+            splashRadius: 24.0, // Nice ripple effect size
+            tooltip: 'කැටපතක් ලියන්න', // Alternative hint text for accessibility
+          ),
+        ),
+      ),
+      const SizedBox(width: 5),
+      // Profile Picture with Border
+      GestureDetector(
+        onTap: () {
+          // Navigate to profile page
+        },
+        child: Padding(
+          padding: const EdgeInsets.only(right: 16.0), // Adjust padding to align it properly
+          child: CircleAvatar(
+            radius: 20, // Set the size of the avatar
+            backgroundColor: Colors.white, // Adds a white border
             child: CircleAvatar(
+              radius: 18, // Actual size of the image
               backgroundImage: authorAvatar.isNotEmpty
                   ? NetworkImage(authorAvatar)
-                  : const NetworkImage('https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png'),
+                  : const NetworkImage(
+                      'https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png',
+                    ),
             ),
           ),
         ),
-        const SizedBox(width: 16),
-      ],
-    );
-  }
+      ),
+    ],
+  );
+}
+
+
+
+
+
 
   Widget _buildPostsList() {
     return Consumer<PostProvider>(
@@ -233,29 +281,26 @@ class _AllPostsScreenState extends State<AllPostsScreen> {
     );
   }
 
-  Widget _buildFloatingActionButton(bool isDarkMode) {
-    return FloatingActionButton(
-      shape: CircleBorder(),
-      onPressed: () async {
-        SharedPreferences prefs = await SharedPreferences.getInstance();
-        String? userId = prefs.getString('displayName');
-        if (userId == null || userId.isEmpty) {
-          // User is not signed in, navigate to SignInScreen
-          Navigator.pushNamed(context, AppRoutes.login2);
-        } else {
-          // User is signed in, navigate to CreatePostScreen
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => CreatePostScreen()),
-          );
-        }
-      },
-      child: Icon(
-        Icons.edit,
-        color: isDarkMode ? const Color.fromARGB(255, 0, 0, 0) : Colors.white,
-      ),
-      backgroundColor: Theme.of(context).primaryColor,
-      elevation: 4,
-    );
-  }
+  // Widget _buildFloatingActionButton(bool isDarkMode) {
+  //   return FloatingActionButton(
+  //     shape: CircleBorder(),
+  //     onPressed: () async {
+  //       SharedPreferences prefs = await SharedPreferences.getInstance();
+  //       String? userId = prefs.getString('displayName');
+  //       if (userId == null || userId.isEmpty) {
+  //         // User is not signed in, navigate to SignInScreen
+  //         Navigator.pushNamed(context, AppRoutes.login2);
+  //       } else {
+  //         // User is signed in, navigate to CreatePostScreen
+        
+  //       }
+  //     },
+  //     child: Icon(
+  //       Icons.edit,
+  //       color: isDarkMode ? const Color.fromARGB(255, 0, 0, 0) : Colors.white,
+  //     ),
+  //     backgroundColor: Theme.of(context).primaryColor,
+  //     elevation: 4,
+  //   );
+  // }
 }

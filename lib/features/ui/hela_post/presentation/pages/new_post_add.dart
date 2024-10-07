@@ -162,7 +162,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('ලියන්න අපිට', style: GoogleFonts.notoSerifSinhala(fontSize: 14.0, color: Colors.white)),
+        title: Text('කැටපත් ලියමු', style: GoogleFonts.notoSerifSinhala(fontSize: 14.0, color: Colors.white)),
         centerTitle: true,
         backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
       ),

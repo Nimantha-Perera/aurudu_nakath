@@ -29,7 +29,8 @@ class _CommentBottomSheetState extends State<CommentBottomSheet> {
   String? currentUserId;
   String? currentUserName;
   String? currentPhotoUrl;
-  int commentsToShow = 10;
+  int commentsToShow = 3; // Initially show 3 comments
+  bool showingAllComments = false;
 
   @override
   void initState() {
@@ -136,14 +137,42 @@ class _CommentBottomSheetState extends State<CommentBottomSheet> {
           return _buildEmptyState(isDarkMode);
         }
 
-        return ListView.builder(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          itemCount: comments.length,
-          itemBuilder: (context, index) {
-            final commentData = comments[index].data() as Map<String, dynamic>;
-            return _buildCommentItem(
-                commentData, comments[index].id, isDarkMode);
-          },
+        final displayedComments = showingAllComments 
+            ? comments 
+            : comments.take(commentsToShow).toList();
+
+        return Column(
+          children: [
+            Expanded(
+              child: ListView.builder(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                itemCount: displayedComments.length,
+                itemBuilder: (context, index) {
+                  final commentData = displayedComments[index].data() as Map<String, dynamic>;
+                  return _buildCommentItem(
+                      commentData, displayedComments[index].id, isDarkMode);
+                },
+              ),
+            ),
+            if (comments.length > commentsToShow && !showingAllComments)
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: TextButton(
+                  onPressed: () {
+                    setState(() {
+                      showingAllComments = true;
+                    });
+                  },
+                  child: Text(
+                    'තවත් අදහස් බලන්න',
+                    style: GoogleFonts.poppins(
+                      color: Theme.of(context).primaryColor,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ),
+          ],
         );
       },
     );
@@ -269,22 +298,15 @@ class _CommentBottomSheetState extends State<CommentBottomSheet> {
           const SizedBox(width: 8),
           GestureDetector(
             onTap: () async {
-              // Get the user ID from SharedPreferences
               final prefs = await SharedPreferences.getInstance();
-              final userId = prefs
-                  .getString('userId'); // Replace 'userId' with your actual key
+              final userId = prefs.getString('userId');
 
-              // Check if the userId is empty
               if (userId == null || userId.isEmpty) {
-                // Navigate to the login screen
-               Navigator.pushNamed(context, AppRoutes.login2);
+                Navigator.pushNamed(context, AppRoutes.login2);
               } else {
-                // Proceed to add or update comment based on editingCommentId
                 if (editingCommentId == null) {
-                  // Call _addComment function if not in editing mode
                   _addComment();
                 } else {
-                  // Call _updateComment function if in editing mode
                   _updateComment();
                 }
               }

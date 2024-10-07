@@ -204,7 +204,7 @@ class HelagptProDrawer extends StatelessWidget {
         '© 2024 LankaTechInnovations. All rights reserved.',
         textAlign: TextAlign.center,
         style: GoogleFonts.notoSerifSinhala(
-          fontSize: 12,
+          fontSize: 8,
           color: isDarkMode ? Colors.grey[400] : Colors.grey[600],
         ),
       ),

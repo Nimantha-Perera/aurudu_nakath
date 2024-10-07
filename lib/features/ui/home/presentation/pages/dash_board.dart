@@ -5,6 +5,7 @@ import 'package:aurudu_nakath/features/ui/maintance/maintance_screen.dart';
 import 'package:aurudu_nakath/features/ui/home/presentation/pages/tools_view.dart';
 import 'package:aurudu_nakath/features/ui/theme/change_theme_notifier.dart';
 import 'package:aurudu_nakath/features/ui/theme/dark_theme.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:aurudu_nakath/features/ui/home/data/modals/modal.dart';
@@ -46,10 +47,10 @@ class _DashBoardState extends State<DashBoard> {
   final FirebaseInAppMessage _firebaseInAppMessage = FirebaseInAppMessage();
   @override
   @override
-
   void initState() {
+    logNewEvent();
     _firebaseInAppMessage.showInAppMessage();
-  
+
     Provider.of<ReviewProvider>(context, listen: false).requestReview();
     super.initState();
     // Initialize Firestore instance
@@ -80,6 +81,21 @@ class _DashBoardState extends State<DashBoard> {
         _setupAndShowTutorial();
       });
     }
+  }
+
+  final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
+
+  // Method to log a new event
+  Future<void> logNewEvent() async {
+    await analytics.logEvent(
+      name: 'home_dash',
+      parameters: <String, Object>{
+        'home_dash_value': 'Home Dash',
+      },
+    );
+
+    // Show a message or take other actions
+    print('New event logged: Sample Event');
   }
 
   // Set tutorial as shown in SharedPreferences
