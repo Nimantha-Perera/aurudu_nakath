@@ -21,8 +21,8 @@ class IntroPage2 extends StatelessWidget {
                 // Lottie Animation in place of the image
                 Container(
                   margin: EdgeInsets.only(top: 0),
-                  child: Lottie.asset(
-                    "assets/animations/robot.json", // Replace with the correct path to your SVG file
+                  child: Lottie.network(
+                    "https://lottie.host/d77386d7-26a3-475e-a271-1083e2861fb3/Jw8dkbxlfj.json", // Replace with the correct path to your SVG file
                     height: 300,
                     width: 300,
                     repeat: false,

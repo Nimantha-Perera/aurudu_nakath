@@ -37,7 +37,7 @@ class _LithaMainScreenState extends State<LithaMainScreen> {
             return Center(child: CircularProgressIndicator());
           } else if (state is AuruduNakathLoaded) {
             return Padding(
-              padding: const EdgeInsets.all(20),
+              padding: const EdgeInsets.all(10),
               child: ListView(
                 children: [
                   TimeNow(),

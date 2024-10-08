@@ -5,7 +5,6 @@ import 'package:aurudu_nakath/features/ui/Login/presentation/pages/login_viewmod
 import 'package:aurudu_nakath/features/ui/routes/routes.dart';
 import 'package:feedback/feedback.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_email_sender/flutter_email_sender.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:path_provider/path_provider.dart';
@@ -248,7 +247,25 @@ class _SettingsPageState extends State<SettingsPage> {
       ],
     );
   }
-
+void _showNoWhatsAppClientDialog(BuildContext context) {
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: Text('WhatsApp යැවීම අසාර්ථකයි'),
+        content: Text('WhatsApp යැවීම සඳහා WhatsApp යෙදුමක් නොමැත. කරුණාකර පරිශීලනයට ඇප් එකක් ස්ථාපනය කරන්න.'),
+        actions: <Widget>[
+          TextButton(
+            child: Text('හරි'),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+          ),
+        ],
+      );
+    },
+  );
+}
   // Support Section
   Widget _buildSupportSection(BuildContext context) {
     return Column(
@@ -288,7 +305,24 @@ class _SettingsPageState extends State<SettingsPage> {
           final screenshotFilePath = await writeImageToStorage(feedback.screenshot);
 
           // Attempt to send the email
-          await sendEmail(context, screenshotFilePath);
+        BetterFeedback.of(context).show((feedback) async {
+            // Save the screenshot to storage
+            final screenshotFilePath = await writeImageToStorage(feedback.screenshot);
+
+            // Prepare the message with the error feedback
+        
+             final uri = Uri.parse(
+              'https://wa.me/+94762938664?text=$feedback%0A%0A%3CAttachment%3E%20$screenshotFilePath'
+            );
+
+
+            // Open WhatsApp
+            if (await canLaunch(uri.toString())) {
+              await launch(uri.toString());
+            } else {
+              _showNoWhatsAppClientDialog(context);
+            }
+          });
         });
           },
         )
@@ -297,33 +331,29 @@ class _SettingsPageState extends State<SettingsPage> {
   }
 
 
-   Future<void> sendEmail(BuildContext context, String screenshotFilePath) async {
-    // Prepare the email
-    final Email email = Email(
-      body: 'දෝශ වාර්තාව - ඇප් එක පිලිබඳ දෝෂයක් සිදු විය',
-      subject: 'දෝශ වාර්තාව - ඇප් එක පිලිබඳ',
-      recipients: ['nmadushanka867@gmail.com'],
-      attachmentPaths: [screenshotFilePath],
-      isHTML: false,
-    );
 
-    try {
-      await FlutterEmailSender.send(email);
-      // Optionally, show a toast on success
-      Fluttertoast.showToast(msg: "ඊමේල් යැවීම සාර්ථක විය!");
-    } catch (error) {
-      // Check for no available email client error
-      if (error.toString().contains('not_available')) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('ඊමේල් යැවීම සඳහා ඊමේල් යැවීමේ යෙදුමක් නොමැත.')),
-        );
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('ඊමේල් යැවීමේ දෝෂයක් සිදු විය: $error')),
-        );
-      }
-    }
-  }
+
+// Helper method to show dialog when no email client is available
+void _showNoEmailClientDialog(BuildContext context) {
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: Text('ඊමේල් යැවීම අසාර්ථකයි'),
+        content: Text('ඊමේල් යැවීම සඳහා ඊමේල් යැවීමේ යෙදුමක් නොමැත. කරුණාකර පරිශීලනයට ඇප් එකක් ස්ථාපනය කරන්න.'),
+        actions: <Widget>[
+          TextButton(
+            child: Text('හරි'),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+          ),
+        ],
+      );
+    },
+  );
+}
+
 
   Future<String> writeImageToStorage(Uint8List _image) async {
     final directory = await getTemporaryDirectory();
