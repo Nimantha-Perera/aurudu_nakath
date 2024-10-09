@@ -81,17 +81,7 @@ class Tools extends StatelessWidget {
                       );
                     },
                   ),
-                  SizedBox(width: 10),
-                  ButtonsCard(
-                    text: "මාලිමාව",
-                    onTap: () {
-                      Navigator.pushNamed(context, AppRoutes.malimawa);
-                    },
-                    color: Color(0xFFA02334),
-                    textColor: Colors.white,
-                    icon: Icon(FontAwesomeIcons.safari, color: Colors.white),
-                    width: buttonWidth,
-                  ),
+                 
                   SizedBox(width: 10),
                   ButtonsCard(
                     text: "කැටපත",
@@ -104,6 +94,19 @@ class Tools extends StatelessWidget {
                     width: buttonWidth,
                   ),
                   SizedBox(width: 10),
+
+                 
+                  ButtonsCard(
+                    text: "මාලිමාව",
+                    onTap: () {
+                      Navigator.pushNamed(context, AppRoutes.malimawa);
+                    },
+                    color: Color(0xFFA02334),
+                    textColor: Colors.white,
+                    icon: Icon(FontAwesomeIcons.safari, color: Colors.white),
+                    width: buttonWidth,
+                  ),
+                    SizedBox(width: 10),
                   ButtonsCard(
                     text: "සැකසුම්",
                     onTap: () {

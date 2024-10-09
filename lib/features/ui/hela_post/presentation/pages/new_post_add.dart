@@ -1,3 +1,4 @@
+import 'package:aurudu_nakath/features/ui/routes/routes.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:aurudu_nakath/features/ui/hela_post/data/modal/post.dart';
@@ -181,10 +182,24 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                 _buildImageSection(),
                 SizedBox(height: 32),
                 _buildSubmitButton(),
+                SizedBox(height: 24),
+                _helpText(),
               ],
             ),
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _helpText() {
+    return TextButton(
+      onPressed: () {
+         Navigator.pushNamed(context, AppRoutes.help);
+      },
+      child: Text(
+        'කොහොමද ලියන්නෙ?',
+        style: TextStyle(color: Theme.of(context).colorScheme.primary),
       ),
     );
   }
@@ -288,6 +303,8 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
       ],
     );
   }
+
+  
 
   Widget _buildSubmitButton() {
     return ElevatedButton(

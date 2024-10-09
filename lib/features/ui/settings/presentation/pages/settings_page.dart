@@ -312,7 +312,7 @@ void _showNoWhatsAppClientDialog(BuildContext context) {
             // Prepare the message with the error feedback
         
              final uri = Uri.parse(
-              'https://wa.me/+94762938664?text=$feedback%0A%0A%3CAttachment%3E%20$screenshotFilePath'
+              'https://wa.me/94762938664?text=$feedback%0A%0A%3CAttachment%3E%20$screenshotFilePath'
             );
 
 
