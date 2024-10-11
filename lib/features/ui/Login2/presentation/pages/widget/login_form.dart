@@ -127,7 +127,7 @@ class _LoginFormState extends State<LoginForm> {
       controller: _passwordController,
       obscureText: _obscurePassword,
       decoration: _inputDecoration(
-        'රහස්‍ය අංකය',
+        'මුරපදය',
         Icons.lock,
         isDarkMode,
       ).copyWith(
@@ -145,7 +145,7 @@ class _LoginFormState extends State<LoginForm> {
       ),
       validator: (value) {
         if (value == null || value.isEmpty) {
-          return 'කරුණාකර ඔබගේ රහස්‍ය අංකය ඇතුළත් කරන්න';
+          return 'කරුණාකර ඔබගේ මුරපදය ඇතුළත් කරන්න';
         }
         return null;
       },
@@ -177,7 +177,7 @@ class _LoginFormState extends State<LoginForm> {
         onPressed: () => _showForgotPasswordDialog(context),
         child: Center(
           child: Text(
-            'රහස්‍ය අංකය අමතක උනාද?',
+            'මුරපදය අමතක උනාද?',
             style: TextStyle(color: primaryColor),
           ),
         ),
