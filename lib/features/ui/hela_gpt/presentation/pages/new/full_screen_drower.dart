@@ -33,6 +33,14 @@ class FullScreenDrawer extends StatelessWidget {
               child: ListView(
                 padding: const EdgeInsets.symmetric(horizontal: 24.0),
                 children: [
+
+                   _buildFeatureItem(
+                    context,
+                    icon: Icons.image_outlined,
+                    title: 'ජායාරූප ජනනය කිරීමේ හැකියාව',
+                    subtitle:
+                        'හෙල GPT Pro ලබාගැනීමෙන් ඔබට ජායාරූප ජනනය (Generate) කල හැකිය.',
+                  ),
                   _buildFeatureItem(
                     context,
                     icon: Icons.chat_bubble_outline,
