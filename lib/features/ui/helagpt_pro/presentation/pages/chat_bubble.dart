@@ -1,9 +1,12 @@
+import 'package:aurudu_nakath/features/ui/permissions/permissions_hadler.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:flutter/services.dart';
 import 'package:markdown/markdown.dart' as md;
 import 'dart:io';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:image_gallery_saver/image_gallery_saver.dart';
 
 class ChatBubble extends StatefulWidget {
   final String message;
@@ -27,9 +30,11 @@ class ChatBubble extends StatefulWidget {
   _ChatBubbleState createState() => _ChatBubbleState();
 }
 
-class _ChatBubbleState extends State<ChatBubble> with SingleTickerProviderStateMixin {
+class _ChatBubbleState extends State<ChatBubble>
+    with SingleTickerProviderStateMixin {
   late AnimationController _animationController;
   late Animation<double> _scaleAnimation;
+  final PermissionHandler _permissionHandler = PermissionHandler();
   String? _localImagePath;
 
   @override
@@ -44,34 +49,84 @@ class _ChatBubbleState extends State<ChatBubble> with SingleTickerProviderStateM
       curve: Curves.easeOutBack,
     );
     _animationController.forward();
-    
+
     if (widget.imagePath != null) {
       _saveImageLocally();
     }
   }
 
-Future<void> _saveImageLocally() async {
-  if (widget.imagePath == null) return;
+  Future<void> _saveImageLocally() async {
+    await _permissionHandler.requestManageExternalStorage();
+    if (widget.imagePath == null) return;
 
-  try {
-    final directory = await getTemporaryDirectory();
-    final fileName = '${DateTime.now().millisecondsSinceEpoch}.jpg';
-    final localPath = '${directory.path}/$fileName';
+    try {
+      final directory = await getTemporaryDirectory();
+      final fileName = '${DateTime.now().millisecondsSinceEpoch}.jpg';
+      final localPath = '${directory.path}/$fileName';
 
-    // Copy the image to temporary directory
-    await File(widget.imagePath!).copy(localPath);
+      // Copy the image to temporary directory
+      await File(widget.imagePath!).copy(localPath);
 
-    // Only call setState if the widget is still mounted
-    if (mounted) {
-      setState(() {
-        _localImagePath = localPath;
-      });
+      if (mounted) {
+        setState(() {
+          _localImagePath = localPath;
+        });
+      }
+    } catch (error) {
+      print('Error saving image locally: $error');
     }
-  } catch (error) {
-    print('Error saving image locally: $error');
   }
-}
 
+  Future<void> _downloadImage() async {
+    if (_localImagePath == null) return;
+
+    // Request storage permission
+    var status = await Permission.storage.request();
+    if (status.isGranted) {
+      try {
+        final result = await ImageGallerySaver.saveFile(_localImagePath!);
+        if (result['isSuccess']) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Image downloaded successfully!'),
+              behavior: SnackBarBehavior.floating,
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10)),
+            ),
+          );
+        } else {
+          throw Exception('Failed to save image');
+        }
+      } catch (error) {
+        print('Error saving image to gallery: $error');
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to download image.'),
+            behavior: SnackBarBehavior.floating,
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+          ),
+        );
+      }
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Storage permission denied.'),
+          behavior: SnackBarBehavior.floating,
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+          action: SnackBarAction(
+            label: 'Settings',
+            onPressed: () async {
+              // Open app settings
+              await openAppSettings();
+            },
+            textColor: Colors.blue, // Customize text color as needed
+          ),
+        ),
+      );
+    }
+  }
 
   @override
   void dispose() {
@@ -135,10 +190,25 @@ Future<void> _saveImageLocally() async {
                       if (_localImagePath != null)
                         ClipRRect(
                           borderRadius: BorderRadius.circular(8),
-                          child: Image.file(
-                            File(_localImagePath!),
-                            fit: BoxFit.cover,
-                            width: double.infinity,
+                          child: Stack(
+                            alignment: Alignment.center,
+                            children: [
+                              Image.file(
+                                File(_localImagePath!),
+                                fit: BoxFit.cover,
+                                width: double.infinity,
+                              ),
+                              Positioned(
+                                right: 10,
+                                bottom: 10,
+                                child: IconButton(
+                                  icon:
+                                      Icon(Icons.download, color: Colors.white),
+                                  onPressed: _downloadImage,
+                                  tooltip: 'Download Image',
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                       if (_localImagePath != null && widget.message.isNotEmpty)

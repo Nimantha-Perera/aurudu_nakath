@@ -53,6 +53,7 @@ class _ChatViewState extends State<HelaGPT_PRO> {
         context.read(),
         context.read(),
         context.read(),
+        context.read(),
       )..fetchMessages(),
       child: Scaffold(
         drawer: HelagptProDrawer(),

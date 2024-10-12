@@ -22,6 +22,7 @@ import 'package:aurudu_nakath/features/ui/hela_post/domain/prvider/post_provider
 import 'package:aurudu_nakath/features/ui/hela_post/domain/usecase/datasource.dart';
 import 'package:aurudu_nakath/features/ui/helagpt_pro/domain/usecases/clear_chat.dart';
 import 'package:aurudu_nakath/features/ui/helagpt_pro/domain/usecases/fetch_and%20_manegemessage.dart';
+import 'package:aurudu_nakath/features/ui/helagpt_pro/domain/usecases/send_generated_img.dart';
 import 'package:aurudu_nakath/features/ui/helagpt_pro/domain/usecases/send_img.dart';
 import 'package:aurudu_nakath/features/ui/helagpt_pro/domain/usecases/send_text_message.dart';
 import 'package:aurudu_nakath/features/ui/help/presentation/pages/help_screen.dart';
@@ -33,6 +34,7 @@ import 'package:aurudu_nakath/features/ui/litha/data/repo/aurudu_nakath_reposito
 import 'package:aurudu_nakath/features/ui/litha/domain/usecase/get_aurudu_nakath_data.dart';
 import 'package:aurudu_nakath/features/ui/litha/presentation/bloc/aurudu_nakath_bloc.dart';
 import 'package:aurudu_nakath/features/ui/maintance/usecase.dart';
+import 'package:aurudu_nakath/features/ui/permissions/permissions_hadler.dart';
 import 'package:aurudu_nakath/features/ui/routes/routes.dart';
 import 'package:aurudu_nakath/features/ui/settings/data/repostories/settings_repository.dart';
 import 'package:aurudu_nakath/features/ui/settings/data/repostories/settings_repository_impl.dart';
@@ -74,6 +76,8 @@ import 'features/ui/hela_post/domain/usecase/getallpost.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await initializeDateFormatting('si_LK');
+  final PermissionHandler _permissionHandler = PermissionHandler();
+  _permissionHandler.isManageExternalStorageGranted();
 
   try {
     await Firebase.initializeApp(
@@ -88,8 +92,6 @@ void main() async {
     androidProvider: AndroidProvider.debug,
   );
 
-
-
   NotificationService notificationService =
       NotificationService(); // Create instance of NotificationService
   await notificationService.initialize(); // Initialize notifications
@@ -99,6 +101,8 @@ void main() async {
   await dotenv.load(fileName: "assets/.env");
 
   final sharedPreferences = await SharedPreferences.getInstance();
+
+  final apigen2 = "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";
 
   final apiKey = dotenv.env['API_KEY'] ?? "";
   final apiUrl =
@@ -155,9 +159,13 @@ void main() async {
           Provider<SharedPreferences>.value(value: sharedPreferences),
           ChangeNotifierProvider(create: (_) => themeNotifier),
           Provider<SettingsRepository>(create: (_) => SettingsRepositoryImpl()),
+
           Provider<SettingsBloc>(
               create: (context) =>
                   SettingsBloc(context.read<SettingsRepository>())),
+          Provider<SendGeneratedImageMessageUseCase2>(
+              create: (_) => SendGeneratedImageMessageUseCase2(apigen2)),
+
           Provider<FetchManageMessagesUseCase>(
               create: (_) => FetchManageMessagesUseCase(sharedPreferences)),
           Provider<SendTextMessageUseCase>(
@@ -196,12 +204,11 @@ class _MyAppState extends State<MyApp> {
   late Future<SharedPreferences> _sharedPreferencesFuture;
   //  ShakeNavigation? _shakeNavigation;
   late UseCaseMaintainsFirebase maintenanceUseCase;
+
   @override
   void initState() {
     super.initState();
     // getFcmToken();
-
-    
 
     // Check maintenance mode when the widget is first built
     // maintenanceUseCase = UseCaseMaintainsFirebase(firestore: FirebaseFirestore.instance);
