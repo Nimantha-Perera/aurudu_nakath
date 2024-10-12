@@ -5,6 +5,7 @@ import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 import 'package:aurudu_nakath/features/ui/hela_gpt/presentation/bloc/chat_view_model.dart';
 import 'package:aurudu_nakath/features/ui/hela_gpt/domain/usecases/send_text_message.dart';
 import '../../../tutorial/tutorial_coach_mark.dart';
+import 'package:speech_to_text/speech_to_text.dart' as stt;
 
 class MessageInput extends StatefulWidget {
   const MessageInput({Key? key}) : super(key: key);
@@ -13,22 +14,27 @@ class MessageInput extends StatefulWidget {
   _MessageInputState createState() => _MessageInputState();
 }
 
-class _MessageInputState extends State<MessageInput> with SingleTickerProviderStateMixin {
+class _MessageInputState extends State<MessageInput>
+    with SingleTickerProviderStateMixin {
   final TextEditingController _controller = TextEditingController();
   final GlobalKey _sendButtonKey = GlobalKey();
   final GlobalKey _textFieldKey = GlobalKey();
   final GlobalKey _startNewChatKey = GlobalKey();
+  final GlobalKey _voiceInputKey = GlobalKey();
 
   late AnimationController _animationController;
   late Animation<double> _sendButtonAnimation;
 
   bool _tutorialShown = false;
+  bool _isListening = false;
+  stt.SpeechToText _speech = stt.SpeechToText();
 
   @override
   void initState() {
     super.initState();
     _loadTutorialState();
     _setupAnimations();
+    _initSpeech();
   }
 
   void _setupAnimations() {
@@ -39,6 +45,19 @@ class _MessageInputState extends State<MessageInput> with SingleTickerProviderSt
     _sendButtonAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(parent: _animationController, curve: Curves.easeInOut),
     );
+  }
+
+  Future<void> _initSpeech() async {
+    bool available = await _speech.initialize(
+      onStatus: (status) => print('Speech recognition status: $status'),
+      onError: (errorNotification) =>
+          print('Speech recognition error: $errorNotification'),
+    );
+    if (available) {
+      print('Speech recognition initialized successfully');
+    } else {
+      print('Speech recognition not available');
+    }
   }
 
   @override
@@ -87,6 +106,13 @@ class _MessageInputState extends State<MessageInput> with SingleTickerProviderSt
         text: 'මෙම බොත්තම එබීමෙන් නව කතාබහක් ආරම්භ කරන්න.',
         shape: ShapeLightFocus.Circle,
       ),
+      TutorialHelper.createCustomTarget(
+        identify: 'voice_input',
+        keyTarget: _voiceInputKey,
+        align: ContentAlign.top,
+        text: 'මෙම බොත්තම ඔබා හඬ ඇතුළත් කිරීම ආරම්භ කරන්න. කතා කිරීම අවසන් වූ පසු ස්වයංක්‍රීයව යැවේ.',
+        shape: ShapeLightFocus.Circle,
+      ),
     ];
 
     TutorialHelper.showTutorial(context: context, targets: targets);
@@ -96,7 +122,8 @@ class _MessageInputState extends State<MessageInput> with SingleTickerProviderSt
   Future<void> _startNewChat() async {
     final chatViewModel = Provider.of<ChatViewModel>(context, listen: false);
     chatViewModel.clearChat();
-    await Provider.of<SendTextMessageUseCase>(context, listen: false).clearConversationHistory();
+    await Provider.of<SendTextMessageUseCase>(context, listen: false)
+        .clearConversationHistory();
     _controller.clear();
     _animationController.reverse();
   }
@@ -109,6 +136,48 @@ class _MessageInputState extends State<MessageInput> with SingleTickerProviderSt
       _animationController.reverse();
     }
   }
+
+void _startListening() async {
+  if (!_isListening) {
+    bool available = await _speech.initialize(
+      onStatus: (status) {
+        print('Speech recognition status: $status');
+        if (status == 'done') {
+          setState(() {
+            _isListening = false;
+          });
+          // Auto-send the message when speech recognition is done
+          if (_controller.text.isNotEmpty) {
+            _sendMessage(); // Send the message here
+          }
+        }
+      },
+      onError: (errorNotification) =>
+          print('Speech recognition error: $errorNotification'),
+    );
+
+    if (available) {
+      setState(() => _isListening = true);
+      _speech.listen(
+        onResult: (result) {
+          setState(() {
+            _controller.text = result.recognizedWords;
+            if (result.finalResult) {
+              // Automatically send the message if the result is final
+              _sendMessage();
+              _isListening = false; // Stop listening after final result
+            }
+          });
+        },
+        localeId: 'si-LK', // Sinhala language code
+      );
+    }
+  } else {
+    setState(() => _isListening = false);
+    _speech.stop();
+  }
+}
+
 
   @override
   Widget build(BuildContext context) {
@@ -132,6 +201,8 @@ class _MessageInputState extends State<MessageInput> with SingleTickerProviderSt
             Expanded(
               child: _buildInputField(),
             ),
+            const SizedBox(width: 8),
+            _buildVoiceInputButton(),
           ],
         ),
       ),
@@ -156,7 +227,8 @@ class _MessageInputState extends State<MessageInput> with SingleTickerProviderSt
   Widget _buildInputField() {
     return Container(
       decoration: BoxDecoration(
-        color: Theme.of(context).inputDecorationTheme.fillColor ?? Colors.grey.shade200,
+        color: Theme.of(context).inputDecorationTheme.fillColor ??
+            Colors.grey.shade200,
         borderRadius: BorderRadius.circular(24.0),
         border: Border.all(
           color: Theme.of(context).primaryColor.withOpacity(0.3),
@@ -179,7 +251,8 @@ class _MessageInputState extends State<MessageInput> with SingleTickerProviderSt
               decoration: InputDecoration(
                 hintText: 'අවශ්‍ය දේ මෙහි ලියන්න...',
                 border: InputBorder.none,
-                contentPadding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
+                contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 16.0, vertical: 12.0),
                 hintStyle: TextStyle(color: Colors.grey.shade600),
               ),
               style: TextStyle(color: Colors.black87),
@@ -213,6 +286,26 @@ class _MessageInputState extends State<MessageInput> with SingleTickerProviderSt
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildVoiceInputButton() {
+    return Container(
+      key: _voiceInputKey,
+      decoration: BoxDecoration(
+        color: _isListening
+            ? Colors.red.withOpacity(0.1)
+            : Theme.of(context).primaryColor.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: IconButton(
+        icon: Icon(
+          _isListening ? Icons.mic : Icons.mic_none,
+          color: _isListening ? Colors.red : Theme.of(context).primaryColor,
+        ),
+        onPressed: _startListening,
+        tooltip: 'Voice Input',
       ),
     );
   }
