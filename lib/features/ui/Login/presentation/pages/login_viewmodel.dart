@@ -77,6 +77,7 @@ class LoginViewModel extends ChangeNotifier {
     await prefs.remove('email');
     await prefs.remove('displayName');
     await prefs.remove('photoURL');
+    await prefs.remove('userId');
 
     notifyListeners(); // Notify listeners to update the UI
 

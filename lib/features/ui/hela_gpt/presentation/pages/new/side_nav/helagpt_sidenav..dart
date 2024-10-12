@@ -132,7 +132,7 @@ class HelagptDrawer extends StatelessWidget {
             leading: Icon(Icons.logout,
                 color: isDarkMode ? Colors.grey[400] : Color.fromARGB(255, 126, 126, 126)),
             title: Text(
-              "සංවිධානය ඉවත් කරන්න",
+              "ගිනුමෙන් ඉවත් වන්න",
               style: GoogleFonts.notoSerifSinhala(
                 color: isDarkMode ? Colors.white : Colors.black87,
                 fontSize: 13,

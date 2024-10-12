@@ -143,7 +143,7 @@ class HelagptProDrawer extends StatelessWidget {
                     ? const Color.fromARGB(255, 220, 220, 220)
                     : const Color.fromARGB(255, 126, 126, 126)),
             title: Text(
-              "සංවිධානය ඉවත් කරන්න",
+              "ගිනුමෙන් ඉවත් වන්න",
               style: GoogleFonts.notoSerifSinhala(
                 color: isDarkMode ? Colors.white : Colors.black87,
                 fontSize: 13,
