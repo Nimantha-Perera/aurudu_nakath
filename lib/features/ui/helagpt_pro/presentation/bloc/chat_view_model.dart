@@ -129,36 +129,4 @@ Future<List<SingleChildStatelessWidget>> setupDependencies() async {
   ];
 }
 
-// 4. Use the ChatViewModel in your UI
-// class ChatScreen extends StatelessWidget {
-//   @override
-//   Widget build(BuildContext context) {
-//     return Consumer<ChatViewModel>(
-//       builder: (context, viewModel, child) {
-//         return Scaffold(
-//           appBar: AppBar(title: Text('Chat')),
-//           body: Column(
-//             children: [
-//               Expanded(
-//                 child: ListView.builder(
-//                   itemCount: viewModel.messages.length,
-//                   itemBuilder: (context, index) {
-//                     final message = viewModel.messages[index];
-//                     return ListTile(
-//                       title: Text(message.message),
-//                       subtitle: Text(message.isMe ? 'You' : 'Bot'),
-//                     );
-//                   },
-//                 ),
-//               ),
-//               if (viewModel.isTyping) CircularProgressIndicator(),
-//               MessageInput(), // Add MessageInput widget
-//             ],
-//           ),
-//         );
-//       },
-//     );
-//   }
-// }
 
-// 5. Initialize in your main.dart

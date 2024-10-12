@@ -59,7 +59,7 @@ final List<String> _conversationHistory = [];
 // Example usage of the function
 Future<void> handleUserMessage(String userMessage) async {
   String response = await sendTextToGemini(userMessage);
-  print('Gemini response: $response');
+  print('HelaGPT response: $response');
 }
 
 
