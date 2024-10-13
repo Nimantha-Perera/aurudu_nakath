@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:speech_to_text/speech_recognition_result.dart';
+import 'package:speech_to_text/speech_to_text.dart';
 import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 import 'package:aurudu_nakath/features/ui/hela_gpt/presentation/bloc/chat_view_model.dart';
 import 'package:aurudu_nakath/features/ui/hela_gpt/domain/usecases/send_text_message.dart';
 import '../../../tutorial/tutorial_coach_mark.dart';
-import 'package:speech_to_text/speech_to_text.dart' as stt;
 
 class MessageInput extends StatefulWidget {
   const MessageInput({Key? key}) : super(key: key);
@@ -26,14 +27,17 @@ class _MessageInputState extends State<MessageInput> with SingleTickerProviderSt
 
   bool _tutorialShown = false;
   bool _isListening = false;
-  stt.SpeechToText _speech = stt.SpeechToText();
+
+  final SpeechToText _speechToText = SpeechToText();
+  String _wordSpoken = '';
+  double _confidenceLevel = 0;
 
   @override
   void initState() {
     super.initState();
     _loadTutorialState();
     _setupAnimations();
-    _initSpeech();
+    _initSpeechRecognition();
   }
 
   void _setupAnimations() {
@@ -46,15 +50,12 @@ class _MessageInputState extends State<MessageInput> with SingleTickerProviderSt
     );
   }
 
-  Future<void> _initSpeech() async {
-    bool available = await _speech.initialize(
-      onStatus: (status) => print('Speech recognition status: $status'),
-      onError: (errorNotification) => print('Speech recognition error: $errorNotification'),
-    );
-    if (available) {
-      print('Speech recognition initialized successfully');
-    } else {
-      print('Speech recognition not available');
+  Future<void> _initSpeechRecognition() async {
+    bool available = await _speechToText.initialize();
+    if (!available) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Speech recognition not available')),
+      );
     }
   }
 
@@ -125,50 +126,44 @@ class _MessageInputState extends State<MessageInput> with SingleTickerProviderSt
     _animationController.reverse();
   }
 
-  void _sendMessage() {
-    final text = _controller.text.trim();
-    if (text.isNotEmpty) {
-      Provider.of<ChatViewModel>(context, listen: false).sendMessage(text);
+  void _sendMessage([String? text]) {
+    final message = text?.trim() ?? _controller.text.trim();
+    if (message.isNotEmpty) {
+      Provider.of<ChatViewModel>(context, listen: false).sendMessage(message);
       _controller.clear();
       _animationController.reverse();
     }
   }
 
   void _startListening() async {
-    if (!_isListening) {
-      bool available = await _speech.initialize(
-        onStatus: (status) {
-          print('Speech recognition status: $status');
-          if (status == 'done') {
-            setState(() {
-              _isListening = false;
-            });
-            if (_controller.text.isNotEmpty) {
-              _sendMessage();
-            }
-          }
-        },
-        onError: (errorNotification) => print('Speech recognition error: $errorNotification'),
-      );
+    if (!_speechToText.isAvailable) return;
 
-      if (available) {
-        setState(() => _isListening = true);
-        _speech.listen(
-          onResult: (result) {
-            setState(() {
-              _controller.text = result.recognizedWords;
-              if (result.finalResult) {
-                _sendMessage();
-                _isListening = false;
-              }
-            });
-          },
-          localeId: 'si-LK',
-        );
-      }
-    } else {
-      setState(() => _isListening = false);
-      _speech.stop();
+    await _speechToText.listen(
+      onResult: _onSpeechResult,
+      localeId: 'si_LK', // Set Sinhala locale
+    );
+
+    setState(() {
+      _isListening = true;
+    });
+  }
+
+  void _stopListening() async {
+    await _speechToText.stop();
+    setState(() {
+      _isListening = false;
+    });
+  }
+
+  void _onSpeechResult(SpeechRecognitionResult result) {
+    setState(() {
+      _wordSpoken = result.recognizedWords;
+      _confidenceLevel = result.confidence;
+    });
+
+    if (result.finalResult) {
+      _stopListening();
+      _sendMessage(_wordSpoken);
     }
   }
 
@@ -263,7 +258,7 @@ class _MessageInputState extends State<MessageInput> with SingleTickerProviderSt
                 color: Colors.transparent,
                 child: InkWell(
                   key: _sendButtonKey,
-                  onTap: _sendMessage,
+                  onTap: () => _sendMessage(),
                   customBorder: const CircleBorder(),
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
@@ -282,22 +277,13 @@ class _MessageInputState extends State<MessageInput> with SingleTickerProviderSt
   }
 
   Widget _buildVoiceInputButton() {
-    return Container(
+    return IconButton(
       key: _voiceInputKey,
-      decoration: BoxDecoration(
-        color: _isListening
-            ? Colors.red.withOpacity(0.1)
-            : Theme.of(context).primaryColor.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(20),
+      icon: Icon(
+        _isListening ? Icons.mic_off : Icons.mic,
+        color: _isListening ? Colors.red : Theme.of(context).primaryColor,
       ),
-      child: IconButton(
-        icon: Icon(
-          _isListening ? Icons.mic : Icons.mic_none,
-          color: _isListening ? Colors.red : Theme.of(context).primaryColor,
-        ),
-        onPressed: _startListening,
-        tooltip: 'Voice Input',
-      ),
+      onPressed: _isListening ? _stopListening : _startListening,
     );
   }
 }
