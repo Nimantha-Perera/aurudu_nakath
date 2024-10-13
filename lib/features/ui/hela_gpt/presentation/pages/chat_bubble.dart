@@ -3,6 +3,7 @@ import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter/services.dart';
 import 'package:markdown/markdown.dart' as md;
+import 'package:flutter_tts/flutter_tts.dart';
 
 class ChatBubble extends StatefulWidget {
   final String message;
@@ -24,9 +25,11 @@ class ChatBubble extends StatefulWidget {
   _ChatBubbleState createState() => _ChatBubbleState();
 }
 
-class _ChatBubbleState extends State<ChatBubble> with SingleTickerProviderStateMixin {
+class _ChatBubbleState extends State<ChatBubble>
+    with SingleTickerProviderStateMixin {
   late AnimationController _animationController;
   late Animation<double> _scaleAnimation;
+  FlutterTts flutterTts = FlutterTts();
 
   @override
   void initState() {
@@ -40,11 +43,38 @@ class _ChatBubbleState extends State<ChatBubble> with SingleTickerProviderStateM
       curve: Curves.easeOutBack,
     );
     _animationController.forward();
+
+    if (!widget.isMe) {
+      _initTts();
+    }
   }
+
+Future<void> _initTts() async {
+  try {
+    await flutterTts.setLanguage("si-LK");
+    await flutterTts.setPitch(1.0);
+    await flutterTts.setSpeechRate(0.5);
+
+    // Log the supported languages
+    List<dynamic> languages = await flutterTts.getLanguages;
+    print("Supported languages: $languages");
+
+    // Check if the language is successfully set
+    String? language = await flutterTts.getLanguages;
+    print("Current TTS language: $language");
+
+    // Now try speaking
+    String result = await flutterTts.speak("හෙලෝ! කොහොමද?");
+    print("TTS result: $result");
+  } catch (e) {
+    print("TTS initialization failed: $e");
+  }
+}
 
   @override
   void dispose() {
     _animationController.dispose();
+    flutterTts.stop();
     super.dispose();
   }
 
@@ -173,7 +203,6 @@ class CustomCodeBlockBuilder extends MarkdownElementBuilder {
 
     String language = '';
 
-    // Check if the element has any classes
     if (element.attributes['class'] != null) {
       final classes = element.attributes['class']!.split(' ');
       for (final className in classes) {
