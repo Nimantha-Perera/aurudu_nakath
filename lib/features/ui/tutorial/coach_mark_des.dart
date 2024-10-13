@@ -14,10 +14,15 @@ class CoachMarkDes extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Access the current theme
+    final theme = Theme.of(context);
+    final isDarkMode = theme.brightness == Brightness.dark;
+
     return Container(
       padding: EdgeInsets.all(10),
       decoration: BoxDecoration(
-        color: Colors.black87,
+        // Background color adapts to dark mode
+        color: isDarkMode ? Colors.black87 : Colors.white,
         borderRadius: BorderRadius.circular(10),
       ),
       child: Column(
@@ -25,7 +30,8 @@ class CoachMarkDes extends StatelessWidget {
         children: [
           Text(
             text,
-            style: TextStyle(color: Colors.white),
+            // Text color adapts to dark mode
+            style: TextStyle(color: isDarkMode ? Colors.white : Colors.black),
             textAlign: TextAlign.center,
           ),
           SizedBox(height: 10),
@@ -36,14 +42,16 @@ class CoachMarkDes extends StatelessWidget {
                 onPressed: onSkip,
                 child: Text(
                   "Skip",
-                  style: TextStyle(color: Colors.red),
+                  // Skip button color adapts to dark mode
+                  style: TextStyle(color: isDarkMode ? Colors.red[300] : Colors.red),
                 ),
               ),
               TextButton(
                 onPressed: onNext,
                 child: Text(
                   "Next",
-                  style: TextStyle(color: Colors.green),
+                  // Next button color adapts to dark mode
+                  style: TextStyle(color: isDarkMode ? Colors.green[300] : Colors.green),
                 ),
               ),
             ],
