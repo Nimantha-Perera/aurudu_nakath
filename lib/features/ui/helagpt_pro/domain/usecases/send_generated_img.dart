@@ -22,6 +22,7 @@ class SendGeneratedImageMessageUseCase2 {
       final blockedKeywords = [
         'sexy', 'nudity', 'nude', 'child',
         'කාමුක', 'නිරුවත්', 'හෙලුවෙන්',"අසභ්‍ය","porn"
+        'ඇඳුම් නැතුව','නග්නව','ඇඳුම් රහිතව'
       ];
 
       // Check if the input text contains any blocked keywords
@@ -32,7 +33,7 @@ class SendGeneratedImageMessageUseCase2 {
       }
 
       // Define keywords to remove
-      final generateKeywords = ['generate', 'අඳින්න', 'උත්පාදනය කරන්න', 'ජායාරූපය'];
+      final generateKeywords = ['generate', 'අඳින්න', 'උත්පාදනය කරන්න', 'ජායාරූපය',"අදින්න"];
 
       // Remove keywords from the input text
       for (final keyword in generateKeywords) {

@@ -51,25 +51,35 @@ class _ChatBubbleState extends State<ChatBubble>
 
 Future<void> _initTts() async {
   try {
+    // Initialize the TTS engine
+    await flutterTts.awaitSpeakCompletion(true); // Ensure TTS is bound properly
+
+    // Check if the TTS engine is installed
+    bool isInstalled = await flutterTts.isLanguageAvailable("si-LK"); // Check with a common language like English
+    if (!isInstalled) {
+      print("TTS engine is not installed on this device.");
+      return;
+    }
+
+    // Set the language to Sinhala (or any other fallback if not available)
     await flutterTts.setLanguage("si-LK");
     await flutterTts.setPitch(1.0);
     await flutterTts.setSpeechRate(0.5);
 
-    // Log the supported languages
-    List<dynamic> languages = await flutterTts.getLanguages;
-    print("Supported languages: $languages");
-
-    // Check if the language is successfully set
-    String? language = await flutterTts.getLanguages;
-    print("Current TTS language: $language");
-
-    // Now try speaking
-    String result = await flutterTts.speak("හෙලෝ! කොහොමද?");
-    print("TTS result: $result");
+    // Check if Sinhala is available
+    bool isLanguageAvailable = await flutterTts.isLanguageAvailable("si-LK");
+    if (isLanguageAvailable) {
+      print("Sinhala language is available");
+      await flutterTts.speak("හෙලෝ! කොහොමද?");
+    } else {
+      print("Sinhala language is not available on this device.");
+    }
   } catch (e) {
     print("TTS initialization failed: $e");
   }
 }
+
+
 
   @override
   void dispose() {
