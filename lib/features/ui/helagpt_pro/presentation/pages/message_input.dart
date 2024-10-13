@@ -1,5 +1,3 @@
-import 'package:aurudu_nakath/features/ui/hela_gpt/domain/usecases/send_img.dart';
-import 'package:aurudu_nakath/features/ui/helagpt_pro/domain/usecases/send_img.dart';
 import 'package:aurudu_nakath/features/ui/helagpt_pro/domain/usecases/send_text_message.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -7,6 +5,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:io';
 import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
+import 'package:speech_to_text/speech_to_text.dart' as stt;
 
 import 'package:aurudu_nakath/features/ui/helagpt_pro/presentation/bloc/chat_view_model.dart';
 import 'package:aurudu_nakath/features/ui/tutorial/tutorial_coach_mark.dart';
@@ -27,10 +26,14 @@ class _MessageInputState extends State<MessageInput> {
   XFile? _selectedImage;
   bool _tutorialShown = false;
 
+  stt.SpeechToText _speechToText = stt.SpeechToText();
+  bool _isListening = false;
+
   @override
   void dispose() {
     _controller.dispose();
     _textNotifier.dispose();
+    _speechToText.stop();
     super.dispose();
   }
 
@@ -39,7 +42,7 @@ class _MessageInputState extends State<MessageInput> {
     chatViewModel.clearChat();
     _controller.clear();
     _textNotifier.value = '';
-     await Provider.of<SendTextMessageUseCase2>(context, listen: false).clearConversationHistory();
+    await Provider.of<SendTextMessageUseCase2>(context, listen: false).clearConversationHistory();
     _selectedImage = null;
   }
 
@@ -66,6 +69,34 @@ class _MessageInputState extends State<MessageInput> {
         _selectedImage = image;
       });
     }
+  }
+
+  Future<void> _startListening() async {
+    bool available = await _speechToText.initialize();
+    if (available) {
+      setState(() {
+        _isListening = true;
+      });
+      _speechToText.listen(
+        onResult: (result) {
+          setState(() {
+            _controller.text = result.recognizedWords;
+            _textNotifier.value = result.recognizedWords;
+            if (result.finalResult) {
+              _sendMessage(result.recognizedWords);
+            }
+          });
+        },
+        localeId: 'si-LK', // Set the locale to Sinhala
+      );
+    }
+  }
+
+  Future<void> _stopListening() async {
+    setState(() {
+      _isListening = false;
+    });
+    _speechToText.stop();
   }
 
   void _showTutorial() {
@@ -102,113 +133,122 @@ class _MessageInputState extends State<MessageInput> {
     _loadTutorialState();
   }
 
- @override
-Widget build(BuildContext context) {
-  return Padding(
-    padding: const EdgeInsets.all(16.0),
-    child: Column(
-      children: [
-        if (_selectedImage != null)
-          Container(
-            height: 100,
-            width: double.infinity,
-            margin: EdgeInsets.only(bottom: 16),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(12),
-              image: DecorationImage(
-                image: FileImage(File(_selectedImage!.path)),
-                fit: BoxFit.cover,
+  void _sendMessage(String message) {
+    if (_selectedImage != null) {
+      Provider.of<ChatViewModel>(context, listen: false).sendImage(_selectedImage!, message);
+      setState(() {
+        _selectedImage = null;
+      });
+    } else {
+      Provider.of<ChatViewModel>(context, listen: false).sendMessage(message);
+    }
+    _controller.clear();
+    _textNotifier.value = '';
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
+        children: [
+          if (_selectedImage != null)
+            Container(
+              height: 100,
+              width: double.infinity,
+              margin: EdgeInsets.only(bottom: 16),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(12),
+                image: DecorationImage(
+                  image: FileImage(File(_selectedImage!.path)),
+                  fit: BoxFit.cover,
+                ),
+              ),
+              child: Stack(
+                alignment: Alignment.topRight,
+                children: [
+                  IconButton(
+                    icon: Icon(Icons.close, color: Colors.white),
+                    onPressed: () => setState(() => _selectedImage = null),
+                  ),
+                ],
               ),
             ),
-            child: Stack(
-              alignment: Alignment.topRight,
-              children: [
-                IconButton(
-                  icon: Icon(Icons.close, color: Colors.white),
-                  onPressed: () => setState(() => _selectedImage = null),
-                ),
-              ],
-            ),
-          ),
-        Row(
-          children: [
-            // Move the FAB here to place it on the left side
-            FloatingActionButton(
-              key: _startNewChatKey,
-              mini: true,
-              child: Icon(Icons.add, color: Theme.of(context).colorScheme.onPrimary),
-              onPressed: _startNewChat,
-              backgroundColor: Theme.of(context).primaryColor,
-            ),
-            SizedBox(width: 12),
-            Expanded(
-              child: Container(
-       
-                decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.surface,
-                  borderRadius: BorderRadius.circular(30),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.grey.withOpacity(0.2),
-                      spreadRadius: 1,
-                      blurRadius: 5,
-                      offset: Offset(0, 3),
-                    ),
-                  ],
-                ),
-                child: Row(
-                  key: _inputFieldKey,
-                  children: [
-                    IconButton(
-                      icon: Icon(Icons.image, color: Theme.of(context).primaryColor),
-                      onPressed: _pickImage,
-                    ),
-                    Expanded(
-                      child: TextField(
-                        controller: _controller,
-                        onChanged: (text) => _textNotifier.value = text,
-                        decoration: InputDecoration(
-                          hintText: 'අවශ්‍ය දේ මෙහි ලියන්න...',
-                          border: InputBorder.none,
-                          contentPadding: EdgeInsets.symmetric(horizontal: 16),
+          Row(
+            children: [
+              FloatingActionButton(
+                shape: CircleBorder(),
+                key: _startNewChatKey,
+                mini: true,
+                child: Icon(Icons.add, color: Theme.of(context).colorScheme.onPrimary),
+                onPressed: _startNewChat,
+                backgroundColor: Theme.of(context).primaryColor,
+              ),
+              SizedBox(width: 12),
+              Expanded(
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).colorScheme.surface,
+                    borderRadius: BorderRadius.circular(30),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey.withOpacity(0.2),
+                        spreadRadius: 1,
+                        blurRadius: 5,
+                        offset: Offset(0, 3),
+                      ),
+                    ],
+                  ),
+                  child: Row(
+                    key: _inputFieldKey,
+                    children: [
+                      IconButton(
+                        icon: Icon(
+                          _isListening ? Icons.mic : Icons.mic_none,
+                          color: Theme.of(context).primaryColor,
+                        ),
+                        onPressed: _isListening ? _stopListening : _startListening,
+                      ),
+                      IconButton(
+                        icon: Icon(Icons.image, color: Theme.of(context).primaryColor),
+                        onPressed: _pickImage,
+                      ),
+                      Expanded(
+                        child: TextField(
+                          controller: _controller,
+                          onChanged: (text) => _textNotifier.value = text,
+                          decoration: InputDecoration(
+                            hintText: 'අවශ්‍ය දේ මෙහි ලියන්න...',
+                            border: InputBorder.none,
+                            contentPadding: EdgeInsets.symmetric(horizontal: 16),
+                          ),
                         ),
                       ),
-                    ),
-                    ValueListenableBuilder<String>(
-                      valueListenable: _textNotifier,
-                      builder: (context, text, child) {
-                        return AnimatedOpacity(
-                          opacity: (text.isNotEmpty || _selectedImage != null) ? 1.0 : 0.5,
-                          duration: Duration(milliseconds: 200),
-                          child: IconButton(
-                            icon: Icon(Icons.send, color: Theme.of(context).primaryColor),
-                            onPressed: (text.isNotEmpty || _selectedImage != null)
-                                ? () {
-                                    if (_selectedImage != null) {
-                                      Provider.of<ChatViewModel>(context, listen: false)
-                                          .sendImage(_selectedImage!, text);
-                                      setState(() => _selectedImage = null);
-                                    } else {
-                                      Provider.of<ChatViewModel>(context, listen: false)
-                                          .sendMessage(text);
+                      ValueListenableBuilder<String>(
+                        valueListenable: _textNotifier,
+                        builder: (context, text, child) {
+                          return AnimatedOpacity(
+                            opacity: (text.isNotEmpty || _selectedImage != null) ? 1.0 : 0.5,
+                            duration: Duration(milliseconds: 200),
+                            child: IconButton(
+                              icon: Icon(Icons.send, color: Theme.of(context).primaryColor),
+                              onPressed: (text.isNotEmpty || _selectedImage != null)
+                                  ? () {
+                                      _sendMessage(text);
                                     }
-                                    _controller.clear();
-                                    _textNotifier.value = '';
-                                  }
-                                : null,
-                          ),
-                        );
-                      },
-                    ),
-                  ],
+                                  : null,
+                            ),
+                          );
+                        },
+                      ),
+                    ],
+                  ),
                 ),
               ),
-            ),
-          ],
-        ),
-      ],
-    ),
-  );
-}
-
+            ],
+          ),
+        ],
+      ),
+    );
+  }
 }

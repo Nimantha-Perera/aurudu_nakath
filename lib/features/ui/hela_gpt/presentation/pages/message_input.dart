@@ -14,8 +14,7 @@ class MessageInput extends StatefulWidget {
   _MessageInputState createState() => _MessageInputState();
 }
 
-class _MessageInputState extends State<MessageInput>
-    with SingleTickerProviderStateMixin {
+class _MessageInputState extends State<MessageInput> with SingleTickerProviderStateMixin {
   final TextEditingController _controller = TextEditingController();
   final GlobalKey _sendButtonKey = GlobalKey();
   final GlobalKey _textFieldKey = GlobalKey();
@@ -40,7 +39,7 @@ class _MessageInputState extends State<MessageInput>
   void _setupAnimations() {
     _animationController = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 300),
+      duration: const Duration(milliseconds: 200),
     );
     _sendButtonAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(parent: _animationController, curve: Curves.easeInOut),
@@ -50,8 +49,7 @@ class _MessageInputState extends State<MessageInput>
   Future<void> _initSpeech() async {
     bool available = await _speech.initialize(
       onStatus: (status) => print('Speech recognition status: $status'),
-      onError: (errorNotification) =>
-          print('Speech recognition error: $errorNotification'),
+      onError: (errorNotification) => print('Speech recognition error: $errorNotification'),
     );
     if (available) {
       print('Speech recognition initialized successfully');
@@ -122,8 +120,7 @@ class _MessageInputState extends State<MessageInput>
   Future<void> _startNewChat() async {
     final chatViewModel = Provider.of<ChatViewModel>(context, listen: false);
     chatViewModel.clearChat();
-    await Provider.of<SendTextMessageUseCase>(context, listen: false)
-        .clearConversationHistory();
+    await Provider.of<SendTextMessageUseCase>(context, listen: false).clearConversationHistory();
     _controller.clear();
     _animationController.reverse();
   }
@@ -137,47 +134,43 @@ class _MessageInputState extends State<MessageInput>
     }
   }
 
-void _startListening() async {
-  if (!_isListening) {
-    bool available = await _speech.initialize(
-      onStatus: (status) {
-        print('Speech recognition status: $status');
-        if (status == 'done') {
-          setState(() {
-            _isListening = false;
-          });
-          // Auto-send the message when speech recognition is done
-          if (_controller.text.isNotEmpty) {
-            _sendMessage(); // Send the message here
-          }
-        }
-      },
-      onError: (errorNotification) =>
-          print('Speech recognition error: $errorNotification'),
-    );
-
-    if (available) {
-      setState(() => _isListening = true);
-      _speech.listen(
-        onResult: (result) {
-          setState(() {
-            _controller.text = result.recognizedWords;
-            if (result.finalResult) {
-              // Automatically send the message if the result is final
+  void _startListening() async {
+    if (!_isListening) {
+      bool available = await _speech.initialize(
+        onStatus: (status) {
+          print('Speech recognition status: $status');
+          if (status == 'done') {
+            setState(() {
+              _isListening = false;
+            });
+            if (_controller.text.isNotEmpty) {
               _sendMessage();
-              _isListening = false; // Stop listening after final result
             }
-          });
+          }
         },
-        localeId: 'si-LK', // Sinhala language code
+        onError: (errorNotification) => print('Speech recognition error: $errorNotification'),
       );
-    }
-  } else {
-    setState(() => _isListening = false);
-    _speech.stop();
-  }
-}
 
+      if (available) {
+        setState(() => _isListening = true);
+        _speech.listen(
+          onResult: (result) {
+            setState(() {
+              _controller.text = result.recognizedWords;
+              if (result.finalResult) {
+                _sendMessage();
+                _isListening = false;
+              }
+            });
+          },
+          localeId: 'si-LK',
+        );
+      }
+    } else {
+      setState(() => _isListening = false);
+      _speech.stop();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -227,8 +220,7 @@ void _startListening() async {
   Widget _buildInputField() {
     return Container(
       decoration: BoxDecoration(
-        color: Theme.of(context).inputDecorationTheme.fillColor ??
-            Colors.grey.shade200,
+        color: Theme.of(context).inputDecorationTheme.fillColor ?? Colors.grey.shade200,
         borderRadius: BorderRadius.circular(24.0),
         border: Border.all(
           color: Theme.of(context).primaryColor.withOpacity(0.3),
@@ -251,8 +243,7 @@ void _startListening() async {
               decoration: InputDecoration(
                 hintText: 'අවශ්‍ය දේ මෙහි ලියන්න...',
                 border: InputBorder.none,
-                contentPadding: const EdgeInsets.symmetric(
-                    horizontal: 16.0, vertical: 12.0),
+                contentPadding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
                 hintStyle: TextStyle(color: Colors.grey.shade600),
               ),
               style: TextStyle(color: Colors.black87),
@@ -278,7 +269,7 @@ void _startListening() async {
                     padding: const EdgeInsets.all(8.0),
                     child: Icon(
                       Icons.send,
-                      color: Colors.amber,
+                      color: Theme.of(context).primaryColor,
                     ),
                   ),
                 ),
