@@ -1,69 +1,198 @@
-// import 'package:aurudu_nakath/Push_Notifications/push_notificatrions.dart';
-import 'package:aurudu_nakath/Compass/compass.dart';
-import 'package:aurudu_nakath/Tools/tools_menu.dart';
-import 'package:aurudu_nakath/firebase_options.dart';
-import 'package:aurudu_nakath/loadin_screen/firebase_api.dart';
-import 'package:aurudu_nakath/loadin_screen/loading.dart';
-import 'package:aurudu_nakath/screens/aurudu_nakath.dart';
-import 'package:aurudu_nakath/screens/hela_ai.dart';
-import 'package:aurudu_nakath/screens/help.dart';
-import 'package:aurudu_nakath/screens/lagna.dart';
-import 'package:aurudu_nakath/screens/nakath_sittuwa.dart';
-import 'package:aurudu_nakath/screens/raahu_kalaya.dart';
-import 'package:aurudu_nakath/screens/splash_screen.dart';
-// import 'package:awesome_notifications/awesome_notifications.dart';
-import 'package:connectivity_plus/connectivity_plus.dart';
+import 'dart:convert';
+import 'package:aurudu_nakath/FirebaeInappMessaging/firebase_in_app_message.dart';
+import 'package:aurudu_nakath/Notifications/notification_service.dart';
+import 'package:aurudu_nakath/features/ui/Login/data/repostorys/auth_repository.dart';
+import 'package:aurudu_nakath/features/ui/Login/domain/repo/auth_repository_interface.dart';
+import 'package:aurudu_nakath/features/ui/Login/domain/usecase/sign_in_with_google.dart';
+import 'package:aurudu_nakath/features/ui/Login/presentation/pages/login_screen.dart';
+import 'package:aurudu_nakath/features/ui/Login/presentation/pages/login_viewmodel.dart';
+import 'package:aurudu_nakath/features/ui/Login2/data/repostorys/auth_repository.dart';
+import 'package:aurudu_nakath/features/ui/Login2/domain/repo/auth_repository_interface.dart';
+import 'package:aurudu_nakath/features/ui/Login2/domain/usecase/sign_in_with_google.dart';
+import 'package:aurudu_nakath/features/ui/Login2/presentation/pages/login_viewmodel.dart';
+import 'package:aurudu_nakath/features/ui/Review/review_provider.dart';
+import 'package:aurudu_nakath/features/ui/compass/compass.dart';
+import 'package:aurudu_nakath/features/ui/errors/error_screen.dart';
+import 'package:aurudu_nakath/features/ui/hela_gpt/domain/usecases/clear_chat.dart';
+import 'package:aurudu_nakath/features/ui/hela_gpt/domain/usecases/fetch_and%20_manegemessage.dart';
+import 'package:aurudu_nakath/features/ui/hela_gpt/domain/usecases/send_img.dart';
+import 'package:aurudu_nakath/features/ui/hela_gpt/domain/usecases/send_text_message.dart';
+import 'package:aurudu_nakath/features/ui/hela_post/data/repo/post_repository_impl.dart';
+import 'package:aurudu_nakath/features/ui/hela_post/domain/prvider/post_provider.dart';
+import 'package:aurudu_nakath/features/ui/hela_post/domain/usecase/datasource.dart';
+import 'package:aurudu_nakath/features/ui/helagpt_pro/domain/usecases/clear_chat.dart';
+import 'package:aurudu_nakath/features/ui/helagpt_pro/domain/usecases/fetch_and%20_manegemessage.dart';
+import 'package:aurudu_nakath/features/ui/helagpt_pro/domain/usecases/send_generated_img.dart';
+import 'package:aurudu_nakath/features/ui/helagpt_pro/domain/usecases/send_img.dart';
+import 'package:aurudu_nakath/features/ui/helagpt_pro/domain/usecases/send_text_message.dart';
+import 'package:aurudu_nakath/features/ui/help/presentation/pages/help_screen.dart';
 
+import 'package:aurudu_nakath/features/ui/home/presentation/pages/dash_board.dart';
+import 'package:aurudu_nakath/features/ui/in_app_update/in_app_update.dart';
+import 'package:aurudu_nakath/features/ui/litha/data/datasouces/firebase_data_source.dart';
+import 'package:aurudu_nakath/features/ui/litha/data/repo/aurudu_nakath_repository_impl.dart';
+import 'package:aurudu_nakath/features/ui/litha/domain/usecase/get_aurudu_nakath_data.dart';
+import 'package:aurudu_nakath/features/ui/litha/presentation/bloc/aurudu_nakath_bloc.dart';
+import 'package:aurudu_nakath/features/ui/maintance/usecase.dart';
+import 'package:aurudu_nakath/features/ui/permissions/permissions_hadler.dart';
+import 'package:aurudu_nakath/features/ui/routes/routes.dart';
+import 'package:aurudu_nakath/features/ui/settings/data/repostories/settings_repository.dart';
+import 'package:aurudu_nakath/features/ui/settings/data/repostories/settings_repository_impl.dart';
+import 'package:aurudu_nakath/features/ui/settings/presentation/bloc/settings_bloc.dart';
+import 'package:aurudu_nakath/features/ui/subcriptions_provider/subcription_privider.dart';
+import 'package:aurudu_nakath/features/ui/theme/change_theme_notifier.dart';
+import 'package:aurudu_nakath/features/ui/theme/dark_theme.dart';
+import 'package:aurudu_nakath/features/ui/theme/light_theme.dart';
+import 'package:aurudu_nakath/firebase_options.dart';
+import 'package:aurudu_nakath/loadin_screen/loading.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+
+import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:device_preview/device_preview.dart';
+import 'package:feedback/feedback.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:firebase_app_check/firebase_app_check.dart';
+import 'package:firebase_app_installations/firebase_app_installations.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_in_app_messaging/firebase_in_app_messaging.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
-import 'package:aurudu_nakath/screens/home.dart';
-import 'package:aurudu_nakath/screens/onboarding_screen.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:flutter/services.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:in_app_update/in_app_update.dart';
-import 'package:intl/date_symbol_data_local.dart';
-import 'package:lottie/lottie.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
-// Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-//   // If you're going to use other Firebase services in the background, such as Firestore,
-//   // make sure you call `initializeApp` before using other Firebase services.
-//   await Firebase.initializeApp();
-//   print('Handling a background message: ${message.messageId}');
-// }
+import 'package:aurudu_nakath/features/ui/intro_screens/onboarding_screen/onboarding_screen.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/date_symbol_data_local.dart';
+import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:timezone/data/latest.dart' as tz;
+import 'package:timezone/timezone.dart' as tz;
+
+import 'features/ui/hela_post/domain/usecase/getallpost.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await initializeDateFormatting('si_LK');
+  final PermissionHandler _permissionHandler = PermissionHandler();
+  _permissionHandler.isManageExternalStorageGranted();
 
-  SystemChrome.setPreferredOrientations([
-    DeviceOrientation.portraitUp, // Or any other desired orientation
-  ]);
+  try {
+    await Firebase.initializeApp(
+        options: DefaultFirebaseOptions.currentPlatform);
+  } catch (e) {
+    runApp(MaterialApp(home: ErrorScreen())); // Error handling
+    return;
+  }
 
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
+  FirebaseInAppMessaging.instance.setAutomaticDataCollectionEnabled(true);
+  await FirebaseAppCheck.instance.activate(
+    androidProvider: AndroidProvider.debug,
   );
-  // String? token = await FirebaseMessaging.instance.getToken();
-  // print("FCM Token: $token");
-  // FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
-  // FirebaseApi.configureFirebaseMessaging();
-  // AwesomeNotifications().initialize(
-  //   'resource://mipmap/ic_launcher', // Replace with the name of your icon resource
-  //   [
-  //     NotificationChannel(
-  //       channelKey: 'basic_channel',
-  //       channelName: 'Basic notifications',
-  //       channelDescription: 'Notification channel for basic notifications',
-  //       defaultColor: Color(0xFF9D50DD),
-  //       ledColor: Colors.white,
-  //     ),
-  //   ],
-  // );
 
-  // LocalNotificationService.initialize();
-  runApp(MyApp());
+  NotificationService notificationService =
+      NotificationService(); // Create instance of NotificationService
+  await notificationService.initialize(); // Initialize notifications
+
+  final themeNotifier = ThemeNotifier();
+  await themeNotifier.loadTheme();
+  await dotenv.load(fileName: "assets/.env");
+
+  final sharedPreferences = await SharedPreferences.getInstance();
+
+  final apigen2 = "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";
+
+  final apiKey = dotenv.env['API_KEY'] ?? "";
+  final apiUrl =
+      "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=$apiKey";
+
+  runApp(
+    BetterFeedback(
+      child: MultiProvider(
+        providers: [
+          Provider<AuthRepositoryInterface2>(create: (_) => AuthRepository2()),
+          Provider<SignInWithGoogle2>(
+              create: (context) =>
+                  SignInWithGoogle2(context.read<AuthRepositoryInterface2>())),
+          ChangeNotifierProvider(
+              create: (context) =>
+                  LoginViewModel2(context.read<SignInWithGoogle2>())),
+          // ChangeNotifierProvider(
+          //   create: (context) => PostProvider(
+          //     GetAllPosts(PostRepositoryImpl(FirebasePostDataSource(FirebaseFirestore.instance)))..fetchAllPosts(),
+          //   ),
+          // ),
+          ChangeNotifierProvider(
+              create: (_) => PostProvider(GetAllPosts(PostRepositoryImpl(
+                  FirebasePostDataSource(FirebaseFirestore.instance))))),
+          Provider<AuthRepositoryInterface>(create: (_) => AuthRepository()),
+          Provider<SignInWithGoogle>(
+              create: (context) =>
+                  SignInWithGoogle(context.read<AuthRepositoryInterface>())),
+          ChangeNotifierProvider(
+              create: (context) =>
+                  LoginViewModel(context.read<SignInWithGoogle>())),
+          ChangeNotifierProvider<ReviewProvider>(
+            create: (_) => ReviewProvider(),
+          ),
+          ChangeNotifierProvider<SubscriptionProvider>(
+            create: (_) => SubscriptionProvider(),
+          ),
+          Provider<FirebaseDataSource>(
+            create: (_) => FirebaseDataSource(),
+          ),
+          ProxyProvider<FirebaseDataSource, AuruduNakathRepositoryImpl>(
+            update: (_, dataSource, __) =>
+                AuruduNakathRepositoryImpl(dataSource: dataSource),
+          ),
+          ProxyProvider<AuruduNakathRepositoryImpl, GetAuruduNakathData>(
+            update: (_, repository, __) =>
+                GetAuruduNakathData(repository: repository),
+          ),
+          ProxyProvider<GetAuruduNakathData, AuruduNakathBloc>(
+            update: (_, getAuruduNakathData, __) =>
+                AuruduNakathBloc(getAuruduNakathData: getAuruduNakathData),
+            dispose: (_, bloc) => bloc.close(),
+          ),
+          Provider<SharedPreferences>.value(value: sharedPreferences),
+          ChangeNotifierProvider(create: (_) => themeNotifier),
+          Provider<SettingsRepository>(create: (_) => SettingsRepositoryImpl()),
+
+          Provider<SettingsBloc>(
+              create: (context) =>
+                  SettingsBloc(context.read<SettingsRepository>())),
+          Provider<SendGeneratedImageMessageUseCase2>(
+              create: (_) => SendGeneratedImageMessageUseCase2(apigen2)),
+
+          Provider<FetchManageMessagesUseCase>(
+              create: (_) => FetchManageMessagesUseCase(sharedPreferences)),
+          Provider<SendTextMessageUseCase>(
+              create: (_) => SendTextMessageUseCase(apiKey, apiUrl)),
+          Provider<SendImageMessageUseCase>(
+              create: (_) => SendImageMessageUseCase(apiKey)),
+          Provider<ClearChatHistoryUseCase>(
+              create: (_) => ClearChatHistoryUseCase(sharedPreferences)),
+          Provider<FetchManageMessagesUseCase2>(
+              create: (_) => FetchManageMessagesUseCase2(sharedPreferences)),
+          Provider<SendTextMessageUseCase2>(
+              create: (_) => SendTextMessageUseCase2(apiKey, apiUrl)),
+          Provider<SendImageMessageUseCase2>(
+              create: (_) => SendImageMessageUseCase2(apiKey)),
+          Provider<ClearChatHistoryUseCase2>(
+              create: (_) => ClearChatHistoryUseCase2(sharedPreferences)),
+        ],
+        child: MyApp(),
+      ),
+    ),
+  );
 }
+
+// Future<void> getFcmToken() async {
+//   final fcmToken = await FirebaseMessaging.instance.getToken();
+//   print(fcmToken);
+// }
 
 class MyApp extends StatefulWidget {
   @override
@@ -72,151 +201,83 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   Future<Widget>? _appWidget;
+  late Future<SharedPreferences> _sharedPreferencesFuture;
+  //  ShakeNavigation? _shakeNavigation;
+  late UseCaseMaintainsFirebase maintenanceUseCase;
 
   @override
   void initState() {
     super.initState();
-    checkForUpdate();
+    // getFcmToken();
+
+    // Check maintenance mode when the widget is first built
+    // maintenanceUseCase = UseCaseMaintainsFirebase(firestore: FirebaseFirestore.instance);
+    // maintenanceUseCase.checkForMaintenanceMode(context);
+
+    //  _shakeNavigation = ShakeNavigation(context);
+    Provider.of<SubscriptionProvider>(context, listen: false)
+        .loadSubscriptionStatus();
+    //in app update check
+    update(context);
+
+    _sharedPreferencesFuture = SharedPreferences.getInstance();
     _appWidget = _checkConnectivityAndFirstTime();
-    // FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-    //   print('Got a message whilst in the foreground!');
-    //   print('Message data: ${message.data}');
-    // });
-
-    // FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
-
-    // _initializeFirebaseMessaging();
-  }
-
-  // Check Updates
-  Future<void> checkForUpdate() async {
-    print('checking for Update');
-    try {
-      var info = await InAppUpdate.checkForUpdate();
+    Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
       setState(() {
-        if (info.updateAvailability == UpdateAvailability.updateAvailable) {
-          print('update available');
-          update();
-        }
+        _appWidget = _checkConnectivityAndFirstTime();
       });
-    } catch (e) {
-      print('Failed to bind to the service: $e');
-      // Handle the failure, show a message to the user, or retry
-    }
-  }
-
-  void update() async {
-    print('Updating');
-    await InAppUpdate.startFlexibleUpdate();
-    InAppUpdate.completeFlexibleUpdate().then((_) {}).catchError((e) {
-      print(e.toString());
     });
   }
 
+  Future<Widget> _checkConnectivityAndFirstTime() async {
+    final connectivityResult = await (Connectivity().checkConnectivity());
+
+    if (connectivityResult == ConnectivityResult.none) {
+      return ErrorScreen(); // Show error screen if no connectivity
+    }
+
+    final sharedPreferences = await _sharedPreferencesFuture;
+    final isFirstTime = sharedPreferences.getBool('isFirstTime') ?? true;
+    if (isFirstTime) {
+      // Set 'isFirstTime' to false after showing the onboarding screen
+
+      return Onboarding(); // Return onboarding screen if first time
+    }
+    return DashBoard(); // Return the main dashboard otherwise
+  }
+
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<Widget>(
-      future: _appWidget,
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.done) {
-          return MaterialApp(
-            debugShowCheckedModeBanner: false,
-            routes: {
-              '/help': (context) => Help(),
-          
-              '/helaai': (context) => HelaChatAI(),
-              '/nakath_sittuwa': (context) => NakathSittuwa(),
-              '/litha': (context) => AuruduNakathScreen(),
-              '/lagna': (context) => LagnaPalapala(),
-              '/rahu_kalayana': (context) => RaahuKaalaya(),
-              '/tools': (context) => ToolsScreen(),
-              '/malimawa': (context) => Compass(),
-            },
-            theme: ThemeData(
-              fontFamily: 'Sinhala',
-            ),
-            home: snapshot.data,
-          );
-        } else {
-          return MaterialApp(
-            debugShowCheckedModeBanner: false,
-            home: LoadingScreen(),
-          );
-        }
+    FirebaseAnalytics analytics =
+        FirebaseAnalytics.instance; // Use named constructor
+    FirebaseAnalyticsObserver observer =
+        FirebaseAnalyticsObserver(analytics: analytics);
+    return Consumer<ThemeNotifier>(
+      builder: (context, themeNotifier, child) {
+        return FutureBuilder<Widget>(
+          future: _appWidget,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.done) {
+              return MaterialApp(
+                debugShowCheckedModeBanner: false,
+                theme: lightTheme,
+                darkTheme: darkTheme,
+                themeMode: themeNotifier.getThemeMode(), // Optimized theme mode
+                initialRoute: AppRoutes.home,
+                navigatorObservers: [observer],
+                onGenerateRoute: AppRoutes.generateRoute,
+                home: snapshot.data ??
+                    DashBoard(), // Default to Dashboard if no data
+              );
+            } else {
+              return MaterialApp(
+                debugShowCheckedModeBanner: false,
+                home: LoadingScreen(),
+              );
+            }
+          },
+        );
       },
     );
   }
-
-  Future<Widget> _checkConnectivityAndFirstTime() async {
-    var connectivityResult = await (Connectivity().checkConnectivity());
-    if (connectivityResult == ConnectivityResult.none) {
-      return ErrorScreen(); // Return the error screen if no internet connection
-    }
-
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    bool isFirstTime = prefs.getBool('isFirstTime') ?? true;
-
-    if (isFirstTime) {
-      print("First time user");
-      await prefs.setBool('isFirstTime', false);
-      return Onboarding();
-    } else {
-      print("Returning HomeScreen");
-
-      return HomeScreen();
-    }
-  }
-}
-
-class ErrorScreen extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Container(
-              margin: EdgeInsets.only(top: 50, bottom: 100),
-              child: Lottie.asset(
-                'assets/no_connection.json', // Replace with the correct path to your Lottie file
-                height: 400,
-                width: 400,
-              ),
-            ),
-            Text("No internet connection"),
-            SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () async {
-                var connectivityResult =
-                    await (Connectivity().checkConnectivity());
-                if (connectivityResult != ConnectivityResult.none) {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (context) {
-                        return HomeScreen();
-                      },
-                    ),
-                  );
-                } else {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text("Still no internet connection"),
-                    ),
-                  );
-                }
-              },
-              child: Text("Refresh"),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-// hadle back buttn
-void handleBackButton() {
-  print("Back button clicked");
-  // Additional logic you want to perform on back button click
 }
