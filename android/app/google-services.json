@@ -15,7 +15,7 @@
       },
       "oauth_client": [
         {
-          "client_id": "91523853816-mjdgnhou70rospit855cjp654qkm3825.apps.googleusercontent.com",
+          "client_id": "91523853816-5694vagv0lviv3n76k05mjstf1b3v7og.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.nakath.aurudu_nakath",
@@ -23,11 +23,11 @@
           }
         },
         {
-          "client_id": "91523853816-od5j0q6teph1a0kmk7mu6cad08di1044.apps.googleusercontent.com",
+          "client_id": "91523853816-grrie0homfduf57i4q3dc30g7it34gau.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.nakath.aurudu_nakath",
-            "certificate_hash": "8adcaaa8e93bd08302b191039d71c9e6f2dc6e98"
+            "certificate_hash": "6d8fb4891403177b3b9ecca36e581ac72f7fcdc7"
           }
         },
         {

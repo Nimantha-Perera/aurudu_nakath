@@ -65,6 +65,8 @@ class DefaultFirebaseOptions {
     projectId: 'nakath-af5a0',
     databaseURL: 'https://nakath-af5a0-default-rtdb.firebaseio.com',
     storageBucket: 'nakath-af5a0.appspot.com',
+    androidClientId: '91523853816-5694vagv0lviv3n76k05mjstf1b3v7og.apps.googleusercontent.com',
+    iosClientId: '91523853816-qldgvgjqsmj243b9k4ocjg26td6cab2q.apps.googleusercontent.com',
     iosBundleId: 'com.nakath.auruduNakath',
   );
 
