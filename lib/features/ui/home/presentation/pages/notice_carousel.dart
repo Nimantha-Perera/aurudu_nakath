@@ -146,7 +146,7 @@ Widget _buildCarousel(List<Notice> notices) {
         options: CarouselOptions(
           
           height: 120,
-          autoPlay: false, // Disable auto sliding
+          autoPlay: true, // Disable auto sliding
           enlargeCenterPage: false,
           viewportFraction: 1.0, // Display one item at a time
           onPageChanged: (index, reason) {

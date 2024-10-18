@@ -35,7 +35,7 @@ class LoginViewModel2 extends ChangeNotifier {
       if (firebaseUser != null) {
         // Fetch user details from Firestore
         DocumentSnapshot userDoc = await FirebaseFirestore.instance
-            .collection('users')
+            .collection('normle_users')
             .doc(firebaseUser.uid)
             .get();
 

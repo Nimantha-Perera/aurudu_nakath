@@ -237,66 +237,81 @@ class _LoginFormState extends State<LoginForm> {
   }
 
   Future<void> _saveUserDetails() async {}
-  void _handleLogin(BuildContext context) async {
-    if (_formKey.currentState!.validate()) {
-      try {
-        // Attempt to sign in the user
-        UserCredential userCredential = await _auth.signInWithEmailAndPassword(
-          email: _emailController.text.trim(),
-          password: _passwordController.text.trim(),
-        );
+ void _handleLogin(BuildContext context) async {
+  if (_formKey.currentState!.validate()) {
+    try {
+      // Attempt to sign in the user
+      UserCredential userCredential = await _auth.signInWithEmailAndPassword(
+        email: _emailController.text.trim(),
+        password: _passwordController.text.trim(),
+      );
 
-        // Store email and UID in SharedPreferences
-        SharedPreferences prefs = await SharedPreferences.getInstance();
-        await prefs.setString('email', userCredential.user!.email!);
-        await prefs.setString('userId', userCredential.user!.uid);
-        await prefs.setString('photoURL',
-            'https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png');
-
-        // Fetch the username from Firestore
-        DocumentSnapshot userDoc = await FirebaseFirestore.instance
-            .collection('normle_users')
-            .doc(userCredential.user!.uid)
-            .get();
-
-        if (userDoc.exists) {
-          // Get the username from the document and store it in SharedPreferences
-          String username = userDoc.get('username');
-          await prefs.setString('displayName', username);
-        } else {
-          print('No user document found for UID: ${userCredential.user!.uid}');
-        }
-
-        // Navigate to the next screen
-        Navigator.pushReplacementNamed(context, AppRoutes.katapatha);
-      } on FirebaseAuthException catch (e) {
-        String message =
-            'පිවිසීම අසාර්ථක විය. කරුණාකර ඔබගේ තොරතුරු පරීක්ෂා කර නැවත උත්සාහ කරන්න.';
-        if (e.code == 'user-not-found') {
-          message = 'මෙම ඊමේල් ලිපිනයට අදාළ පරිශීලකයෙක් සොයා ගත නොහැක.';
-        } else if (e.code == 'wrong-password') {
-          message = 'රහස්‍ය අංකය වැරදිය.';
-        }
-        // Log the error for debugging
-        print('Login error: ${e.message}');
+      // Check if the email is verified
+      if (!userCredential.user!.emailVerified) {
+        // Email is not verified
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(message),
+            content: Text('කරුණාකර ඔබගේ ඊමේල් ලිපිනය තහවුරු කරන්න.'),
             backgroundColor: Colors.red,
           ),
         );
-      } catch (e) {
-        // Handle any other exceptions
-        print('Unexpected error: $e');
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('අසාර්ථකතාවක් සිදු විය. නැවත උත්සාහ කරන්න.'),
-            backgroundColor: Colors.red,
-          ),
-        );
+        // Optionally, send a verification email
+        await userCredential.user!.sendEmailVerification();
+        return; // Exit the function, preventing login
       }
+
+      // Store email and UID in SharedPreferences
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      await prefs.setString('email', userCredential.user!.email!);
+      await prefs.setString('userId', userCredential.user!.uid);
+      await prefs.setString('photoURL',
+          'https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png');
+
+      // Fetch the username from Firestore
+      DocumentSnapshot userDoc = await FirebaseFirestore.instance
+          .collection('normle_users')
+          .doc(userCredential.user!.uid)
+          .get();
+
+      if (userDoc.exists) {
+        // Get the username from the document and store it in SharedPreferences
+        String username = userDoc.get('displayName');
+        await prefs.setString('displayName', username);
+      } else {
+        print('No user document found for UID: ${userCredential.user!.uid}');
+      }
+
+      // Navigate to the next screen
+      Navigator.pushReplacementNamed(context, AppRoutes.katapatha);
+    } on FirebaseAuthException catch (e) {
+      String message =
+          'පිවිසීම අසාර්ථක විය. කරුණාකර ඔබගේ තොරතුරු පරීක්ෂා කර නැවත උත්සාහ කරන්න.';
+      if (e.code == 'user-not-found') {
+        message = 'මෙම ඊමේල් ලිපිනයට අදාළ පරිශීලකයෙක් සොයා ගත නොහැක.';
+      } else if (e.code == 'wrong-password') {
+        message = 'රහස්‍ය අංකය වැරදිය.';
+      }
+      // Log the error for debugging
+      print('Login error: ${e.message}');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(message),
+          backgroundColor: Colors.red,
+        ),
+      );
+    } catch (e) {
+      // Handle any other exceptions
+      print('Unexpected error: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('අසාර්ථකතාවක් සිදු විය. නැවත උත්සාහ කරන්න.'),
+          backgroundColor: Colors.red,
+        ),
+      );
     }
   }
+}
+
 
   void _showForgotPasswordDialog(BuildContext context) {
     showDialog(
@@ -304,10 +319,10 @@ class _LoginFormState extends State<LoginForm> {
       builder: (context) {
         final TextEditingController emailController = TextEditingController();
         return AlertDialog(
-          title: Text('රහස්‍ය අංකය අමතක උනාද?'),
+          title: Text('මුර පදය අමතක උනාද?'),
           content: TextField(
             controller: emailController,
-            decoration: InputDecoration(hintText: 'ඊමේල් ලිපිනය'),
+            decoration: InputDecoration(hintText: 'ගිණුමට යෙදූ ඊමේල් ලිපිනය'),
           ),
           actions: [
             TextButton(

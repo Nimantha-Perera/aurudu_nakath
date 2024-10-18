@@ -167,7 +167,7 @@ class _SettingsPageState extends State<SettingsPage> {
             ElevatedButton(
               onPressed: () {
                 // Navigate to the Sign In screen
-                Navigator.pushNamed(context, AppRoutes.login);
+                Navigator.pushNamed(context, AppRoutes.login2);
               },
               child: Text('පුරනය වන්න', style: TextStyle(fontSize: 14)),
             ),

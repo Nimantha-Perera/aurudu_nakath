@@ -1,11 +1,8 @@
-// login_register_screen.dart
-import 'package:aurudu_nakath/features/ui/Login2/presentation/pages/widget/login_form.dart';
 import 'package:aurudu_nakath/features/ui/Login2/presentation/pages/widget/login_form.dart';
 import 'package:aurudu_nakath/features/ui/Login2/presentation/pages/widget/register_form.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'login_viewmodel.dart';
-
 
 class LoginRegisterScreen extends StatelessWidget {
   @override
@@ -23,15 +20,24 @@ class LoginRegisterScreen extends StatelessWidget {
             unselectedLabelColor: Colors.grey,
             indicatorColor: const Color.fromARGB(255, 255, 255, 255),
             tabs: [
-              Tab(text: 'පූර්ණය වන්න'),
-              Tab(text: 'නව ගිනුමක් සාදන්න'),
+              Tab(text: 'පූර්ණය වන්න'), // Login
+              Tab(text: 'නව ගිනුමක් සාදන්න'), // Register
             ],
           ),
         ),
-        body: TabBarView(
+        body: Stack(
           children: [
-            LoginForm(loginViewModel: loginViewModel),
-            RegisterForm(),
+            TabBarView(
+              children: [
+                LoginForm(loginViewModel: loginViewModel),
+                RegisterForm(),
+              ],
+            ),
+            // Loader overlay
+            if (loginViewModel.isLoading) 
+              Center(
+                child: CircularProgressIndicator(),
+              ),
           ],
         ),
       ),

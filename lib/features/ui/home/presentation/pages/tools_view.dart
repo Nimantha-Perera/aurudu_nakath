@@ -1,14 +1,38 @@
-import 'package:aurudu_nakath/features/ui/Login/presentation/pages/login_viewmodel.dart';
-import 'package:aurudu_nakath/features/ui/hela_post/presentation/pages/main.dart';
 import 'package:flutter/material.dart';
 import 'package:aurudu_nakath/features/ui/subcriptions_provider/subcription_privider.dart';
 import 'package:aurudu_nakath/features/ui/routes/routes.dart';
 import 'package:aurudu_nakath/features/ui/home/presentation/pages/buttons_card.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-class Tools extends StatelessWidget {
+class Tools extends StatefulWidget {
   const Tools({super.key});
+
+  @override
+  _ToolsState createState() => _ToolsState();
+}
+
+class _ToolsState extends State<Tools> {
+  String? _userId;
+
+  @override
+  void initState() {
+    super.initState();
+    _checkUserId();
+  }
+
+  Future<void> _checkUserId() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _userId = prefs.getString('userId');
+    });
+  }
+
+  Future<String?> _checkUserIdLive() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString('userId'); // Return the userId for live check
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -24,9 +48,7 @@ class Tools extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                "අමතර මෙවලම්",
-              ),
+              Text("අමතර මෙවලම්"),
             ],
           ),
           SizedBox(height: 20),
@@ -38,50 +60,29 @@ class Tools extends StatelessWidget {
                 children: [
                   Consumer<SubscriptionProvider>(
                     builder: (context, subscriptionProvider, child) {
-                      return FutureBuilder<bool>(
-                        future:
-                            Provider.of<LoginViewModel>(context, listen: false)
-                                .checkLoginStatus(),
-                        builder: (context, snapshot) {
-                          if (snapshot.connectionState ==
-                              ConnectionState.waiting) {
-                            return CircularProgressIndicator(); // Show a loading indicator while checking
-                          } else if (snapshot.hasError) {
-                            return Text(
-                                'Error: ${snapshot.error}'); // Handle errors
+                      return ButtonsCard(
+                        text: "හෙළ GPT",
+                        onTap: () async {
+                          // Check userId live on button click
+                          final userIdLive = await _checkUserIdLive();
+                          
+                          if (userIdLive != null) {
+                            if (subscriptionProvider.isSubscribed) {
+                              Navigator.pushNamed(context, AppRoutes.helagptPro);
+                            } else {
+                              Navigator.pushNamed(context, AppRoutes.helagptnormless);
+                            }
+                          } else {
+                            Navigator.pushNamed(context, AppRoutes.login);
                           }
-
-                          final isLoggedIn = snapshot.data ?? false;
-
-                          return ButtonsCard(
-                            text: "හෙළ GPT",
-                            onTap: () {
-                              if (isLoggedIn) {
-                                // User is logged in
-                                if (subscriptionProvider.isSubscribed) {
-                                  Navigator.pushNamed(
-                                      context, AppRoutes.helagptPro);
-                                } else {
-                                  //Please Change this helagptnormless
-                                  Navigator.pushNamed(
-                                      context, AppRoutes.helagptnormless);
-                                }
-                              } else {
-                                // User is not logged in
-                                Navigator.pushNamed(context, AppRoutes.login);
-                              }
-                            },
-                            color: Color(0xFFA02334),
-                            textColor: Colors.white,
-                            icon: Icon(FontAwesomeIcons.commentDots,
-                                color: Colors.white),
-                            width: buttonWidth,
-                          );
                         },
+                        color: Color(0xFFA02334),
+                        textColor: Colors.white,
+                        icon: Icon(FontAwesomeIcons.commentDots, color: Colors.white),
+                        width: buttonWidth,
                       );
                     },
                   ),
-                 
                   SizedBox(width: 10),
                   ButtonsCard(
                     text: "කැටපත",
@@ -94,8 +95,6 @@ class Tools extends StatelessWidget {
                     width: buttonWidth,
                   ),
                   SizedBox(width: 10),
-
-                 
                   ButtonsCard(
                     text: "මාලිමාව",
                     onTap: () {
@@ -106,7 +105,7 @@ class Tools extends StatelessWidget {
                     icon: Icon(FontAwesomeIcons.safari, color: Colors.white),
                     width: buttonWidth,
                   ),
-                    SizedBox(width: 10),
+                  SizedBox(width: 10),
                   ButtonsCard(
                     text: "සැකසුම්",
                     onTap: () {

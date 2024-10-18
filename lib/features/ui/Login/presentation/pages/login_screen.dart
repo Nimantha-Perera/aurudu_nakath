@@ -69,23 +69,42 @@ class LoginScreen extends StatelessWidget {
   Widget _buildWelcomeText() {
     return Column(
       children: [
+        // Row to combine Sinhala and English fonts for 'හෙළ GPT'
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              'හෙළ ',
+              style: GoogleFonts.notoSerifSinhala(
+                fontSize: 36,
+                fontWeight: FontWeight.bold,
+                color: const Color.fromARGB(255, 90, 90, 90),
+              ),
+            ),
+            Text(
+              'GPT',
+              style: GoogleFonts.roboto(
+                fontSize: 36,
+                fontWeight: FontWeight.bold,
+                color: const Color.fromARGB(255, 90, 90, 90),
+              ),
+            ),
+          ],
+        ),
+        SizedBox(height: 10),
+        
+        // English text in Roboto
         Text(
-          'හෙළ GPT',
+          'ඔබේ තාක්ශණික සහායක',
           style: GoogleFonts.notoSerifSinhala(
-            fontSize: 36,
-            fontWeight: FontWeight.bold,
+            fontSize: 18,
+            fontWeight: FontWeight.normal,
             color: const Color.fromARGB(255, 90, 90, 90),
           ),
         ),
         SizedBox(height: 10),
-        Text(
-          'ඔබගේ තාක්ශණික සහායක',
-          style: GoogleFonts.notoSerifSinhala(
-            fontSize: 18,
-            color: const Color.fromARGB(255, 90, 90, 90),
-          ),
-        ),
 
+        // Sinhala text in SansSerifSinhala (Google Sans alternative)
         Text(
           'හෙළ GPT භාවිතාකිරීම සඳහා පූර්නය වන්න',
           style: GoogleFonts.notoSerifSinhala(
@@ -96,6 +115,7 @@ class LoginScreen extends StatelessWidget {
       ],
     );
   }
+
 
   Widget _buildGoogleSignInButton(BuildContext context, LoginViewModel loginViewModel) {
     return ElevatedButton.icon(
@@ -118,7 +138,10 @@ class LoginScreen extends StatelessWidget {
         ),
         elevation: 5,
       ),
-      onPressed: loginViewModel.isLoading ? null : () => _handleSignIn(context, loginViewModel),
+      // onPressed: loginViewModel.isLoading ? null : () => _handleSignIn(context, loginViewModel),
+      onPressed: () {
+         showDialog(context: context, builder: (context) => AlertDialog(content: Text('Google සමගින් පූර්ණය තාවකාලිකව විසන්දි කර ඇත. කරුනාකර පහල ඇති Sign Up මඟින් ගිනුමක් නිර්මාණය කර හෝ ඔබට දැනටමත් ගිනුමක් ඇත්නම් එයින් පූර්ණය වන්න'),));
+      },
     );
   }
 
@@ -127,7 +150,10 @@ class LoginScreen extends StatelessWidget {
       onPressed: () {
         // Navigate to sign-up screen if needed
         // Navigator.pushNamed(context, AppRoutes.signup);
-        showDialog(context: context, builder: (context) => AlertDialog(content: Text('කරුනාකර Google සමඟින් පූර්ණය වන්න'),));
+
+
+        Navigator.pushReplacementNamed(context, AppRoutes.login2);
+
       },
       child: Text(
         'ඔයාට ගිනුමක් නැද්ද? Sign Up',

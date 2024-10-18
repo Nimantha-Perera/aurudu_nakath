@@ -21,7 +21,6 @@ class _RegisterFormState extends State<RegisterForm> {
 
   @override
   void dispose() {
-    // Dispose of the TextEditingControllers when the widget is removed from the widget tree
     _usernameController.dispose();
     _emailController.dispose();
     _mobileController.dispose();
@@ -184,23 +183,24 @@ class _RegisterFormState extends State<RegisterForm> {
   }
 
   Future<void> _handleRegister(BuildContext context) async {
-  if (_formKey.currentState!.validate()) {
-    try {
-      // Check if username already exists in Firestore
-      final usernameQuery = await FirebaseFirestore.instance
-          .collection('normle_users')
-          .where('username', isEqualTo: _usernameController.text.trim())
-          .get();
+    if (_formKey.currentState!.validate()) {
+      _showLoadingDialog(context); // Show the loader before the registration process
 
-      if (usernameQuery.docs.isNotEmpty) {
-        _showErrorDialog(context, 'දෝෂයක් සිදුවී ඇත',
-            'පරිශීලක නාමය දැනටමත් කෙනෙකු භාවිතා කරයි.'); // Username already exists
-        return;
-      }
-
-      // Authentication process in a separate try-catch
       try {
-        // Create the user with Firebase Authentication
+        // Check if username already exists in Firestore
+        final usernameQuery = await FirebaseFirestore.instance
+            .collection('normle_users')
+            .where('username', isEqualTo: _usernameController.text.trim())
+            .get();
+
+        if (usernameQuery.docs.isNotEmpty) {
+          Navigator.of(context).pop(); // Close the loader
+          _showErrorDialog(context, 'දෝෂයක් සිදුවී ඇත',
+              'පරිශීලක නාමය දැනටමත් කෙනෙකු භාවිතා කරයි.');
+          return;
+        }
+
+        // Authentication process
         final UserCredential userCredential = await FirebaseAuth.instance
             .createUserWithEmailAndPassword(
                 email: _emailController.text.trim(),
@@ -219,11 +219,16 @@ class _RegisterFormState extends State<RegisterForm> {
           'uid': user.uid,
         });
 
+        // Send email verification
+        await user.sendEmailVerification();
+
         // Save data to SharedPreferences
         SharedPreferences prefs = await SharedPreferences.getInstance();
         await prefs.setString('email', user.email ?? '');
         await prefs.setString('displayName', _usernameController.text.trim());
         await prefs.setString('userId', user.uid);
+
+        Navigator.of(context).pop(); // Close the loader after successful registration
 
         // Clear fields after successful registration
         _usernameController.clear();
@@ -232,62 +237,40 @@ class _RegisterFormState extends State<RegisterForm> {
         _passwordController.clear();
         _confirmPasswordController.clear();
 
-        // Show success message
-        _showErrorDialog(context, 'ලියාපදිංචිය සාර්ථකයි', 'ඔබ ලියාපදිංචි විය.');
+        _showErrorDialog(context, 'ලියාපදිංචිය සාර්ථකයි',
+            'ඔබ ලියාපදිංචි වීම සාර්තකයි. දැන් ඇත්තේ ඔබේ ඊමේල් ලිපිනය සත්‍යාපනය කිරීමයි කරුනාකර ඔබගේ ලබාදුන් ඊමේල් ගිනුම පරීක්ශා කරන්න.');
       } on FirebaseAuthException catch (e) {
-        // Handle authentication-specific errors
+        Navigator.of(context).pop(); // Close the loader on error
         String errorMessage;
         switch (e.code) {
           case 'email-already-in-use':
-            errorMessage =
-                'මෙම විද්‍යුත් තැපෑල සම්පූර්ණයෙන්ම වෙන පරිශීලකයෙකු පවත්වාගෙන යනු ලබයි.';
+            errorMessage = 'මෙම විද්‍යුත් තැපෑල දැනටමත් භාවිතා කරයි.';
             break;
           case 'weak-password':
-            errorMessage = 'මුරපදය දුර්වලයි. (Weak password)';
+            errorMessage = 'මුරපදය දුර්වලයි.';
             break;
           case 'invalid-email':
-            errorMessage =
-                'වලංගු විද්‍යුත් තැපෑලක් ඇතුළත් කරන්න. (Please enter a valid email address.)';
+            errorMessage = 'වලංගු විද්‍යුත් තැපෑලක් ඇතුළත් කරන්න.';
             break;
           default:
-            errorMessage =
-                'ලියාපදිංචි කිරීමේ දෝෂයක් සිදුවී ඇත. (Registration error)';
+            errorMessage = 'කරුණාකර නැවත උත්සාහ කරන්න.';
             break;
         }
         _showErrorDialog(context, 'දෝෂයක් සිදුවී ඇත', errorMessage);
-        return; // Exit method on error
-      } catch (e) {
-        // Handle other authentication errors
-        _showErrorDialog(context, 'දෝෂයක් සිදුවී ඇත',
-            'Firebase සත්‍යාපන දෝෂයක් සිදුවී ඇත.');
-        return;
       }
-
-    } catch (e) {
-      // Handle other registration errors
-      _showErrorDialog(context, 'දෝෂයක් සිදුවී ඇත',
-          'ලියාපදිංචි කිරීමේ දෝෂයක් සිදුවී ඇත. (Registration error)');
     }
   }
-}
 
-
-// Function to show an alert dialog
-  void _showAlertDialog(BuildContext context, String title, String message) {
+  void _showLoadingDialog(BuildContext context) {
     showDialog(
+      barrierDismissible: false,
       context: context,
       builder: (context) {
-        return AlertDialog(
-          title: Text(title),
-          content: Text(message),
-          actions: <Widget>[
-            TextButton(
-              child: Text('හරි'), // "OK" in Sinhala
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
+        return Dialog(
+          backgroundColor: Colors.transparent,
+          child: Center(
+            child: CircularProgressIndicator(),
+          ),
         );
       },
     );
@@ -300,10 +283,10 @@ class _RegisterFormState extends State<RegisterForm> {
         return AlertDialog(
           title: Text(title),
           content: Text(content),
-          actions: <Widget>[
+          actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
-              child: Text('ඉවත් වන්න'),
+              child: Text('හරි'),
             ),
           ],
         );
