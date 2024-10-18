@@ -24,7 +24,8 @@ class _AllPostsScreenState extends State<AllPostsScreen> {
   String author = 'Anonymous';
   String userid = '';
   String appBarImageUrl = '';
-  final LoadAppBarImageUseCase _loadAppBarImageUseCase = LoadAppBarImageUseCase();
+  final LoadAppBarImageUseCase _loadAppBarImageUseCase =
+      LoadAppBarImageUseCase();
 
   @override
   void initState() {
@@ -51,7 +52,8 @@ class _AllPostsScreenState extends State<AllPostsScreen> {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
     return ChangeNotifierProvider(
       create: (context) => PostProvider(
-        GetAllPosts(PostRepositoryImpl(FirebasePostDataSource(FirebaseFirestore.instance))),
+        GetAllPosts(PostRepositoryImpl(
+            FirebasePostDataSource(FirebaseFirestore.instance))),
       )..fetchAllPosts(),
       child: Scaffold(
         body: Stack(
@@ -87,126 +89,139 @@ class _AllPostsScreenState extends State<AllPostsScreen> {
     });
   }
 
-Widget _buildAppBar(BuildContext context, String appBarImageUrl, String authorAvatar) {
-  return SliverAppBar(
-    expandedHeight: 200.0,
-    floating: false,
-    pinned: true,
-    flexibleSpace: FlexibleSpaceBar(
-      collapseMode: CollapseMode.parallax,
-      centerTitle: true, // Center the title
-      titlePadding: const EdgeInsets.only(bottom: 16.0), // Adjust title position
-      title: const Text(
-        'කැටපත',
-        style: TextStyle(
-          fontSize: 17,
-          fontWeight: FontWeight.bold,
-          color: Colors.white,
-          shadows: [
-            Shadow(
-              blurRadius: 10.0,
-              color: Colors.black45,
-              offset: Offset(2.0, 2.0),
+  Widget _buildAppBar(
+      BuildContext context, String appBarImageUrl, String authorAvatar) {
+    return SliverAppBar(
+      expandedHeight: 200.0,
+      floating: false,
+      pinned: true,
+      flexibleSpace: FlexibleSpaceBar(
+        collapseMode: CollapseMode.parallax,
+        centerTitle: true, // Center the title
+        titlePadding:
+            const EdgeInsets.only(bottom: 16.0), // Adjust title position
+        title: const Text(
+          'කැටපත',
+          style: TextStyle(
+            fontSize: 17,
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+            shadows: [
+              Shadow(
+                blurRadius: 10.0,
+                color: Colors.black45,
+                offset: Offset(2.0, 2.0),
+              ),
+            ],
+          ),
+        ),
+        background: Stack(
+          fit: StackFit.expand,
+          children: [
+            appBarImageUrl.isNotEmpty
+                ? Image.network(
+                    appBarImageUrl,
+                    fit: BoxFit.cover,
+                  )
+                : Image.asset(
+                    'assets/icons/appbar.jpg',
+                    fit: BoxFit.cover,
+                  ),
+            Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [Colors.transparent, Colors.black.withOpacity(0.7)],
+                ),
+              ),
             ),
           ],
         ),
       ),
-      background: Stack(
-        fit: StackFit.expand,
-        children: [
-          appBarImageUrl.isNotEmpty
-              ? Image.network(
-                  appBarImageUrl,
-                  fit: BoxFit.cover,
-                )
-              : Image.asset(
-                  'assets/icons/appbar.jpg',
-                  fit: BoxFit.cover,
-                ),
-          Container(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [Colors.transparent, Colors.black.withOpacity(0.7)],
-              ),
-            ),
-          ),
-        ],
-      ),
-    ),
-    leading: IconButton(
-      icon: const Icon(Icons.arrow_back, color: Colors.white),
-      onPressed: () {
-        Navigator.pop(context); // Go back to the previous screen
-      },
-    ),
-    actions: [
-      // Beautiful Create Post Button
-      Tooltip(
-        message: "කැටපතක් ලියන්න", // Tooltip text in Sinhala
-        child: Container(
-          margin: const EdgeInsets.only(right: 8.0), // Adjust spacing
-          decoration: BoxDecoration(
-            color: const Color.fromARGB(255, 255, 255, 255), // Button background
-            borderRadius: BorderRadius.circular(30.0),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.1), // Subtle shadow
-                spreadRadius: 1,
-                blurRadius: 8,
-                offset: const Offset(2, 4), // Shadow position
-              ),
-            ],
-          ),
-          child: IconButton(
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => CreatePostScreen()),
-              );
-            },
-            icon: const Icon(
-              Icons.edit,
-              color: Color.fromARGB(255, 0, 0, 0),
-              size: 20.0, // Slightly larger icon
-            ),
-            padding: const EdgeInsets.all(1.0), // Adjust padding for a better touch target
-            splashRadius: 24.0, // Nice ripple effect size
-            tooltip: 'කැටපතක් ලියන්න', // Alternative hint text for accessibility
-          ),
-        ),
-      ),
-      const SizedBox(width: 5),
-      // Profile Picture with Border
-      GestureDetector(
-        onTap: () {
-          // Navigate to profile page
+      leading: IconButton(
+        icon: const Icon(Icons.arrow_back, color: Colors.white),
+        onPressed: () {
+          Navigator.pop(context); // Go back to the previous screen
         },
-        child: Padding(
-          padding: const EdgeInsets.only(right: 16.0), // Adjust padding to align it properly
-          child: CircleAvatar(
-            radius: 20, // Set the size of the avatar
-            backgroundColor: Colors.white, // Adds a white border
-            child: CircleAvatar(
-              radius: 18, // Actual size of the image
-              backgroundImage: authorAvatar.isNotEmpty
-                  ? NetworkImage(authorAvatar)
-                  : const NetworkImage(
-                      'https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png',
-                    ),
+      ),
+      actions: [
+        // Beautiful Create Post Button
+        Tooltip(
+          message: "කැටපතක් ලියන්න", // Tooltip text in Sinhala
+          child: Container(
+            margin: const EdgeInsets.only(right: 8.0), // Adjust spacing
+            decoration: BoxDecoration(
+              color:
+                  const Color.fromARGB(255, 255, 255, 255), // Button background
+              borderRadius: BorderRadius.circular(30.0),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.1), // Subtle shadow
+                  spreadRadius: 1,
+                  blurRadius: 8,
+                  offset: const Offset(2, 4), // Shadow position
+                ),
+              ],
+            ),
+            child: IconButton(
+              onPressed: () async {
+                // Retrieve user ID from SharedPreferences
+                final prefs = await SharedPreferences.getInstance();
+                final userId = prefs.getString('userId');
+
+                // Check if userId is empty or null
+                if (userId == null || userId.isEmpty) {
+                  // Navigate to the login screen
+                  Navigator.pushNamed(context, AppRoutes.login2);
+                } else {
+                  // Navigate to CreatePostScreen if userId is valid
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => CreatePostScreen()),
+                  );
+                }
+              },
+
+              icon: const Icon(
+                Icons.edit,
+                color: Color.fromARGB(255, 0, 0, 0),
+                size: 20.0, // Slightly larger icon
+              ),
+              padding: const EdgeInsets.all(
+                  1.0), // Adjust padding for a better touch target
+              splashRadius: 24.0, // Nice ripple effect size
+              tooltip:
+                  'කැටපතක් ලියන්න', // Alternative hint text for accessibility
             ),
           ),
         ),
-      ),
-    ],
-  );
-}
-
-
-
-
-
+        const SizedBox(width: 5),
+        // Profile Picture with Border
+        GestureDetector(
+          onTap: () {
+            // Navigate to profile page
+          },
+          child: Padding(
+            padding: const EdgeInsets.only(
+                right: 16.0), // Adjust padding to align it properly
+            child: CircleAvatar(
+              radius: 20, // Set the size of the avatar
+              backgroundColor: Colors.white, // Adds a white border
+              child: CircleAvatar(
+                radius: 18, // Actual size of the image
+                backgroundImage: authorAvatar.isNotEmpty
+                    ? NetworkImage(authorAvatar)
+                    : const NetworkImage(
+                        'https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png',
+                      ),
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
 
   Widget _buildPostsList() {
     return Consumer<PostProvider>(
@@ -246,7 +261,8 @@ Widget _buildAppBar(BuildContext context, String appBarImageUrl, String authorAv
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Icon(Icons.notes_outlined, size: 60, color: Colors.grey),
+                  const Icon(Icons.notes_outlined,
+                      size: 60, color: Colors.grey),
                   const SizedBox(height: 16),
                   Text(
                     'No posts available',
@@ -268,10 +284,14 @@ Widget _buildAppBar(BuildContext context, String appBarImageUrl, String authorAv
             (context, index) {
               final post = postProvider.posts[index];
               return Padding(
-                padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-                child: PostWidget(post: post ,refreshCallback: () {
-                  _refreshPosts();
-                },),
+                padding:
+                    const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+                child: PostWidget(
+                  post: post,
+                  refreshCallback: () {
+                    _refreshPosts();
+                  },
+                ),
               );
             },
             childCount: postProvider.posts.length,
@@ -292,7 +312,7 @@ Widget _buildAppBar(BuildContext context, String appBarImageUrl, String authorAv
   //         Navigator.pushNamed(context, AppRoutes.login2);
   //       } else {
   //         // User is signed in, navigate to CreatePostScreen
-        
+
   //       }
   //     },
   //     child: Icon(
