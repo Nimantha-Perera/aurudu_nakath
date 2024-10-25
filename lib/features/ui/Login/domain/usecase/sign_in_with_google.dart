@@ -1,30 +1,37 @@
-// lib/services/sign_in_with_google.dart
-import 'package:aurudu_nakath/features/ui/Login/domain/repo/auth_repository_interface.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 class SignInWithGoogle {
   final GoogleSignIn _googleSignIn = GoogleSignIn();
-  final FirebaseAuth _auth = FirebaseAuth.instance;
 
-  SignInWithGoogle(AuthRepositoryInterface read);
+  SignInWithGoogle();
 
-  Future<User?> signIn() async {
-    final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
-    if (googleUser == null) return null; // User canceled the sign-in
+  // Sign-in method without Firebase authentication
+  Future<Map<String, String>?> signIn() async {
+    try {
+      // Trigger the Google Sign-In process
+      final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
+      if (googleUser == null) return null; // User canceled the sign-in
 
-    final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
-    final credential = GoogleAuthProvider.credential(
-      accessToken: googleAuth.accessToken,
-      idToken: googleAuth.idToken,
-    );
+      // Retrieve authentication tokens
+      final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
 
-    UserCredential userCredential = await _auth.signInWithCredential(credential);
-    return userCredential.user;
+      // Return the access token and ID token (can be sent to your server for verification)
+      return {
+        'accessToken': googleAuth.accessToken!,
+        'idToken': googleAuth.idToken!,
+        'email': googleUser.email,
+        'displayName': googleUser.displayName ?? '',
+        'photoUrl': googleUser.photoUrl ?? ''
+      };
+    } catch (error) {
+      // Handle sign-in errors here
+      print("Error signing in with Google: $error");
+      return null;
+    }
   }
 
+  // Sign-out method
   Future<void> signOut() async {
-    await _auth.signOut();
     await _googleSignIn.signOut();
   }
 }

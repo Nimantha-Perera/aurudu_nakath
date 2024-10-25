@@ -1,9 +1,10 @@
+import 'package:aurudu_nakath/features/ui/Login/data/modal/user_model.dart';
+import 'package:aurudu_nakath/features/ui/Login/domain/usecase/sign_in_with_google.dart';
 import 'package:aurudu_nakath/features/ui/Login2/data/modal/user_model.dart';
 import 'package:aurudu_nakath/features/ui/Login2/domain/usecase/sign_in_with_google.dart';
 import 'package:aurudu_nakath/features/ui/routes/routes.dart';
+import 'package:cloud_firestore/cloud_firestore.dart'; // Firestore
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:cloud_firestore/cloud_firestore.dart'; // Firestore import
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginViewModel2 extends ChangeNotifier {
@@ -16,55 +17,31 @@ class LoginViewModel2 extends ChangeNotifier {
   CustomUser2? get user => _user;
   bool get isLoading => _isLoading;
 
-  /// Saves user details in SharedPreferences
-  Future<void> _saveUserDetails() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setString('email', _user!.email);
-    await prefs.setString('displayName', _user!.displayName);
-    await prefs.setString('photoURL', _user!.photoURL ?? '');
-    await prefs.setString('userId', _user!.id?? '');
-  }
-
-  /// Logs in the user using Google Sign-In
+  /// Logs in the user using Google Sign-In and saves data in Firestore
   Future<void> login() async {
     _isLoading = true; // Set loading state to true
     notifyListeners();
 
     try {
-      User? firebaseUser = await _signInWithGoogle.signIn();
-      if (firebaseUser != null) {
-        // Fetch user details from Firestore
-        DocumentSnapshot userDoc = await FirebaseFirestore.instance
-            .collection('normle_users')
-            .doc(firebaseUser.uid)
-            .get();
+      final result = await _signInWithGoogle.signIn();
 
-        if (userDoc.exists) {
-          // Cast userDoc.data() to Map<String, dynamic>
-          Map<String, dynamic>? userData = userDoc.data() as Map<String, dynamic>?;
+      if (result != null) {
+        // The result contains access token, id token, email, display name, and photo URL
+        _user = CustomUser2(
+          email: result['email']!,
+          displayName: result['displayName']!,
+          photoURL: result['photoUrl'],
+          id: result['idToken'], // You can use idToken or accessToken as user ID or for verification
+        );
 
-          // Check if 'displayName' field exists in Firestore data
-          String displayName = userData?['displayName'] ?? firebaseUser.displayName ?? '';
+        // Save user details in Firestore
+        await _saveUserDetailsToFirestore();
 
-          _user = CustomUser2(
-            email: firebaseUser.email!,
-            displayName: displayName, // Use Firestore or FirebaseAuth displayName
-            photoURL: firebaseUser.photoURL,
-            id: firebaseUser.uid,
-          );
-
-          // Save user details in SharedPreferences
-          await _saveUserDetails();
-        } else {
-          print("Document does not exist in Firestore for the user.");
-        }
+        // Save user details in SharedPreferences
+        await _saveUserDetailsToSharedPreferences();
       }
     } catch (e) {
       print("Login failed: $e");
-      // Handle specific error cases if needed (e.g., cancellation)
-      if (e is FirebaseAuthException) {
-        // Handle Firebase-specific errors if required
-      }
       _user = null; // Reset user on failure
     } finally {
       _isLoading = false; // Reset loading state
@@ -72,11 +49,34 @@ class LoginViewModel2 extends ChangeNotifier {
     }
   }
 
+  /// Saves user details in Firestore
+  Future<void> _saveUserDetailsToFirestore() async {
+    final FirebaseFirestore firestore = FirebaseFirestore.instance;
+
+    // Create a user document in 'users' collection using the user's ID (idToken in this case)
+    await firestore.collection('google_authed_users').doc(_user!.id).set({
+      'email': _user!.email,
+      'displayName': _user!.displayName,
+      'photoURL': _user!.photoURL,
+      'createdAt': Timestamp.now(),
+      'userId': _user!.id, // Use the user ID as the document ID
+    });
+  }
+
+  /// Saves user details in SharedPreferences
+  Future<void> _saveUserDetailsToSharedPreferences() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('email', _user!.email);
+    await prefs.setString('displayName', _user!.displayName);
+    await prefs.setString('photoURL', _user!.photoURL ?? '');
+    await prefs.setString('userId', _user!.id ?? '');
+  }
+
   /// Checks the login status of the user and returns a bool indicating if logged in
   Future<bool> checkLoginStatus() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? userId = prefs.getString('userId'); // Check for userId instead of email
-    return userId != null; // Return true if the userId exists
+    String? email = prefs.getString('email');
+    return email != null; // Return true if the email exists
   }
 
   /// Logs out the user and clears their information

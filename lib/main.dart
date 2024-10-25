@@ -89,7 +89,7 @@ void main() async {
 
   FirebaseInAppMessaging.instance.setAutomaticDataCollectionEnabled(true);
   await FirebaseAppCheck.instance.activate(
-    androidProvider: AndroidProvider.debug,
+    androidProvider: AndroidProvider.playIntegrity,
   );
 
   NotificationService notificationService =
@@ -113,9 +113,13 @@ void main() async {
       child: MultiProvider(
         providers: [
           Provider<AuthRepositoryInterface2>(create: (_) => AuthRepository2()),
-          Provider<SignInWithGoogle2>(
-              create: (context) =>
-                  SignInWithGoogle2(context.read<AuthRepositoryInterface2>())),
+          // Provider<SignInWithGoogle2>(
+          //     create: (context) =>
+          //         SignInWithGoogle2(context.read<AuthRepositoryInterface2>())),
+           Provider<SignInWithGoogle2>(
+            create: (context) => SignInWithGoogle2(),
+          ),
+
           ChangeNotifierProvider(
               create: (context) =>
                   LoginViewModel2(context.read<SignInWithGoogle2>())),
@@ -129,8 +133,9 @@ void main() async {
                   FirebasePostDataSource(FirebaseFirestore.instance))))),
           Provider<AuthRepositoryInterface>(create: (_) => AuthRepository()),
           Provider<SignInWithGoogle>(
-              create: (context) =>
-                  SignInWithGoogle(context.read<AuthRepositoryInterface>())),
+            create: (context) => SignInWithGoogle(),
+          ),
+
           ChangeNotifierProvider(
               create: (context) =>
                   LoginViewModel(context.read<SignInWithGoogle>())),

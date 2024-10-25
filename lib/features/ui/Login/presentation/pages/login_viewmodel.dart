@@ -1,8 +1,8 @@
 import 'package:aurudu_nakath/features/ui/Login/data/modal/user_model.dart';
 import 'package:aurudu_nakath/features/ui/Login/domain/usecase/sign_in_with_google.dart';
 import 'package:aurudu_nakath/features/ui/routes/routes.dart';
+import 'package:cloud_firestore/cloud_firestore.dart'; // Firestore
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginViewModel extends ChangeNotifier {
@@ -15,30 +15,31 @@ class LoginViewModel extends ChangeNotifier {
   CustomUser? get user => _user;
   bool get isLoading => _isLoading;
 
-  /// Logs in the user using Google Sign-In
+  /// Logs in the user using Google Sign-In and saves data in Firestore
   Future<void> login() async {
     _isLoading = true; // Set loading state to true
     notifyListeners();
 
     try {
-      User? firebaseUser = await _signInWithGoogle.signIn();
-      if (firebaseUser != null) {
+      final result = await _signInWithGoogle.signIn();
+
+      if (result != null) {
+        // The result contains access token, id token, email, display name, and photo URL
         _user = CustomUser(
-          email: firebaseUser.email!,
-          displayName: firebaseUser.displayName ?? '',
-          photoURL: firebaseUser.photoURL,
-          id: firebaseUser.uid,
+          email: result['email']!,
+          displayName: result['displayName']!,
+          photoURL: result['photoUrl'],
+          id: result['idToken'], // You can use idToken or accessToken as user ID or for verification
         );
 
+        // Save user details in Firestore
+        await _saveUserDetailsToFirestore();
+
         // Save user details in SharedPreferences
-        await _saveUserDetails();
+        await _saveUserDetailsToSharedPreferences();
       }
     } catch (e) {
       print("Login failed: $e");
-      // Handle specific error cases if needed (e.g., cancellation)
-      if (e is FirebaseAuthException) {
-        // Handle Firebase specific errors if required
-      }
       _user = null; // Reset user on failure
     } finally {
       _isLoading = false; // Reset loading state
@@ -46,16 +47,27 @@ class LoginViewModel extends ChangeNotifier {
     }
   }
 
+  /// Saves user details in Firestore
+  Future<void> _saveUserDetailsToFirestore() async {
+    final FirebaseFirestore firestore = FirebaseFirestore.instance;
+
+    // Create a user document in 'users' collection using the user's ID (idToken in this case)
+    await firestore.collection('google_authed_users').doc(_user!.id).set({
+      'email': _user!.email,
+      'displayName': _user!.displayName,
+      'photoURL': _user!.photoURL,
+      'createdAt': Timestamp.now(),
+      'userId': _user!.id, // Use the user ID as the document ID
+    });
+  }
+
   /// Saves user details in SharedPreferences
-  Future<void> _saveUserDetails() async {
+  Future<void> _saveUserDetailsToSharedPreferences() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setString('email', _user!.email);
     await prefs.setString('displayName', _user!.displayName);
     await prefs.setString('photoURL', _user!.photoURL ?? '');
-    await prefs.setString(
-      'userId',
-      _user!.id ?? '',
-    );
+    await prefs.setString('userId', _user!.id ?? '');
   }
 
   /// Checks the login status of the user and returns a bool indicating if logged in
