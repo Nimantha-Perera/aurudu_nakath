@@ -39,31 +39,30 @@ class LoginScreen extends StatelessWidget {
 
   Widget _buildLogo() {
     return Container(
-  width: 120,
-  height: 120,
-  decoration: BoxDecoration(
-    image: DecorationImage(image: AssetImage('assets/icons/lion.webp')),
-    color: Colors.white,
-    shape: BoxShape.circle,
-    boxShadow: [
-      BoxShadow(
-        color: Colors.black.withOpacity(0.1),
-        spreadRadius: 5,
-        blurRadius: 15,
-        offset: Offset(0, 5),
+      width: 120,
+      height: 120,
+      decoration: BoxDecoration(
+        image: DecorationImage(image: AssetImage('assets/icons/lion.webp')),
+        color: Colors.white,
+        shape: BoxShape.circle,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            spreadRadius: 5,
+            blurRadius: 15,
+            offset: Offset(0, 5),
+          ),
+        ],
       ),
-    ],
-  ),
-  // child: Center(
-  //   child: Image.asset(
-  //     'assets/icons/lion.webp', // Replace with your image path
-  //     width: 100, // Set the width of the image
-  //     height: 60, // Set the height of the image
-  //     fit: BoxFit.cover, // Adjust the image fit as necessary
-  //   ),
-  // ),
-);
-
+      // child: Center(
+      //   child: Image.asset(
+      //     'assets/icons/lion.webp', // Replace with your image path
+      //     width: 100, // Set the width of the image
+      //     height: 60, // Set the height of the image
+      //     fit: BoxFit.cover, // Adjust the image fit as necessary
+      //   ),
+      // ),
+    );
   }
 
   Widget _buildWelcomeText() {
@@ -92,7 +91,7 @@ class LoginScreen extends StatelessWidget {
           ],
         ),
         SizedBox(height: 10),
-        
+
         // English text in Roboto
         Text(
           'ඔබේ තාක්ශණික සහායක',
@@ -116,14 +115,15 @@ class LoginScreen extends StatelessWidget {
     );
   }
 
-
-  Widget _buildGoogleSignInButton(BuildContext context, LoginViewModel loginViewModel) {
+  Widget _buildGoogleSignInButton(
+      BuildContext context, LoginViewModel loginViewModel) {
     return ElevatedButton.icon(
       label: loginViewModel.isLoading
           ? SizedBox(
               width: 16,
               height: 16,
-              child: CircularProgressIndicator(color: Colors.indigo.shade800, strokeWidth: 2),
+              child: CircularProgressIndicator(
+                  color: Colors.indigo.shade800, strokeWidth: 2),
             )
           : Text(
               'Google සමගින් පූර්ණය වන්න',
@@ -138,10 +138,12 @@ class LoginScreen extends StatelessWidget {
         ),
         elevation: 5,
       ),
-      // onPressed: loginViewModel.isLoading ? null : () => _handleSignIn(context, loginViewModel),
-      onPressed: () {
-         showDialog(context: context, builder: (context) => AlertDialog(content: Text('Google සමගින් පූර්ණය තාවකාලිකව විසන්දි කර ඇත. කරුනාකර පහල ඇති Sign Up මඟින් ගිනුමක් නිර්මාණය කර හෝ ඔබට දැනටමත් ගිනුමක් ඇත්නම් එයින් පූර්ණය වන්න'),));
-      },
+      onPressed: loginViewModel.isLoading
+          ? null
+          : () => _handleSignIn(context, loginViewModel),
+      // onPressed: () {
+      //    showDialog(context: context, builder: (context) => AlertDialog(content: Text('Google සමගින් පූර්ණය තාවකාලිකව විසන්දි කර ඇත. කරුනාකර පහල ඇති Sign Up මඟින් ගිනුමක් නිර්මාණය කර හෝ ඔබට දැනටමත් ගිනුමක් ඇත්නම් එයින් පූර්ණය වන්න'),));
+      // },
     );
   }
 
@@ -151,23 +153,24 @@ class LoginScreen extends StatelessWidget {
         // Navigate to sign-up screen if needed
         // Navigator.pushNamed(context, AppRoutes.signup);
 
-
         Navigator.pushReplacementNamed(context, AppRoutes.login2);
-
       },
       child: Text(
         'ඔයාට ගිනුමක් නැද්ද? Sign Up',
-        style: TextStyle(color: const Color.fromARGB(255, 90, 90, 90), fontSize: 16),
+        style: TextStyle(
+            color: const Color.fromARGB(255, 90, 90, 90), fontSize: 16),
       ),
     );
   }
 
-  void _handleSignIn(BuildContext context, LoginViewModel loginViewModel) async {
+  void _handleSignIn(
+      BuildContext context, LoginViewModel loginViewModel) async {
     try {
       await loginViewModel.login();
       if (loginViewModel.user != null) {
-        final subscriptionProvider = Provider.of<SubscriptionProvider>(context, listen: false);
-        
+        final subscriptionProvider =
+            Provider.of<SubscriptionProvider>(context, listen: false);
+
         if (subscriptionProvider.isSubscribed) {
           Navigator.pushReplacementNamed(context, AppRoutes.helagptPro);
         } else {

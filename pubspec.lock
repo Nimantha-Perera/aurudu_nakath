@@ -9,6 +9,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.3.44"
+  app_integrity_checker:
+    dependency: "direct main"
+    description:
+      name: app_integrity_checker
+      sha256: "9cdfc474cf55c3efec56ae01da6ec363c0f96834cc2d256b111269234741edd1"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.5"
   archive:
     dependency: transitive
     description:
@@ -1293,6 +1301,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.1.5"
+  play_integrity_flutter:
+    dependency: "direct main"
+    description:
+      name: play_integrity_flutter
+      sha256: "27664c6838778678091b7ca58f1a7265217c0e773d86f876bf04903a9e2bbc15"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.0.1"
   plugin_platform_interface:
     dependency: transitive
     description:
