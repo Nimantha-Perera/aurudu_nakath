@@ -1,7 +1,14 @@
 import 'package:google_sign_in/google_sign_in.dart';
 
 class SignInWithGoogle2 {
-  final GoogleSignIn _googleSignIn = GoogleSignIn();
+  final GoogleSignIn _googleSignIn = GoogleSignIn(
+    scopes: [
+      'email',
+      'https://www.googleapis.com/auth/contacts.readonly',
+    ],
+    clientId: '91523853816-grrie0homfduf57i4q3dc30g7it34gau.apps.googleusercontent.com', // Replace with your Google OAuth client ID
+
+  );
 
   SignInWithGoogle2();
 

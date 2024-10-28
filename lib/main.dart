@@ -58,6 +58,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_in_app_messaging/firebase_in_app_messaging.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/material.dart';
 
 import 'package:aurudu_nakath/features/ui/intro_screens/onboarding_screen/onboarding_screen.dart';
@@ -75,6 +76,7 @@ import 'features/ui/hela_post/domain/usecase/getallpost.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
   await initializeDateFormatting('si_LK');
   final PermissionHandler _permissionHandler = PermissionHandler();
   _permissionHandler.isManageExternalStorageGranted();
@@ -107,16 +109,19 @@ void main() async {
   final apiKey = dotenv.env['API_KEY'] ?? "";
   final apiUrl =
       "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=$apiKey";
+      final remoteConfig = FirebaseRemoteConfig.instance;
+
 
   runApp(
     BetterFeedback(
       child: MultiProvider(
         providers: [
+
           Provider<AuthRepositoryInterface2>(create: (_) => AuthRepository2()),
           // Provider<SignInWithGoogle2>(
           //     create: (context) =>
           //         SignInWithGoogle2(context.read<AuthRepositoryInterface2>())),
-           Provider<SignInWithGoogle2>(
+          Provider<SignInWithGoogle2>(
             create: (context) => SignInWithGoogle2(),
           ),
 
@@ -206,9 +211,9 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   Future<Widget>? _appWidget;
+
   late Future<SharedPreferences> _sharedPreferencesFuture;
   //  ShakeNavigation? _shakeNavigation;
-  late UseCaseMaintainsFirebase maintenanceUseCase;
 
   @override
   void initState() {

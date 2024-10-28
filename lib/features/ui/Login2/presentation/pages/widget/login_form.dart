@@ -47,9 +47,9 @@ class _LoginFormState extends State<LoginForm> {
             SizedBox(height: 30),
             _buildLoginButton(context),
             SizedBox(height: 30),
-            _buildDividerWithText(context),
-            SizedBox(height: 30),
-            GoogleLoginButton(),
+            // _buildDividerWithText(context),
+            // SizedBox(height: 30),
+            // GoogleLoginButton(),
           ],
         ),
       ),
@@ -64,7 +64,7 @@ class _LoginFormState extends State<LoginForm> {
         height: 120,
         decoration: BoxDecoration(
           image:
-              DecorationImage(image: AssetImage('assets/icons/katapatha.webp')),
+              DecorationImage(image: AssetImage('assets/icons/lion.webp')),
           color: Colors.white,
           shape: BoxShape.circle,
           boxShadow: [
@@ -84,7 +84,7 @@ class _LoginFormState extends State<LoginForm> {
     return Column(
       children: [
         Text(
-          'කැටපත',
+          'පූර්ණය වන්න',
           style: TextStyle(
             fontSize: 15,
             fontWeight: FontWeight.bold,
@@ -93,7 +93,7 @@ class _LoginFormState extends State<LoginForm> {
         ),
         SizedBox(height: 10),
         Text(
-          'ඔබගේ නිර්මාණශීලීත්වය අගය කිරීම සඳහා',
+          'ඔබ සතුව ගිණුමක් නොමැතිනම් උඩ ඇති නව ගිනුමක් සාදන්න ක්ලික් කරන්න',
           textAlign: TextAlign.center,
           style: TextStyle(
             fontSize: 13,
