@@ -1,4 +1,5 @@
-import 'package:aurudu_nakath/features/ui/maintance/usecase.dart';
+import 'package:aurudu_nakath/features/ui/maintance/maintance_screen.dart';
+import 'package:aurudu_nakath/features/ui/maintance/usecase2.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -11,8 +12,7 @@ class LoadingScreen extends StatefulWidget {
 class _LoadingScreenState extends State<LoadingScreen>
     with SingleTickerProviderStateMixin {
 
-
-      late UseCaseMaintainsFirebase maintenanceUseCase;
+  late UseCaseMaintainsFirebase maintenanceUseCase;
 
   @override
   void initState() {
@@ -22,16 +22,32 @@ class _LoadingScreenState extends State<LoadingScreen>
     maintenanceUseCase = UseCaseMaintainsFirebase(firestore: FirebaseFirestore.instance);
 
     // Ensure the widget tree is built before navigating
- 
-      _checkForMaintenance();
-   
+    _checkForMaintenance();
   }
 
-   void _checkForMaintenance() async {
-    await maintenanceUseCase.checkForMaintenanceMode(context);
+void _checkForMaintenance() async {
+  print("Checking for maintenance mode...");
+  bool isInMaintenance = await maintenanceUseCase.checkForMaintenanceMode();
+  print("Maintenance mode status: $isInMaintenance");
+
+  // Check if the widget is still mounted before navigating
+  if (mounted) {
+    if (isInMaintenance) {
+      print("App is in maintenance mode. Showing MaintenanceScreen...");
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => MaintenanceScreenDialog(endTime: '',)),
+      );
+    } else {
+      print("App is not in maintenance mode. Proceeding with app flow...");
+    }
   }
+}
+
+
   @override
   Widget build(BuildContext context) {
+    print("Building LoadingScreen UI...");
     return Scaffold(
       backgroundColor: Colors.white,
       body: Center(
@@ -39,14 +55,6 @@ class _LoadingScreenState extends State<LoadingScreen>
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             // Animated logo or image for branding
-            // Hero(
-            //   tag: 'appLogo',
-            //   child: Image.asset(
-            //     'assets/logo.png', // Replace with your logo or asset
-            //     width: 100,
-            //     height: 100,
-            //   ),
-            // ),
             SizedBox(height: 40),
             // Circular progress indicator with smooth animation
             CircularProgressIndicator(
@@ -83,6 +91,7 @@ class _LoadingScreenState extends State<LoadingScreen>
       builder: (context, value, child) {
         int dotsCount = (value * 3).floor(); // Show 1-3 dots based on animation
         String dots = '.' * dotsCount;
+        print("Animated dots: $dots");
         return Text(
           'Loading$dots',
           style: GoogleFonts.poppins(
@@ -93,7 +102,10 @@ class _LoadingScreenState extends State<LoadingScreen>
           ),
         );
       },
-      onEnd: () => setState(() {}), // SetState triggers rebuild safely
+      onEnd: () {
+        print("Tween animation completed, restarting...");
+        setState(() {}); // Triggers rebuild safely
+      },
     );
   }
 }

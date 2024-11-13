@@ -33,6 +33,7 @@ import 'package:aurudu_nakath/features/ui/litha/data/datasouces/firebase_data_so
 import 'package:aurudu_nakath/features/ui/litha/data/repo/aurudu_nakath_repository_impl.dart';
 import 'package:aurudu_nakath/features/ui/litha/domain/usecase/get_aurudu_nakath_data.dart';
 import 'package:aurudu_nakath/features/ui/litha/presentation/bloc/aurudu_nakath_bloc.dart';
+import 'package:aurudu_nakath/features/ui/maintance/maintance_screen.dart';
 import 'package:aurudu_nakath/features/ui/maintance/usecase.dart';
 import 'package:aurudu_nakath/features/ui/permissions/permissions_hadler.dart';
 import 'package:aurudu_nakath/features/ui/routes/routes.dart';
@@ -257,37 +258,53 @@ class _MyAppState extends State<MyApp> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    FirebaseAnalytics analytics =
-        FirebaseAnalytics.instance; // Use named constructor
-    FirebaseAnalyticsObserver observer =
-        FirebaseAnalyticsObserver(analytics: analytics);
-    return Consumer<ThemeNotifier>(
-      builder: (context, themeNotifier, child) {
-        return FutureBuilder<Widget>(
-          future: _appWidget,
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.done) {
-              return MaterialApp(
-                debugShowCheckedModeBanner: false,
-                theme: lightTheme,
-                darkTheme: darkTheme,
-                themeMode: themeNotifier.getThemeMode(), // Optimized theme mode
-                initialRoute: AppRoutes.home,
-                navigatorObservers: [observer],
-                onGenerateRoute: AppRoutes.generateRoute,
-                home: snapshot.data ??
-                    DashBoard(), // Default to Dashboard if no data
-              );
-            } else {
-              return MaterialApp(
-                debugShowCheckedModeBanner: false,
-                home: LoadingScreen(),
-              );
-            }
-          },
-        );
-      },
-    );
-  }
+ Widget build(BuildContext context) {
+  FirebaseAnalytics analytics = FirebaseAnalytics.instance; // Use named constructor
+  FirebaseAnalyticsObserver observer = FirebaseAnalyticsObserver(analytics: analytics);
+
+  return Consumer<ThemeNotifier>(
+    builder: (context, themeNotifier, child) {
+      return FutureBuilder<Widget>(
+        future: _appWidget, // Assuming this future is defined elsewhere in your code
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.done) {
+            // Check if the app is in maintenance mode
+            return FutureBuilder<Map<String, dynamic>>(
+              future: UseCaseMaintainsFirebase(firestore: FirebaseFirestore.instance).getMaintenanceStatus(),
+              builder: (context, maintenanceSnapshot) {
+                if (maintenanceSnapshot.connectionState == ConnectionState.waiting) {
+                  return LoadingScreen(); // Show loading while checking maintenance mode
+                }
+
+                if (maintenanceSnapshot.hasData && maintenanceSnapshot.data!['is_active'] == true) {
+                  return MaintenanceScreenDialog(
+                    endTime: maintenanceSnapshot.data!['end_time'], // Pass the formatted end time
+                  ); // Show maintenance screen if in maintenance mode
+                }
+
+                return MaterialApp(
+                  debugShowCheckedModeBanner: false,
+                  theme: lightTheme,
+                  darkTheme: darkTheme,
+                  themeMode: themeNotifier.getThemeMode(), // Optimized theme mode
+                  initialRoute: AppRoutes.home,
+                  navigatorObservers: [observer],
+                  onGenerateRoute: AppRoutes.generateRoute,
+                  home: snapshot.data ?? DashBoard(), // Default to Dashboard if no data
+                );
+              },
+            );
+          } else {
+            return MaterialApp(
+              debugShowCheckedModeBanner: false,
+              home: LoadingScreen(),
+            );
+          }
+        },
+      );
+    },
+  );
+}
+
+
 }

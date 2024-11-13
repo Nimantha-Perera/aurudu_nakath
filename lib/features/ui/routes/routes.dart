@@ -1,5 +1,6 @@
 import 'package:aurudu_nakath/features/ui/Compass/compass.dart';
 import 'package:aurudu_nakath/features/ui/Login2/presentation/pages/login_screen.dart';
+import 'package:aurudu_nakath/features/ui/Login2/presentation/pages/login_screen2.dart';
 import 'package:aurudu_nakath/features/ui/hela_post/presentation/pages/main.dart';
 import 'package:flutter/material.dart';
 import 'package:aurudu_nakath/features/ui/Login/presentation/pages/login_screen.dart';
@@ -39,6 +40,7 @@ class AppRoutes {
 
   static const String katapatha = '/katapatha';
   static const String login2 = '/login2';
+  static const String login3 = '/login3';
 
   static Route<dynamic> generateRoute(RouteSettings settings) {
     // Log Firebase Analytics event for screen view
@@ -48,6 +50,7 @@ class AppRoutes {
     );
 
     switch (settings.name) {
+  
       case katapatha:
         return _buildPageWithSlideTransition(
             AllPostsScreen(), Offset(1, 0)); // Slide from right
@@ -95,6 +98,10 @@ class AppRoutes {
       case dashboard:
         return _buildPageWithSlideTransition(
             DashBoard(), Offset(1, 0)); // Slide from right
+      case login3:
+        return _buildPageWithSlideTransition(
+            LoginRegisterScreen2(), Offset(1, 0)); // Slide from right
+           
       default:
         return _buildPageWithSlideTransition(
             ErrorScreen(), Offset(1, 0)); // Fallback in case of undefined route

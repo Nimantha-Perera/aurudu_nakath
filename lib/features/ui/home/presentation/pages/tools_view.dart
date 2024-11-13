@@ -73,7 +73,7 @@ class _ToolsState extends State<Tools> {
                               Navigator.pushNamed(context, AppRoutes.helagptnormless);
                             }
                           } else {
-                            Navigator.pushNamed(context, AppRoutes.login2);
+                            Navigator.pushNamed(context, AppRoutes.login3);
                           }
                         },
                         color: Color(0xFFA02334),
