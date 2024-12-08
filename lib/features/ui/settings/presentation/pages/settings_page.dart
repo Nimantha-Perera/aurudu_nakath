@@ -4,6 +4,7 @@ import 'dart:typed_data';
 import 'package:aurudu_nakath/features/ui/Login/presentation/pages/login_viewmodel.dart';
 import 'package:aurudu_nakath/features/ui/routes/routes.dart';
 import 'package:feedback/feedback.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -23,6 +24,8 @@ class _SettingsPageState extends State<SettingsPage> {
   String _version = '';
   String _profileName = '';
   String _profileImage = '';
+  String _email = '';
+  bool _isEmailVerified = false;
 
   @override
   void initState() {
@@ -38,14 +41,16 @@ class _SettingsPageState extends State<SettingsPage> {
     });
   }
 
-  Future<void> _getProfileInfo() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    setState(() {
-      _profileName = prefs.getString('displayName') ?? '';
-      _profileImage = prefs.getString('photoURL') ??
-          ''; // If image is empty, we will show a button
-    });
-  }
+  // Future<void> _getProfileInfo() async {
+  //   SharedPreferences prefs = await SharedPreferences.getInstance();
+  //   setState(() {
+  //     _email = prefs.getString('email') ?? '';
+  //     _profileName = prefs.getString('displayName') ?? '';
+  //     _profileImage = prefs.getString('photoURL') ??
+  //         'https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png';
+  //         ''; // If image is empty, we will show a button
+  //   });
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -99,7 +104,7 @@ class _SettingsPageState extends State<SettingsPage> {
 
   // Profile Section (Shows either profile view or a Sign In button)
   Widget _buildProfileSection(BuildContext context) {
-    if (_profileName.isEmpty || _profileImage.isEmpty) {
+    if (_profileName.isEmpty) {
       // Show "Sign In" button if profile info is missing
       return _buildSignInButton(context);
     } else {
@@ -109,39 +114,157 @@ class _SettingsPageState extends State<SettingsPage> {
   }
 
   // Profile View Section
+Future<void> _getProfileInfo() async {
+    final user = FirebaseAuth.instance.currentUser;
+    await user?.reload();  // Reload the user to get the latest email verification status
+    final updatedUser = FirebaseAuth.instance.currentUser;
+
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    
+    setState(() {
+      _email = updatedUser?.email ?? '';
+      _isEmailVerified = updatedUser?.emailVerified ?? false;
+      _profileName = prefs.getString('displayName') ?? '';
+      _profileImage = prefs.getString('photoURL') ?? 'https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png';
+    });
+  }
+
+
+  Future<void> _sendVerificationEmail() async {
+    try {
+      final user = FirebaseAuth.instance.currentUser;
+      await user?.sendEmailVerification();
+      
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('තහවුරු කිරීමේ ඊමේල් පණිවිඩය යවා ඇත. කරුණාකර ඔබගේ ඊමේල් පරීක්ෂා කරන්න.'),
+          backgroundColor: Colors.green,
+        ),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('තහවුරු කිරීමේ ඊමේල් පණිවිඩය යැවීමට අසමත් විය. පසුව නැවත උත්සාහ කරන්න.'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
+
   Widget _buildProfileViewSection(BuildContext context) {
     return Card(
       color: Theme.of(context).cardColor,
-      margin: const EdgeInsets.symmetric(vertical: 8.0),
-      elevation: 3,
+      margin: const EdgeInsets.all(16.0),
+      elevation: 4,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(15),
+      ),
       child: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(24.0),
         child: Column(
+          mainAxisSize: MainAxisSize.min,
           children: [
-            CircleAvatar(
-              backgroundImage: _profileImage.isNotEmpty
-                  ? NetworkImage(
-                      _profileImage) // Use the loaded profile image URL
-                  : const NetworkImage(
-                      'https://i.pravatar.cc/150?u=a042581f4e29026704d'), // Default image
-              radius: 40,
+            Stack(
+              alignment: Alignment.center,
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(4),
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    border: Border.all(
+                      color: Theme.of(context).primaryColor,
+                      width: 2,
+                    ),
+                  ),
+                  child: CircleAvatar(
+                    backgroundImage: _profileImage.isNotEmpty
+                        ? NetworkImage(_profileImage)
+                        : const NetworkImage(
+                            'https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png'),
+                    radius: 50,
+                  ),
+                ),
+              ],
             ),
-            SizedBox(height: 16),
-            // Displaying the profile name without editing
+            const SizedBox(height: 24),
             Text(
               _profileName,
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              style: GoogleFonts.roboto(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+              ),
             ),
-            SizedBox(height: 16),
-            ElevatedButton(
+            const SizedBox(height: 8),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Flexible(
+                  child: Text(
+                    _email,
+                    style: GoogleFonts.roboto(
+                      fontSize: 16,
+                      color: Theme.of(context).textTheme.bodyMedium?.color?.withOpacity(0.7),
+                    ),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Icon(
+                  _isEmailVerified ? Icons.verified : Icons.warning,
+                  color: _isEmailVerified ? Colors.green : Colors.orange,
+                  size: 20,
+                ),
+              ],
+            ),
+            if (!_isEmailVerified) ...[
+              const SizedBox(height: 16),
+              Text(
+                'ඊමේල් ලිපිනය තහවුරු කර නැත',
+                style: GoogleFonts.notoSerifSinhala(
+                  fontSize: 14,
+                  color: Colors.orange,
+                ),
+              ),
+              const SizedBox(height: 8),
+              ElevatedButton.icon(
+                onPressed: _sendVerificationEmail,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.orange,
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                ),
+                icon: const Icon(Icons.email, size: 18),
+                label: Text(
+                  'තහවුරු කිරීමේ ඊමේල් පණිවිඩය යවන්න',
+                  style: GoogleFonts.notoSerifSinhala(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ),
+            ],
+            const SizedBox(height: 24),
+            ElevatedButton.icon(
               onPressed: () {
-                // Navigate to the Sign In screen
-                final loginViewModel = Provider.of<LoginViewModel>(context,
-                    listen: false); // Add listen: false
+                final loginViewModel = Provider.of<LoginViewModel>(context, listen: false);
                 loginViewModel.logout(context);
               },
-              child:
-                  Text('ගිනුමෙන් ඉවත් වන්න.', style: TextStyle(fontSize: 14)),
+              style: ElevatedButton.styleFrom(
+                padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(25),
+                ),
+              ),
+              icon: const Icon(Icons.logout),
+              label: Text(
+                'ගිනුමෙන් ඉවත් වන්න.',
+                style: GoogleFonts.notoSerifSinhala(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
             ),
           ],
         ),

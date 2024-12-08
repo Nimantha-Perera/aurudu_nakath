@@ -227,6 +227,8 @@ class _RegisterFormState extends State<RegisterForm> {
         await prefs.setString('email', user.email ?? '');
         await prefs.setString('displayName', _usernameController.text.trim());
         await prefs.setString('userId', user.uid);
+        await prefs.setString('photoURL',
+          'https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png');
 
         Navigator.of(context).pop(); // Close the loader after successful registration
 
