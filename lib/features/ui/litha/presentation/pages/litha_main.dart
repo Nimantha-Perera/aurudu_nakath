@@ -27,7 +27,7 @@ class _LithaMainScreenState extends State<LithaMainScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('2024 ලිත',style: GoogleFonts.notoSerifSinhala(fontSize: 14.0, color: Colors.white)),
+        title: Text('2025 ලිත',style: GoogleFonts.notoSerifSinhala(fontSize: 14.0, color: Colors.white)),
         centerTitle: true,
         backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
       ),

@@ -43,19 +43,26 @@ class _MessageInputState extends State<MessageInput> with SingleTickerProviderSt
   void _setupAnimations() {
     _animationController = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 200),
+      duration: const Duration(milliseconds: 300),
     );
     _sendButtonAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(parent: _animationController, curve: Curves.easeInOut),
+      CurvedAnimation(parent: _animationController, curve: Curves.elasticOut),
     );
   }
 
   Future<void> _initSpeechRecognition() async {
     bool available = await _speechToText.initialize();
     if (!available) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Speech recognition not available')),
-      );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: const Text('Speech recognition not available'),
+            backgroundColor: Colors.red.shade400,
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+          ),
+        );
+      }
     }
   }
 
@@ -140,7 +147,7 @@ class _MessageInputState extends State<MessageInput> with SingleTickerProviderSt
 
     await _speechToText.listen(
       onResult: _onSpeechResult,
-      localeId: 'si_LK', // Set Sinhala locale
+      localeId: 'si_LK',
     );
 
     setState(() {
@@ -175,11 +182,13 @@ class _MessageInputState extends State<MessageInput> with SingleTickerProviderSt
         color: Theme.of(context).cardColor,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 10,
+            color: Colors.black.withOpacity(0.08),
+            blurRadius: 15,
             offset: const Offset(0, -3),
+            spreadRadius: 2,
           ),
         ],
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
       ),
       child: SafeArea(
         child: Row(
@@ -189,7 +198,7 @@ class _MessageInputState extends State<MessageInput> with SingleTickerProviderSt
             Expanded(
               child: _buildInputField(),
             ),
-            const SizedBox(width: 8),
+            const SizedBox(width: 12),
             _buildVoiceInputButton(),
           ],
         ),
@@ -202,12 +211,21 @@ class _MessageInputState extends State<MessageInput> with SingleTickerProviderSt
       key: _startNewChatKey,
       decoration: BoxDecoration(
         color: Theme.of(context).primaryColor.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(15),
+        border: Border.all(
+          color: Theme.of(context).primaryColor.withOpacity(0.2),
+          width: 1,
+        ),
       ),
       child: IconButton(
-        icon: Icon(Icons.refresh, color: Theme.of(context).primaryColor),
+        icon: Icon(
+          Icons.refresh_rounded,
+          color: Theme.of(context).primaryColor,
+          size: 22,
+        ),
         onPressed: _startNewChat,
         tooltip: 'Start New Chat',
+        splashRadius: 24,
       ),
     );
   }
@@ -215,12 +233,21 @@ class _MessageInputState extends State<MessageInput> with SingleTickerProviderSt
   Widget _buildInputField() {
     return Container(
       decoration: BoxDecoration(
-        color: Theme.of(context).inputDecorationTheme.fillColor ?? Colors.grey.shade200,
-        borderRadius: BorderRadius.circular(24.0),
+        color: Theme.of(context).brightness == Brightness.light
+            ? Colors.grey.shade50
+            : Colors.grey.shade900,
+        borderRadius: BorderRadius.circular(20),
         border: Border.all(
-          color: Theme.of(context).primaryColor.withOpacity(0.3),
+          color: Theme.of(context).primaryColor.withOpacity(0.2),
           width: 1.5,
         ),
+        boxShadow: [
+          BoxShadow(
+            color: Theme.of(context).primaryColor.withOpacity(0.05),
+            blurRadius: 10,
+            spreadRadius: 1,
+          ),
+        ],
       ),
       child: Row(
         children: [
@@ -238,10 +265,25 @@ class _MessageInputState extends State<MessageInput> with SingleTickerProviderSt
               decoration: InputDecoration(
                 hintText: 'අවශ්‍ය දේ මෙහි ලියන්න...',
                 border: InputBorder.none,
-                contentPadding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
-                hintStyle: TextStyle(color: Colors.grey.shade600),
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 16.0,
+                  vertical: 12.0,
+                ),
+                hintStyle: TextStyle(
+                  color: Theme.of(context).brightness == Brightness.light
+                      ? Colors.grey.shade600
+                      : Colors.grey.shade400,
+                  fontSize: 15,
+                ),
               ),
-              style: TextStyle(color: Colors.black87),
+              style: TextStyle(
+                color: Theme.of(context).brightness == Brightness.light
+                    ? Colors.black87
+                    : Colors.white,
+                fontSize: 15,
+              ),
+              maxLines: 4,
+              minLines: 1,
             ),
           ),
           AnimatedBuilder(
@@ -260,11 +302,16 @@ class _MessageInputState extends State<MessageInput> with SingleTickerProviderSt
                   key: _sendButtonKey,
                   onTap: () => _sendMessage(),
                   customBorder: const CircleBorder(),
-                  child: Padding(
+                  child: Container(
                     padding: const EdgeInsets.all(8.0),
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).primaryColor.withOpacity(0.1),
+                      shape: BoxShape.circle,
+                    ),
                     child: Icon(
-                      Icons.send,
+                      Icons.send_rounded,
                       color: Theme.of(context).primaryColor,
+                      size: 20,
                     ),
                   ),
                 ),
@@ -277,13 +324,29 @@ class _MessageInputState extends State<MessageInput> with SingleTickerProviderSt
   }
 
   Widget _buildVoiceInputButton() {
-    return IconButton(
-      key: _voiceInputKey,
-      icon: Icon(
-        _isListening ? Icons.mic_off : Icons.mic,
-        color: _isListening ? Colors.red : Theme.of(context).primaryColor,
+    return Container(
+      decoration: BoxDecoration(
+        color: _isListening
+            ? Colors.red.withOpacity(0.1)
+            : Theme.of(context).primaryColor.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(15),
+        border: Border.all(
+          color: _isListening
+              ? Colors.red.withOpacity(0.2)
+              : Theme.of(context).primaryColor.withOpacity(0.2),
+          width: 1,
+        ),
       ),
-      onPressed: _isListening ? _stopListening : _startListening,
+      child: IconButton(
+        key: _voiceInputKey,
+        icon: Icon(
+          _isListening ? Icons.mic_off_rounded : Icons.mic_rounded,
+          color: _isListening ? Colors.red : Theme.of(context).primaryColor,
+          size: 22,
+        ),
+        onPressed: _isListening ? _stopListening : _startListening,
+        splashRadius: 24,
+      ),
     );
   }
 }
