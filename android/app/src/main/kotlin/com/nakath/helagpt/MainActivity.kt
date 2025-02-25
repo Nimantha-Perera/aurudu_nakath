@@ -1,4 +1,4 @@
-package com.nakath.aurudu_nakath
+package com.nakath.helagpt
 
 import io.flutter.embedding.android.FlutterActivity
 
